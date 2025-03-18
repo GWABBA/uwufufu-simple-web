@@ -1,0 +1,31 @@
+import { Locales } from '@/enums/enums.enum';
+
+export const LocaleNames: Record<Locales, string> = {
+  [Locales.AR]: 'Arabic',
+  [Locales.DA]: 'Danish',
+  [Locales.DE]: 'German',
+  [Locales.EL]: 'Greek',
+  [Locales.EN]: 'English',
+  [Locales.ES]: 'Spanish',
+  [Locales.FI]: 'Finnish',
+  [Locales.FIL]: 'Filipino',
+  [Locales.FR]: 'French',
+  [Locales.HI]: 'Hindi',
+  [Locales.HU]: 'Hungarian',
+  [Locales.ID]: 'Indonesian',
+  [Locales.IT]: 'Italian',
+  [Locales.JA]: 'Japanese',
+  [Locales.KO]: 'Korean',
+  [Locales.MN]: 'Mongolian',
+  [Locales.NL]: 'Dutch',
+  [Locales.PL]: 'Polish',
+  [Locales.PT_BR]: 'Portuguese (Brazil)',
+  [Locales.PT]: 'Portuguese',
+  [Locales.RU]: 'Russian',
+  [Locales.SV]: 'Swedish',
+  [Locales.TH]: 'Thai',
+  [Locales.TR]: 'Turkish',
+  [Locales.VI]: 'Vietnamese',
+  [Locales.ZH_HANT]: 'Chinese (Traditional)', // ✅ Fixed `ZH_CHT`
+  [Locales.ZH]: 'Chinese (Simplified)',
+};
