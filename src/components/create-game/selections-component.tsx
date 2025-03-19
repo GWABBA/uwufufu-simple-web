@@ -5,7 +5,7 @@ import {
   createSelectionWithVideo,
   deleteSelection,
   fetchSelectionsForEdit,
-  updateSelectionName,
+  updateSelection,
 } from '@/services/selections.service';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import Pagination from '../common/Pagination';
 import { useTranslation } from 'react-i18next';
+import ImageUpload from '@/../public/assets/icons/image-upload.svg';
+import { uploadImage } from '@/services/images.service';
 
 interface SelectionsComponentProps {
   game: Worldcup;
@@ -49,6 +51,13 @@ export default function SelectionsComponent({
     useState(false);
 
   const [editMode, setEditMode] = useState<{ [key: number]: boolean }>({});
+  const [changedSelectionImage, setChangedSelectionImage] = useState<{
+    [key: number]: string;
+  }>({});
+  const [selectionIsUploading, setSelectionIsUploading] = useState<{
+    [key: number]: boolean;
+  }>({});
+
   const [newName, setNewName] = useState<{ [key: number]: string }>({});
 
   const [youtubeUrl, setYoutubeUrl] = useState('');
@@ -215,20 +224,20 @@ export default function SelectionsComponent({
     }
   };
 
-  const handleSaveName = async (selectionId: number) => {
+  const handleSave = async (selection: SelectionDto) => {
     try {
-      const newNameValue = newName[selectionId];
-      if (!newNameValue) return;
-
-      const updatedSelection = await updateSelectionName({
+      const updatedSelection = await updateSelection({
         gameId: game.id,
-        selectionId,
-        name: newNameValue,
+        selectionId: selection.id,
+        name: newName[selection.id] || selection.name,
+        resourceUrl:
+          changedSelectionImage[selection.id] || selection.resourceUrl,
       });
       setSelections((prev) =>
-        prev.map((s) => (s.id === selectionId ? updatedSelection! : s))
+        prev.map((s) => (s.id === selection.id ? updatedSelection! : s))
       );
-      setEditMode((prev) => ({ ...prev, [selectionId]: false }));
+      setEditMode((prev) => ({ ...prev, [selection.id]: false }));
+      setChangedSelectionImage((prev) => ({ ...prev, [selection.id]: '' }));
       toast.success(t('create-worldcup.selection-name-updated-successfully'));
     } catch (e) {
       console.error(e);
@@ -238,6 +247,38 @@ export default function SelectionsComponent({
   const searchSelections = async () => {
     setPage(1);
     await fetchSelections();
+  };
+
+  const handleEditSelectionImage = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    selectionId: number
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', 'cover');
+
+    setSelectionIsUploading((prev) => ({ ...prev, [selectionId]: true }));
+
+    try {
+      const uploadedImage = await uploadImage(formData);
+      setChangedSelectionImage(
+        (prev) => ({ ...prev, [selectionId]: uploadedImage.url }) // ✅ Show uploaded image
+      );
+      toast.success(t('common.image-uploaded-successfully'));
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : t('common.unknown-error-occurred')
+      );
+    } finally {
+      setSelectionIsUploading(
+        (prev) => ({ ...prev, [selectionId]: false }) // ✅
+      ); // ✅ Hide spinner
+    }
   };
 
   return (
@@ -429,7 +470,7 @@ export default function SelectionsComponent({
                       <div className="flex justify-end space-x-2 ">
                         {/* ✅ Save Button */}
                         <button
-                          onClick={() => handleSaveName(selection.id)}
+                          onClick={() => handleSave(selection)}
                           className="bg-uwu-red text-white rounded-full w-8 h-8 flex items-center justify-center"
                         >
                           <Save size={16} />
@@ -459,11 +500,42 @@ export default function SelectionsComponent({
 
                   {/* ✅ Media Container */}
                   <div className="aspect-video relative h-36 w-full px-12">
-                    {selection.isVideo ? (
+                    {selectionIsUploading[selection.id] ? (
+                      <div className="absolute inset-0 flex items-center justify-center rounded-lg">
+                        <div className="animate-spin w-8 h-8 border-4 border-white border-t-transparent rounded-full"></div>
+                      </div>
+                    ) : editMode[selection.id] ? (
+                      <>
+                        {changedSelectionImage[selection.id] ? (
+                          <Image
+                            src={changedSelectionImage[selection.id]}
+                            alt="image"
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-lg px-12"
+                          />
+                        ) : (
+                          <div className="text-white flex flex-col items-center">
+                            <ImageUpload className="w-13 h-12 mt-6" />
+                            <p className="text-sm mt-2">
+                              {t('create-worldcup.upload-image')}
+                            </p>
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          id="coverImage"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          accept="image/*"
+                          onChange={(e) =>
+                            handleEditSelectionImage(e, selection.id)
+                          }
+                        />
+                      </>
+                    ) : selection.isVideo ? (
                       <iframe
                         src={`${selection.videoUrl}?autoplay=0&rel=0`}
                         className="rounded-lg w-full h-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       ></iframe>
                     ) : (

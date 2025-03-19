@@ -10,11 +10,11 @@ import toast from 'react-hot-toast';
 import { ImageResponse } from '@/dtos/images.dtos';
 import { addResultImageToStartedGame } from '@/services/startedGames.service';
 import {
-  shareOnDiscord,
-  shareOnFacebook,
-  shareOnReddit,
-  shareOnTwitter,
-  shareOnWhatsApp,
+  shareOnDiscord as shareOnDiscordService,
+  shareOnFacebook as shareOnFacebookService,
+  shareOnReddit as shareOnRedditService,
+  shareOnTwitter as shareOnTwitterService,
+  shareOnWhatsApp as shareOnWhatsAppService,
 } from '@/services/share.service';
 import { useTranslation } from 'react-i18next';
 
@@ -318,6 +318,14 @@ const MatchModal: React.FC<MatchModalProps> = ({
 
     setIsUploading(true);
 
+    saveResultImage();
+
+    handleCopy();
+
+    setIsUploading(false);
+  };
+
+  const saveResultImage = async () => {
     let imageResponse = resultImage; // Check if an image is already set
 
     if (!imageResponse) {
@@ -331,10 +339,6 @@ const MatchModal: React.FC<MatchModalProps> = ({
         });
       }
     }
-
-    handleCopy();
-
-    setIsUploading(false);
   };
 
   const handleCopy = () => {
@@ -359,13 +363,30 @@ const MatchModal: React.FC<MatchModalProps> = ({
     }
   };
 
-  // const shareOnTwitter = () => {
-  //   const text = encodeURIComponent(`Check this out! 🔥`);
-  //   const url = encodeURIComponent(resultUrl);
-  //   const twitterShareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+  async function shareOnTwitter(url: string, text: string) {
+    await saveResultImage();
+    shareOnTwitterService(url, text);
+  }
 
-  //   window.open(twitterShareUrl, '_blank');
-  // };
+  async function shareOnDiscord(url: string) {
+    await saveResultImage();
+    shareOnDiscordService(url);
+  }
+
+  async function shareOnReddit(url: string, title: string) {
+    await saveResultImage();
+    shareOnRedditService(url, title);
+  }
+
+  async function shareOnFacebook(url: string) {
+    await saveResultImage();
+    shareOnFacebookService(url);
+  }
+
+  async function shareOnWhatsApp(url: string, text: string) {
+    await saveResultImage();
+    shareOnWhatsAppService(url, text);
+  }
 
   if (!isOpen) return null;
 
@@ -605,7 +626,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
               >
                 <Image
                   src="/assets/social-medias/share_discord.svg"
-                  alt="Twitter"
+                  alt="discord"
                   width={24}
                   height={24}
                 />

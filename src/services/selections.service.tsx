@@ -93,13 +93,14 @@ export const createSelectionWithVideo = async (
   }
 };
 
-export const updateSelectionName = async (body: {
+export const updateSelection = async (body: {
   gameId: number;
   selectionId: number;
   name: string;
+  resourceUrl: string;
 }): Promise<SelectionDto> => {
   try {
-    const { data } = await api.patch<SelectionDto>('/selections/name', body);
+    const { data } = await api.patch<SelectionDto>('/selections', body);
 
     return data;
   } catch (error: unknown) {
