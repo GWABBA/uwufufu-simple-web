@@ -128,3 +128,17 @@ export const updateWorldcup = async (
     throw new Error('An unexpected error occurred');
   }
 };
+
+export const deleteWorldcup = async (id: number): Promise<void> => {
+  try {
+    await api.delete(`/games/${id}`);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || 'Delete worldcup request failed'
+      );
+    }
+
+    throw new Error('An unexpected error occurred');
+  }
+};

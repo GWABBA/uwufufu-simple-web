@@ -1,19 +1,20 @@
 'use client';
 
 import { Worldcup } from '@/dtos/worldcup.dtos';
-import Link from 'next/link';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Pagination from '@/components/common/Pagination';
 import { useEffect, useState } from 'react';
-import { fetchMyWorldcups } from '@/services/worldcup.service';
+import { deleteWorldcup, fetchMyWorldcups } from '@/services/worldcup.service';
 import toast from 'react-hot-toast';
 import { Visibility } from '@/enums/enums.enum';
 import { useTranslation } from 'react-i18next';
 import LoadingAnimation from '@/components/animation/Loading';
+import { Pencil, Trash2 } from 'lucide-react';
 
 export default function MyGames() {
   const { t } = useTranslation();
+  const router = useRouter();
 
   const itemsPerPage = 15;
   const searchParams = useSearchParams();
@@ -63,6 +64,36 @@ export default function MyGames() {
     return <LoadingAnimation />;
   }
 
+  const onEditClicked = (game: Worldcup) => {
+    router.push(`/create-game/${game.id}`);
+  };
+
+  const onDeleteClicked = async (game: Worldcup) => {
+    const confirmDelete = confirm('Are you sure you want to delete this?');
+    if (confirmDelete) {
+      try {
+        await deleteWorldcup(game.id);
+        setGames((prevGames) => prevGames.filter((g) => g.id !== game.id));
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error(t('common.unknown-error-occurred'));
+        }
+      }
+
+      toast.success('Deleted successfully.');
+    }
+  };
+
+  const playGame = (game: Worldcup) => () => {
+    if (game.visibility === Visibility.IsClosed) {
+      toast.error('Cannot play a closed Worldcup');
+      return;
+    }
+    router.push(`/worldcup/${game.slug}`);
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto px-4 pt-4 md:pt-8">
       <h1 className="text-xl md:text-4xl font-bold text-white mb-8">
@@ -72,10 +103,10 @@ export default function MyGames() {
         {games.map((game) => {
           const visibility = getVisibilityLabel(game.visibility);
           return (
-            <Link
+            <div
               key={game.id}
-              href={`/create-game/${game.id}`}
-              className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden relative transform hover:scale-105"
+              className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg cursor-pointer transition-shadow duration-200 overflow-hidden relative transform hover:scale-105"
+              onClick={playGame(game)}
             >
               {/* Cover Image */}
               <div className="w-full h-60 relative">
@@ -103,17 +134,41 @@ export default function MyGames() {
                 </div>
 
                 {/* Category & NSFW Row */}
-                <div className="flex items-center text-sm text-gray-300 mb-2">
-                  <span className="text-uwuRed font-semibold">
-                    {game.category ? game.category.name : 'Unknown'}
-                  </span>
-
-                  {/* NSFW Indicator */}
-                  {game.isNsfw && (
-                    <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md">
-                      NSFW
+                <div className="flex items-center text-sm text-gray-300 mb-2 justify-between">
+                  <div>
+                    <span className="text-uwuRed font-semibold">
+                      {game.category ? game.category.name : 'Unknown'}
                     </span>
-                  )}
+
+                    {/* NSFW Indicator */}
+                    {game.isNsfw && (
+                      <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md">
+                        NSFW
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex">
+                    <button className="mr-2">
+                      <Pencil
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          onEditClicked(game);
+                        }}
+                        className="text-uwu-red hover:scale-125"
+                      ></Pencil>
+                    </button>
+                    <button>
+                      <Trash2
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          onDeleteClicked(game);
+                        }}
+                        className="text-gray-600 hover:scale-125"
+                      ></Trash2>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Title */}
@@ -126,7 +181,7 @@ export default function MyGames() {
                   {game.description}
                 </p>
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>
