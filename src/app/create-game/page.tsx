@@ -43,7 +43,7 @@ const CreateGame = () => {
     const token = Cookies.get('accessToken'); // ✅ Read the cookie in client-side
 
     if (!token) {
-      toast.error(t('create-worldcup.you-need-to-login-first'));
+      toast.error(t('common.you-need-to-login-first'));
       router.replace('/auth/login?redirect=/create-game');
     } else {
       setIsLoading(false);

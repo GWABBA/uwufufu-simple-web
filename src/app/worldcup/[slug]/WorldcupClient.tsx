@@ -106,6 +106,7 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
   };
 
   const handleOnSelect = async (selection: Selection) => {
+    console.log('ccc')
     if (!startedGame || !startedGame.match) return;
     const newStartedGameData = await pickSelection({
       startedGameId: startedGame.startedGame.id,
