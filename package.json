@@ -21,7 +21,7 @@
     "@tailwindcss/line-clamp": "^0.4.4",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
-    "framer-motion": "^12.4.7",
+    "framer-motion": "^12.5.0",
     "i18next": "^24.2.2",
     "i18next-browser-languagedetector": "^8.0.4",
     "js-cookie": "^3.0.5",
