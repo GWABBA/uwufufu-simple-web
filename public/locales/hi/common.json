@@ -60,7 +60,10 @@
     "closed": "बंद",
     "category": "श्रेणी",
     "select-category": "श्रेणी चुनें",
-    "nsfw-warning": "यदि कार्यस्थल के लिए उपयुक्त नहीं तो चेक करें"
+    "nsfw-warning": "यदि कार्यस्थल के लिए उपयुक्त नहीं तो चेक करें",
+    "are-your-sure-you-want-to-delete-this-worldcup": "क्या आप वाकई इस वर्ल्डकप को हटाना चाहते हैं?",
+    "worldcup-deleted-successfully": "वर्ल्डकप सफलतापूर्वक हटा दिया गया",
+    "cannot-play-closed": "बंद वर्ल्डकप नहीं खेल सकते"
   },
   "user-profile": {
     "user-profile": "उपयोगकर्ता प्रोफ़ाइल",

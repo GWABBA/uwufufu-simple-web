@@ -60,7 +60,10 @@
     "closed": "종료됨",
     "category": "카테고리",
     "select-category": "카테고리 선택",
-    "nsfw-warning": "직장에서 보기에 부적절한 경우 체크"
+    "nsfw-warning": "직장에서 보기에 부적절한 경우 체크",
+    "are-your-sure-you-want-to-delete-this-worldcup": "이 월드컵을 삭제하시겠습니까?",
+    "worldcup-deleted-successfully": "월드컵이 성공적으로 삭제되었습니다",
+    "cannot-play-closed": "닫힌 월드컵은 플레이할 수 없습니다"
   },
   "user-profile": {
     "user-profile": "사용자 프로필",

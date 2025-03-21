@@ -60,7 +60,10 @@
     "closed": "Stängd",
     "category": "Kategori",
     "select-category": "Välj kategori",
-    "nsfw-warning": "Markera om ej lämpligt för arbete"
+    "nsfw-warning": "Markera om ej lämpligt för arbete",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Är du säker på att du vill radera denna världscup?",
+    "worldcup-deleted-successfully": "Världscupen raderades framgångsrikt",
+    "cannot-play-closed": "Kan inte spela en stängd världscup"
   },
   "user-profile": {
     "user-profile": "Användarprofil",

@@ -60,7 +60,10 @@
     "closed": "Zamknięty",
     "category": "Kategoria",
     "select-category": "Wybierz kategorię",
-    "nsfw-warning": "Zaznacz, jeśli treść nie jest odpowiednia do pracy"
+    "nsfw-warning": "Zaznacz, jeśli treść nie jest odpowiednia do pracy",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Czy na pewno chcesz usunąć ten mundial?",
+    "worldcup-deleted-successfully": "Mundial został pomyślnie usunięty",
+    "cannot-play-closed": "Nie można grać w zamknięty mundial"
   },
   "user-profile": {
     "user-profile": "Profil użytkownika",

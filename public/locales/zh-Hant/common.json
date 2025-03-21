@@ -60,7 +60,10 @@
     "closed": "已關閉",
     "category": "分類",
     "select-category": "選擇分類",
-    "nsfw-warning": "若內容不適合工作場所請勾選"
+    "nsfw-warning": "若內容不適合工作場所請勾選",
+    "are-your-sure-you-want-to-delete-this-worldcup": "您確定要刪除此世界盃嗎？",
+    "worldcup-deleted-successfully": "世界盃已成功刪除",
+    "cannot-play-closed": "無法遊玩已關閉的世界盃"
   },
   "user-profile": {
     "user-profile": "使用者資料",

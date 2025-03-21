@@ -60,7 +60,10 @@
     "closed": "Sarado",
     "category": "Kategorya",
     "select-category": "Piliin ang Kategorya",
-    "nsfw-warning": "I-check kung hindi angkop sa trabaho"
+    "nsfw-warning": "I-check kung hindi angkop sa trabaho",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Sigurado ka bang gusto mong tanggalin ang worldcup na ito?",
+    "worldcup-deleted-successfully": "Matagumpay na natanggal ang worldcup",
+    "cannot-play-closed": "Hindi maaaring laruin ang saradong worldcup"
   },
   "user-profile": {
     "user-profile": "Profile ng Gumagamit",

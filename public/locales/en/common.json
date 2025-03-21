@@ -60,7 +60,10 @@
     "closed": "Closed",
     "category": "Category",
     "select-category": "Select Category",
-    "nsfw-warning": "Check if it's not suitable for work"
+    "nsfw-warning": "Check if it's not suitable for work",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Are you sure you want to delete this worldcup?",
+    "worldcup-deleted-successfully": "Worldcup deleted successfully",
+    "cannot-play-closed": "Cannot play a closed worldcup"
   },
   "user-profile": {
     "user-profile": "User Profile",

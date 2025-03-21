@@ -60,7 +60,10 @@
     "closed": "Fermé",
     "category": "Catégorie",
     "select-category": "Sélectionner une catégorie",
-    "nsfw-warning": "Cochez si le contenu n'est pas adapté au travail"
+    "nsfw-warning": "Cochez si le contenu n'est pas adapté au travail",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Êtes-vous sûr de vouloir supprimer cette coupe du monde ?",
+    "worldcup-deleted-successfully": "Coupe du monde supprimée avec succès",
+    "cannot-play-closed": "Impossible de jouer une coupe du monde fermée"
   },
   "user-profile": {
     "user-profile": "Profil utilisateur",

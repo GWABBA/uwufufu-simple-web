@@ -60,7 +60,10 @@
     "closed": "終了",
     "category": "カテゴリ",
     "select-category": "カテゴリを選択",
-    "nsfw-warning": "職場閲覧注意の場合はチェック"
+    "nsfw-warning": "職場閲覧注意の場合はチェック",
+    "are-your-sure-you-want-to-delete-this-worldcup": "このワールドカップを削除してもよろしいですか？",
+    "worldcup-deleted-successfully": "ワールドカップが正常に削除されました",
+    "cannot-play-closed": "閉じたワールドカップはプレイできません"
   },
   "user-profile": {
     "user-profile": "ユーザープロフィール",

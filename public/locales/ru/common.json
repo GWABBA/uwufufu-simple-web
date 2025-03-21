@@ -60,7 +60,10 @@
     "closed": "Закрытый",
     "category": "Категория",
     "select-category": "Выберите категорию",
-    "nsfw-warning": "Отметьте, если контент не для работы"
+    "nsfw-warning": "Отметьте, если контент не для работы",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Вы уверены, что хотите удалить этот чемпионат мира?",
+    "worldcup-deleted-successfully": "Чемпионат мира успешно удален",
+    "cannot-play-closed": "Нельзя играть в закрытый чемпионат мира"
   },
   "user-profile": {
     "user-profile": "Профиль пользователя",

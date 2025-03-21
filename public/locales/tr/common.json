@@ -60,7 +60,10 @@
     "closed": "Kapalı",
     "category": "Kategori",
     "select-category": "Kategori Seçin",
-    "nsfw-warning": "İş için uygun değilse işaretleyin"
+    "nsfw-warning": "İş için uygun değilse işaretleyin",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Bu dünya kupasını silmek istediğinizden emin misiniz?",
+    "worldcup-deleted-successfully": "Dünya kupası başarıyla silindi",
+    "cannot-play-closed": "Kapalı bir dünya kupası oynanamaz"
   },
   "user-profile": {
     "user-profile": "Kullanıcı Profili",

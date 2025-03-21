@@ -60,7 +60,10 @@
     "closed": "Geschlossen",
     "category": "Kategorie",
     "select-category": "Kategorie auswählen",
-    "nsfw-warning": "Aktivieren, wenn nicht für die Arbeit geeignet"
+    "nsfw-warning": "Aktivieren, wenn nicht für die Arbeit geeignet",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Bist du sicher, dass du diese Weltmeisterschaft löschen möchtest?",
+    "worldcup-deleted-successfully": "Weltmeisterschaft erfolgreich gelöscht",
+    "cannot-play-closed": "Kann ein geschlossenes Turnier nicht spielen"
   },
   "user-profile": {
     "user-profile": "Benutzerprofil",

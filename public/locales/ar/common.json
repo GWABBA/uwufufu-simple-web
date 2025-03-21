@@ -60,7 +60,10 @@
     "closed": "مغلق",
     "category": "الفئة",
     "select-category": "اختر الفئة",
-    "nsfw-warning": "حدّد إذا كان المحتوى غير مناسب للعمل"
+    "nsfw-warning": "حدّد إذا كان المحتوى غير مناسب للعمل",
+    "are-your-sure-you-want-to-delete-this-worldcup": "هل أنت متأكد أنك تريد حذف هذه البطولة؟",
+    "worldcup-deleted-successfully": "تم حذف البطولة بنجاح",
+    "cannot-play-closed": "لا يمكن لعب بطولة مغلقة"
   },
   "user-profile": {
     "user-profile": "الملف الشخصي",

@@ -69,7 +69,9 @@ export default function MyGames() {
   };
 
   const onDeleteClicked = async (game: Worldcup) => {
-    const confirmDelete = confirm('Are you sure you want to delete this?');
+    const confirmDelete = confirm(
+      t('create-worldcup.are-your-sure-you-want-to-delete-this-worldcup')
+    );
     if (confirmDelete) {
       try {
         await deleteWorldcup(game.id);
@@ -82,13 +84,13 @@ export default function MyGames() {
         }
       }
 
-      toast.success('Deleted successfully.');
+      toast.success(t('create-worldcup.worldcup-deleted-successfully'));
     }
   };
 
   const playGame = (game: Worldcup) => () => {
     if (game.visibility === Visibility.IsClosed) {
-      toast.error('Cannot play a closed Worldcup');
+      toast.error(t('create-worldcup.cannot-play-closed'));
       return;
     }
     router.push(`/worldcup/${game.slug}`);

@@ -60,7 +60,10 @@
     "closed": "Đã đóng",
     "category": "Danh mục",
     "select-category": "Chọn danh mục",
-    "nsfw-warning": "Chọn nếu nội dung không phù hợp nơi làm việc"
+    "nsfw-warning": "Chọn nếu nội dung không phù hợp nơi làm việc",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Bạn có chắc chắn muốn xóa giải đấu này không?",
+    "worldcup-deleted-successfully": "Giải đấu đã được xóa thành công",
+    "cannot-play-closed": "Không thể chơi giải đấu đã đóng"
   },
   "user-profile": {
     "user-profile": "Hồ sơ người dùng",

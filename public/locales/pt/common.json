@@ -60,7 +60,10 @@
     "closed": "Encerrado",
     "category": "Categoria",
     "select-category": "Selecionar categoria",
-    "nsfw-warning": "Marque se não for apropriado para trabalho"
+    "nsfw-warning": "Marque se não for apropriado para trabalho",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Tem certeza de que deseja excluir esta Copa do Mundo?",
+    "worldcup-deleted-successfully": "Copa do Mundo excluída com sucesso",
+    "cannot-play-closed": "Não é possível jogar uma Copa do Mundo fechada"
   },
   "user-profile": {
     "user-profile": "Perfil do Usuário",

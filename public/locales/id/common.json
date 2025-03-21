@@ -60,7 +60,10 @@
     "closed": "Tertutup",
     "category": "Kategori",
     "select-category": "Pilih Kategori",
-    "nsfw-warning": "Centang jika tidak cocok untuk tempat kerja"
+    "nsfw-warning": "Centang jika tidak cocok untuk tempat kerja",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Apakah Anda yakin ingin menghapus worldcup ini?",
+    "worldcup-deleted-successfully": "Worldcup berhasil dihapus",
+    "cannot-play-closed": "Tidak dapat bermain di worldcup yang ditutup"
   },
   "user-profile": {
     "user-profile": "Profil Pengguna",

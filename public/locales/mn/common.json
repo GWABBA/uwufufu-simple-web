@@ -60,7 +60,10 @@
     "closed": "Хаалттай",
     "category": "Ангилал",
     "select-category": "Ангилал сонгох",
-    "nsfw-warning": "Ажлын байранд тохиромжгүй бол сонгоно уу"
+    "nsfw-warning": "Ажлын байранд тохиромжгүй бол сонгоно уу",
+    "are-your-sure-you-want-to-delete-this-worldcup": "Та энэ дэлхийн аваргыг устгахдаа итгэлтэй байна уу?",
+    "worldcup-deleted-successfully": "Дэлхийн аварга амжилттай устгагдлаа",
+    "cannot-play-closed": "Хаалттай дэлхийн аваргыг тоглож болохгүй"
   },
   "user-profile": {
     "user-profile": "Хэрэглэгчийн профайл",

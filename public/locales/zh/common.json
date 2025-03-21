@@ -60,7 +60,10 @@
     "closed": "关闭",
     "category": "类别",
     "select-category": "选择类别",
-    "nsfw-warning": "如不适合工作场合请勾选"
+    "nsfw-warning": "如不适合工作场合请勾选",
+    "are-your-sure-you-want-to-delete-this-worldcup": "您确定要删除此世界杯吗？",
+    "worldcup-deleted-successfully": "世界杯已成功删除",
+    "cannot-play-closed": "无法玩已关闭的世界杯"
   },
   "user-profile": {
     "user-profile": "用户资料",
