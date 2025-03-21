@@ -396,6 +396,11 @@ export default function NewHomeComponent() {
                             className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
                           >
                             <div className="w-full h-60 relative">
+                              {game.isNsfw && (
+                                <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md z-20 top-2 right-2">
+                                  NSFW
+                                </span>
+                              )}
                               {game.isNsfw &&
                                 (!user || (user && user.tier === 'basic')) && (
                                   <div className="absolute w-full h-full backdrop-blur-lg z-10"></div>
@@ -417,10 +422,29 @@ export default function NewHomeComponent() {
                                   <span className="text-uwuRed font-semibold">
                                     {game.category?.name || 'Unknown'}
                                   </span>
-                                  {game.isNsfw && (
-                                    <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md">
-                                      NSFW
-                                    </span>
+                                  {game.user && (
+                                    <div className="flex items-center">
+                                      {game.user.profileImage ? (
+                                        <Image
+                                          src={game.user.profileImage!}
+                                          alt="profile"
+                                          width={24}
+                                          height={24}
+                                          className="rounded-full mr-1"
+                                        ></Image>
+                                      ) : (
+                                        <Image
+                                          src="/assets/icons/account-circle.svg"
+                                          alt="profile"
+                                          width={24}
+                                          height={24}
+                                          className="rounded-full mr-1"
+                                        ></Image>
+                                      )}
+                                      <span className="text-gray-400">
+                                        {game.user.name}
+                                      </span>
+                                    </div>
                                   )}
                                 </div>
                                 <h2 className="text-lg md:text-xl font-semibold text-white line-clamp-1">

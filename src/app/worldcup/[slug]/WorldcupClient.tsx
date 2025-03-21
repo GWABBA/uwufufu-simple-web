@@ -106,7 +106,7 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
   };
 
   const handleOnSelect = async (selection: Selection) => {
-    console.log('ccc')
+    console.log('ccc');
     if (!startedGame || !startedGame.match) return;
     const newStartedGameData = await pickSelection({
       startedGameId: startedGame.startedGame.id,
@@ -434,6 +434,30 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
           <p className="text-base md:text-lg text-gray-400 mb-4">
             {worldcup.description}
           </p>
+          {worldcup.user && (
+            <div className="flex items-center">
+              {worldcup.user.profileImage ? (
+                <Image
+                  src={worldcup.user.profileImage!}
+                  alt="profile"
+                  width={24}
+                  height={24}
+                  className="rounded-full mr-1"
+                ></Image>
+              ) : (
+                <Image
+                  src="/assets/icons/account-circle.svg"
+                  alt="profile"
+                  width={24}
+                  height={24}
+                  className="rounded-full mr-1"
+                ></Image>
+              )}
+              <span className="text-base md:text-lg text-gray-400">
+                {worldcup.user.name}
+              </span>
+            </div>
+          )}
         </div>
         {/* play button area */}
         <div className="flex justify-center md:block">
