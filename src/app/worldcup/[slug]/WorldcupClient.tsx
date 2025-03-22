@@ -217,8 +217,8 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
             <tbody>
               {selections.map((selection) => {
                 let finalWinRatio = 0;
-                if (worldcup.plays > 0) {
-                  finalWinRatio = (selection.finalWins / worldcup.plays) * 100;
+                if (worldcup.plays! > 0) {
+                  finalWinRatio = (selection.finalWins / worldcup.plays!) * 100;
                 }
 
                 return (
@@ -327,8 +327,8 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
         <div className="md:hidden grid grid-cols-1 gap-4">
           {selections.map((selection) => {
             let finalWinRatio = 0;
-            if (worldcup.plays > 0) {
-              finalWinRatio = (selection.finalWins / worldcup.plays) * 100;
+            if (worldcup.plays! > 0) {
+              finalWinRatio = (selection.finalWins / worldcup.plays!) * 100;
             }
 
             return (
