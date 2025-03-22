@@ -97,7 +97,10 @@ export const updateSelection = async (body: {
   gameId: number;
   selectionId: number;
   name: string;
-  resourceUrl: string;
+  resourceUrl?: string;
+  videoUrl?: string;
+  startTime?: number;
+  endTime?: number;
 }): Promise<SelectionDto> => {
   try {
     const { data } = await api.patch<SelectionDto>('/selections', body);

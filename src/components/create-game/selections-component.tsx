@@ -59,6 +59,9 @@ export default function SelectionsComponent({
   }>({});
 
   const [newName, setNewName] = useState<{ [key: number]: string }>({});
+  const [newVideo, setNewVideo] = useState<{
+    [key: number]: { videoUrl: string; startTime: number; endTime: number };
+  }>({});
 
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [startTime, setStartTime] = useState(0);
@@ -196,9 +199,20 @@ export default function SelectionsComponent({
     }
   };
 
-  const handleEditClick = (selectionId: number, selectionName: string) => {
-    setEditMode((prev) => ({ ...prev, [selectionId]: true }));
-    setNewName((prev) => ({ ...prev, [selectionId]: selectionName }));
+  const handleEditClick = (selection: SelectionDto) => {
+    setEditMode((prev) => ({ ...prev, [selection.id]: true }));
+    setNewName((prev) => ({ ...prev, [selection.id]: selection.name }));
+
+    if (selection?.isVideo) {
+      setNewVideo((prev) => ({
+        ...prev,
+        [selection.id]: {
+          videoUrl: selection.resourceUrl,
+          startTime: selection.startTime ?? 0,
+          endTime: selection.endTime ?? 0,
+        },
+      }));
+    }
   };
 
   const handleOnYoutubeSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -232,6 +246,9 @@ export default function SelectionsComponent({
         name: newName[selection.id] || selection.name,
         resourceUrl:
           changedSelectionImage[selection.id] || selection.resourceUrl,
+        videoUrl: newVideo[selection.id]?.videoUrl || selection.resourceUrl,
+        startTime: newVideo[selection.id]?.startTime || selection.startTime,
+        endTime: newVideo[selection.id]?.endTime || selection.endTime,
       });
       setSelections((prev) =>
         prev.map((s) => (s.id === selection.id ? updatedSelection! : s))
@@ -327,7 +344,6 @@ export default function SelectionsComponent({
       </div>
 
       {/* create selections */}
-
       {tab === SelectionTabType.IMAGE ? (
         <>
           <label className="text-white block">
@@ -487,9 +503,7 @@ export default function SelectionsComponent({
                         </button>
                         {/* Edit button */}
                         <button
-                          onClick={() =>
-                            handleEditClick(selection.id, selection.name)
-                          }
+                          onClick={() => handleEditClick(selection)}
                           className="bg-uwu-red text-white rounded-full w-8 h-8 flex items-center justify-center"
                         >
                           <Pencil size={16} />
@@ -505,33 +519,88 @@ export default function SelectionsComponent({
                         <div className="animate-spin w-8 h-8 border-4 border-white border-t-transparent rounded-full"></div>
                       </div>
                     ) : editMode[selection.id] ? (
-                      <>
-                        {changedSelectionImage[selection.id] ? (
-                          <Image
-                            src={changedSelectionImage[selection.id]}
-                            alt="image"
-                            layout="fill"
-                            objectFit="cover"
-                            className="rounded-lg px-12"
+                      selection.isVideo ? (
+                        <div className="p-4 rounded-lg -mx-12">
+                          <input
+                            type="text"
+                            value={newVideo[selection.id]?.videoUrl || ''}
+                            onChange={(e) =>
+                              setNewVideo((prev) => ({
+                                ...prev,
+                                [selection.id]: {
+                                  ...prev[selection.id],
+                                  videoUrl: e.target.value,
+                                },
+                              }))
+                            }
+                            className="p-2 rounded-md bg-uwu-dark-gray text-white w-full border mb-2 h-8"
                           />
-                        ) : (
+                          <div>
+                            <input
+                              type="number"
+                              value={newVideo[selection.id]?.startTime || 0}
+                              onChange={(e) =>
+                                setNewVideo((prev) => ({
+                                  ...prev,
+                                  [selection.id]: {
+                                    ...prev[selection.id],
+                                    startTime: Number(e.target.value),
+                                  },
+                                }))
+                              }
+                              className="p-2 rounded-md bg-uwu-dark-gray text-white w-full border mb-2 h-8 max-w-12"
+                            />
+                            <label className="ml-2 text-gray-400">
+                              Start Time
+                            </label>
+                          </div>
+                          <div>
+                            <input
+                              type="number"
+                              value={newVideo[selection.id]?.endTime || 0}
+                              onChange={(e) =>
+                                setNewVideo((prev) => ({
+                                  ...prev,
+                                  [selection.id]: {
+                                    ...prev[selection.id],
+                                    endTime: Number(e.target.value),
+                                  },
+                                }))
+                              }
+                              className="p-2 rounded-md bg-uwu-dark-gray text-white w-full border mb-2 h-8 max-w-12"
+                            />
+                            <label className="ml-2 text-gray-400">
+                              End Time
+                            </label>
+                          </div>
+                        </div>
+                      ) : changedSelectionImage[selection.id] ? (
+                        <Image
+                          src={changedSelectionImage[selection.id]}
+                          alt="image"
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-lg px-12"
+                        />
+                      ) : (
+                        <>
                           <div className="text-white flex flex-col items-center">
                             <ImageUpload className="w-13 h-12 mt-6" />
                             <p className="text-sm mt-2">
                               {t('create-worldcup.upload-image')}
                             </p>
                           </div>
-                        )}
-                        <input
-                          type="file"
-                          id="coverImage"
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                          accept="image/*"
-                          onChange={(e) =>
-                            handleEditSelectionImage(e, selection.id)
-                          }
-                        />
-                      </>
+                          <input
+                            type="file"
+                            id="coverImage"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            accept="image/*"
+                            onChange={(e) =>
+                              handleEditSelectionImage(e, selection.id)
+                            }
+                          />
+                        </>
+                      )
                     ) : selection.isVideo ? (
                       <iframe
                         src={`${selection.videoUrl}?autoplay=0&rel=0`}

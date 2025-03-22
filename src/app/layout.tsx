@@ -160,6 +160,7 @@ export default async function RootLayout({
             <div className="flex flex-col min-h-screen">
               <Navigation />
               <FreeTrial user={user} />
+              {/* <ImageUpload></ImageUpload> */}
               <main className="flex-grow">{children}</main>
               <Footer />
             </div>
