@@ -216,17 +216,10 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
             </thead>
             <tbody>
               {selections.map((selection) => {
-                const winRatio =
-                  selection.wins + selection.losses > 0
-                    ? (selection.wins / (selection.wins + selection.losses)) *
-                      100
-                    : 0;
-                const finalWinRatio =
-                  selection.finalWins + selection.finalLosses > 0
-                    ? (selection.finalWins /
-                        (selection.finalWins + selection.finalLosses)) *
-                      100
-                    : 0;
+                let finalWinRatio = 0;
+                if (worldcup.plays > 0) {
+                  finalWinRatio = (selection.finalWins / worldcup.plays) * 100;
+                }
 
                 return (
                   <tr key={selection.id} className="border-b border-gray-700">
@@ -294,10 +287,19 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
                       <div className="relative w-40 h-5 bg-gray-700 rounded-md overflow-hidden">
                         <div
                           className="h-full bg-green-500 transition-all"
-                          style={{ width: `${winRatio}%` }}
+                          style={{
+                            width: `${
+                              selection.winLossRatio
+                                ? (selection.winLossRatio * 100).toFixed(1)
+                                : 0
+                            }%`,
+                          }}
                         ></div>
                         <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">
-                          {winRatio.toFixed(1)}%
+                          {selection.winLossRatio
+                            ? (selection.winLossRatio * 100).toFixed(1)
+                            : 0}
+                          %
                         </span>
                       </div>
                     </td>
@@ -324,16 +326,10 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
         {/* Selections (Mobile) */}
         <div className="md:hidden grid grid-cols-1 gap-4">
           {selections.map((selection) => {
-            const winRatio =
-              selection.wins + selection.losses > 0
-                ? (selection.wins / (selection.wins + selection.losses)) * 100
-                : 0;
-            const finalWinRatio =
-              selection.finalWins + selection.finalLosses > 0
-                ? (selection.finalWins /
-                    (selection.finalWins + selection.finalLosses)) *
-                  100
-                : 0;
+            let finalWinRatio = 0;
+            if (worldcup.plays > 0) {
+              finalWinRatio = (selection.finalWins / worldcup.plays) * 100;
+            }
 
             return (
               <div
@@ -389,10 +385,19 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
                   <div className="relative w-full h-5 bg-gray-700 rounded-md overflow-hidden">
                     <div
                       className="h-full bg-green-500 transition-all"
-                      style={{ width: `${winRatio}%` }}
+                      style={{
+                        width: `${
+                          selection.winLossRatio
+                            ? (selection.winLossRatio * 100).toFixed(1)
+                            : 0
+                        }%`,
+                      }}
                     ></div>
                     <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">
-                      {winRatio.toFixed(1)}%
+                      {selection.winLossRatio
+                        ? (selection.winLossRatio * 100).toFixed(1)
+                        : 0}
+                      %
                     </span>
                   </div>
                 </div>
@@ -460,7 +465,7 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
           )}
         </div>
         {/* play button area */}
-        <div className="flex justify-center md:block">
+        <div className="flex justify-center md:block mt-4 md:mt-0">
           <button
             onClick={handleOnPlayNow}
             className="relative overflow-hidden p-2 rounded-lg text-lg md:text-2xl font-extrabold text-white px-16 bg-gradient-to-r from-[#ff6f54] via-uwu-red to-[#8b1e12] bg-[length:200%_200%] animate-gradient-glow"

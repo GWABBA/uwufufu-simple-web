@@ -19,6 +19,7 @@ export interface SelectionDto {
   finalLosses: number;
   resourceUrl: string;
   ranking: number;
+  winLossRatio: number;
 }
 
 export interface CreateSelectionWithVideo {
