@@ -207,7 +207,7 @@ export default function SelectionsComponent({
       setNewVideo((prev) => ({
         ...prev,
         [selection.id]: {
-          videoUrl: selection.resourceUrl,
+          videoUrl: selection.videoUrl,
           startTime: selection.startTime ?? 0,
           endTime: selection.endTime ?? 0,
         },
@@ -548,7 +548,7 @@ export default function SelectionsComponent({
                                   },
                                 }))
                               }
-                              className="p-2 rounded-md bg-uwu-dark-gray text-white w-full border mb-2 h-8 max-w-12"
+                              className="p-2 rounded-md bg-uwu-dark-gray text-white w-full border mb-2 h-8 max-w-24"
                             />
                             <label className="ml-2 text-gray-400">
                               Start Time
@@ -567,7 +567,7 @@ export default function SelectionsComponent({
                                   },
                                 }))
                               }
-                              className="p-2 rounded-md bg-uwu-dark-gray text-white w-full border mb-2 h-8 max-w-12"
+                              className="p-2 rounded-md bg-uwu-dark-gray text-white w-full border mb-2 h-8 max-w-24"
                             />
                             <label className="ml-2 text-gray-400">
                               End Time

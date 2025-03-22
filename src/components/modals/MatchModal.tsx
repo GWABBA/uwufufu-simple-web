@@ -17,6 +17,7 @@ import {
   shareOnWhatsApp as shareOnWhatsAppService,
 } from '@/services/share.service';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 
 interface MatchModalProps {
   isOpen: boolean;
@@ -273,6 +274,13 @@ const MatchModal: React.FC<MatchModalProps> = ({
     setFullSizeMedia(null); // Close full-size modal
   };
 
+  useEffect(() => {
+    // Reset selection states when a new match starts
+    setWinnerId(null);
+    setSelected(false);
+    setSelectDisabled(false);
+  }, [startedGame]);
+
   const saveCanvasImage = async (): Promise<ImageResponse | null> => {
     const canvas = document.getElementById(
       'finalWinnerCanvas'
@@ -431,7 +439,22 @@ const MatchModal: React.FC<MatchModalProps> = ({
                   className="flex justify-between items-center p-4 gap-4 h-full"
                 >
                   {/* First Selection */}
-                  <div
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    animate={
+                      winnerId
+                        ? winnerId === startedGame.match.selection1.id
+                          ? { scale: 1.1 } // Winner slightly enlarges
+                          : {
+                              rotate: 20,
+                              scale: 0,
+                              opacity: 0,
+                              transition: { duration: 0.6 },
+                            } // Loser gets "destroyed"
+                        : { opacity: 1 }
+                    }
+                    transition={{ type: 'spring', stiffness: 200, damping: 10 }}
                     onClick={() => handleOnSelect(startedGame.match.selection1)}
                     className="w-1/2 cursor-pointer flex flex-col items-center relative"
                   >
@@ -448,7 +471,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
                           : t('worldcup.lose')}
                       </div>
                     )}
-                    <div className="w-full max-h-[50vh] overflow-hidden relative">
+                    <div className="w-full max-h-[50vh] overflow-hidden relative rounded-2xl">
                       <div
                         className="w-12 h-12 absolute top-1 left-1 md:top-5 md:left-5 rounded-full bg-gray-900 flex justify-center items-center"
                         onClick={(event) =>
@@ -499,13 +522,28 @@ const MatchModal: React.FC<MatchModalProps> = ({
                         />
                       )}
                     </div>
-                    <div className="p-0.5 md:p-2 bg-blue-500 text-white rounded mt-2 w-full text-center text-sm md:text-base">
+                    <div className="flex items-center justify-center p-0.5 md:p-2 bg-blue-500 text-white rounded mt-2 w-full text-center text-sm md:text-base min-h-14">
                       {startedGame.match.selection1.name}
                     </div>
-                  </div>
+                  </motion.div>
 
                   {/* Second Selection */}
-                  <div
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    animate={
+                      winnerId
+                        ? winnerId === startedGame.match.selection2.id
+                          ? { scale: 1.1 } // Winner slightly enlarges
+                          : {
+                              rotate: -20,
+                              scale: 0,
+                              opacity: 0,
+                              transition: { duration: 0.6 },
+                            } // Loser gets "destroyed"
+                        : { opacity: 1 }
+                    }
+                    transition={{ type: 'spring', stiffness: 200, damping: 10 }}
                     onClick={() => handleOnSelect(startedGame.match.selection2)}
                     className="w-1/2 cursor-pointer flex flex-col items-center relative"
                   >
@@ -534,7 +572,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
                           : t('worldcup.lose')}
                       </div>
                     )}
-                    <div className="w-full max-h-[50vh] overflow-hidden">
+                    <div className="w-full max-h-[50vh] overflow-hidden rounded-2xl">
                       {startedGame.match.selection2.isVideo ? (
                         <div className="w-full aspect-video">
                           <iframe
@@ -574,10 +612,10 @@ const MatchModal: React.FC<MatchModalProps> = ({
                         />
                       )}
                     </div>
-                    <div className="p-0.5 md:p-2 bg-red-500 text-white rounded mt-2 w-full text-center text-sm md:text-base">
+                    <div className="flex items-center justify-center p-0.5 md:p-2 bg-red-500 text-white rounded mt-2 w-full text-sm md:text-base min-h-14">
                       {startedGame.match.selection2.name}
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             </div>
