@@ -404,12 +404,12 @@ const MatchModal: React.FC<MatchModalProps> = ({
         <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center">
           <div className="relative w-full h-full max-h-screen overflow-hidden">
             {/* Header */}
-            <div className="p-4 bg-uwu-black text-white flex justify-between items-center h-16">
+            <div className="p-4 bg-uwu-black text-white flex justify-between items-center md:h-16">
               <h2
                 onClick={onClose}
-                className="text-xl font-bold flex items-center"
+                className="text-base md:text-xl font-bold flex items-center"
               >
-                <ChevronLeft className="w-6 h-6 mr-1" />
+                <ChevronLeft className="w-3 h-3 md:w-6 md:h-6 mr-1" />
                 Back
               </h2>
             </div>
@@ -423,7 +423,9 @@ const MatchModal: React.FC<MatchModalProps> = ({
             >
               <div className="absolute inset-0 flex justify-center text-white">
                 <div className="text-center">
-                  <h1 className="text-3xl font-bold">{worldcup.title}</h1>
+                  <h1 className="text-base md:text-3xl font-bold">
+                    {worldcup.title}
+                  </h1>
                   <p className="text-gray-400">{worldcup.description}</p>
                   <p className="text-xl font-bold">
                     {t('worldcup.rounds-of', {
@@ -436,8 +438,11 @@ const MatchModal: React.FC<MatchModalProps> = ({
               <div className="max-w-7xl mx-auto h-full">
                 <div
                   key={startedGame.match.id}
-                  className="flex justify-between items-center p-4 gap-4 h-full"
+                  className="flex flex-col md:flex-row justify-between items-center p-4 md:gap-4 h-full pt-28 md:pt-4 relative"
                 >
+                  <span className="hidden md:block absolute left-1/2 top-[65%] md:top-1/2 transform -translate-x-1/2 md:-translate-y-1/2 text-white md:text-7xl font-extrabold drop-shadow-lg pointer-events-none z-20 select-none">
+                    VS
+                  </span>
                   {/* First Selection */}
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -456,7 +461,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
                     }
                     transition={{ type: 'spring', stiffness: 200, damping: 10 }}
                     onClick={() => handleOnSelect(startedGame.match.selection1)}
-                    className="w-1/2 cursor-pointer flex flex-col items-center relative"
+                    className="w-full md:w-1/2 cursor-pointer flex flex-col items-center relative"
                   >
                     {winnerId && selected && (
                       <div
@@ -527,6 +532,10 @@ const MatchModal: React.FC<MatchModalProps> = ({
                     </div>
                   </motion.div>
 
+                  <div className="md:hidden flex justify-center items-center w-full transform text-white text-5xl font-extrabold drop-shadow-lg z-20 select-none py-2">
+                    VS
+                  </div>
+
                   {/* Second Selection */}
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -545,7 +554,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
                     }
                     transition={{ type: 'spring', stiffness: 200, damping: 10 }}
                     onClick={() => handleOnSelect(startedGame.match.selection2)}
-                    className="w-1/2 cursor-pointer flex flex-col items-center relative"
+                    className="w-full md:w-1/2 cursor-pointer flex flex-col items-center relative"
                   >
                     <div
                       className="w-12 h-12 absolute top-1 right-1 md:top-5 md:right-5 rounded-full bg-gray-900 flex justify-center items-center"
