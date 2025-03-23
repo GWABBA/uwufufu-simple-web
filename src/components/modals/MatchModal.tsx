@@ -440,9 +440,22 @@ const MatchModal: React.FC<MatchModalProps> = ({
                   key={startedGame.match.id}
                   className="flex flex-col md:flex-row justify-between items-center p-4 md:gap-4 h-full pt-28 md:pt-4 relative"
                 >
-                  <span className="hidden md:block absolute left-1/2 top-[65%] md:top-1/2 transform -translate-x-1/2 md:-translate-y-1/2 text-white md:text-7xl font-extrabold drop-shadow-lg pointer-events-none z-20 select-none">
+                  {/* <span className="hidden md:block absolute left-1/2 top-[65%] md:top-1/2 transform -translate-x-1/2 md:-translate-y-1/2 text-white md:text-7xl font-extrabold drop-shadow-lg pointer-events-none z-20 select-none">
                     VS
-                  </span>
+                  </span> */}
+                  {!winnerId && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1, x: '-50%' }} // <- this replaces -translate-x-1/2
+                      exit={{ opacity: 0, scale: 0.6 }}
+                      className="hidden md:block absolute left-1/2 top-[40%] 
+                        text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r 
+                        from-blue-500 to-uwu-red drop-shadow-2xl z-30 select-none"
+                    >
+                      VS
+                    </motion.div>
+                  )}
+
                   {/* First Selection */}
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -532,9 +545,18 @@ const MatchModal: React.FC<MatchModalProps> = ({
                     </div>
                   </motion.div>
 
-                  <div className="md:hidden flex justify-center items-center w-full transform text-white text-5xl font-extrabold drop-shadow-lg z-20 select-none py-2">
-                    VS
-                  </div>
+                  {!winnerId && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.6 }}
+                      className="md:hidden flex justify-center items-center w-full text-5xl font-black 
+                      text-transparent bg-clip-text bg-gradient-to-b from-blue-500 to-uwu-red
+                      drop-shadow-xl z-30 select-none py-2"
+                    >
+                      VS
+                    </motion.div>
+                  )}
 
                   {/* Second Selection */}
                   <motion.div
