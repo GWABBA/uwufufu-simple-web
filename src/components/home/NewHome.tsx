@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { LocaleNames } from '@/constants/locale';
-import { Search, X } from 'lucide-react';
+import { Search, X, GalleryHorizontalEnd } from 'lucide-react';
 import { fetchWorldcups } from '@/services/worldcup.service';
 import { Worldcup } from '@/dtos/worldcup.dtos';
 import Link from 'next/link';
@@ -396,6 +396,10 @@ export default function NewHomeComponent() {
                             className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
                           >
                             <div className="w-full h-60 relative">
+                              <div className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 top-2 left-2 flex items-center">
+                                <GalleryHorizontalEnd className="mr-2"></GalleryHorizontalEnd>
+                                {game.selectionCount}
+                              </div>
                               {game.isNsfw && (
                                 <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md z-20 top-2 right-2">
                                   NSFW
@@ -450,7 +454,7 @@ export default function NewHomeComponent() {
                                 <h2 className="text-lg md:text-xl font-semibold text-white line-clamp-1">
                                   {game.title}
                                 </h2>
-                                <p className="text-sm text-gray-400 mt-2 line-clamp-2">
+                                <p className="text-sm text-gray-400 mt-2 line-clamp-1">
                                   {game.description}
                                 </p>
                               </div>

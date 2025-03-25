@@ -24,10 +24,11 @@ export interface Worldcup {
   categoryId: number;
   category?: Category;
   user?: SimpleUser;
-  selectionsCount?: number;
+  selectionCount?: number;
   plays?: number;
   createdAt?: Date;
   updatedAt?: Date;
+  selectionsCount?: number;
 }
 
 export interface MyWorldcupListQuery {
