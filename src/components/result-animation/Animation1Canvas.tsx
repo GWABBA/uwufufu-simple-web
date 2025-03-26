@@ -37,6 +37,35 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
       getCanvas: () => canvasRef.current,
     }));
 
+    function drawImageCover(
+      ctx: CanvasRenderingContext2D,
+      img: HTMLImageElement,
+      dx: number,
+      dy: number,
+      dWidth: number,
+      dHeight: number
+    ) {
+      const imgAspect = img.width / img.height;
+      const boxAspect = dWidth / dHeight;
+
+      let sx = 0,
+        sy = 0,
+        sWidth = img.width,
+        sHeight = img.height;
+
+      if (imgAspect > boxAspect) {
+        // Image is wider, crop sides
+        sWidth = img.height * boxAspect;
+        sx = (img.width - sWidth) / 2;
+      } else {
+        // Image is taller, crop top/bottom
+        sHeight = img.width / boxAspect;
+        sy = (img.height - sHeight) / 2;
+      }
+
+      ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    }
+
     useEffect(() => {
       const canvas = canvasRef.current!;
       const ctx = canvas.getContext('2d')!;
@@ -109,19 +138,19 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
           ctx.globalAlpha = 0.4 + 0.6 * auraProgress;
 
           if (finalWinnerId === finalStartedGame!.match.selection1.id) {
-            ctx.drawImage(imgA, xA, offsetY, drawWidth, drawHeight);
-          } else if (finalWinnerId === finalStartedGame!.match.selection2.id) {
-            ctx.drawImage(imgB, xB, offsetY, drawWidth, drawHeight);
+            drawImageCover(ctx, imgA, xA, offsetY, drawWidth, drawHeight);
+          } else {
+            drawImageCover(ctx, imgB, xB, offsetY, drawWidth, drawHeight);
           }
 
           ctx.restore();
         }
 
-        // 🖼️ Draw both images
+        // 🖼️ Draw both images using cover logic
         if (frame >= imageStartFrame) {
           ctx.save();
-          ctx.drawImage(imgA, xA, offsetY, drawWidth, drawHeight);
-          ctx.drawImage(imgB, xB, offsetY, drawWidth, drawHeight);
+          drawImageCover(ctx, imgA, xA, offsetY, drawWidth, drawHeight);
+          drawImageCover(ctx, imgB, xB, offsetY, drawWidth, drawHeight);
           ctx.restore();
         }
 
@@ -148,7 +177,7 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
           ctx.restore();
         }
 
-        // 🔠 VS text (always on top)
+        // 🔠 VS text
         if (frame >= vsStartFrame) {
           const vsProgress = Math.min((frame - vsStartFrame) / vsDuration, 1);
           const vsScale = 0.8 + 0.7 * Math.sin(vsProgress * Math.PI);
@@ -243,9 +272,9 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
           animFrame = requestAnimationFrame(draw);
         }
 
-        // 🐾 Draw uwufufu logo (bottom right, precise aspect ratio)
+        // 🐾 Draw uwufufu logo (bottom right)
         const logoAspectRatio = 0.2388;
-        const logoWidth = canvas.width * 0.15; // 15% of canvas width
+        const logoWidth = canvas.width * 0.15;
         const logoHeight = logoWidth * logoAspectRatio;
         const padding = 12;
 

@@ -271,24 +271,25 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
           >
             <RefreshCcw size={16} />
           </button>
-
-          <button
-            onClick={() => {
-              if (!videoUrl) return;
-              const a = document.createElement('a');
-              a.href = videoUrl;
-              a.download = 'uwufufu-animation.webm';
-              a.click();
-            }}
-            disabled={!videoUrl}
-            className={`absolute bottom-2 right-12 bg-uwu-red text-white p-2 rounded-full z-10 transition-opacity ${
-              !videoUrl ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-            title="Download animation"
-          >
-            <Download size={16} />
-          </button>
         </div>
+        <button
+          onClick={() => {
+            if (!videoUrl) return;
+            const a = document.createElement('a');
+            a.href = videoUrl;
+            a.download = 'uwufufu-animation.webm';
+            a.click();
+          }}
+          disabled={!videoUrl}
+          className={`w-full h-10 mb-4 rounded-md flex items-center justify-center font-semibold transition-opacity ${
+            videoUrl
+              ? 'bg-uwu-red text-white'
+              : 'bg-uwu-dark-gray text-gray-400 opacity-50 cursor-not-allowed'
+          }`}
+        >
+          <Download size={16} className="mr-2" />
+          Download Video
+        </button>
         <div
           className={`flex ${
             !videoUrl || isUploading
@@ -306,6 +307,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
           <button
             className="h-10 w-14 bg-uwu-red rounded-r-md flex justify-center items-center"
             disabled={!videoUrl || isUploading}
+            title="Copy link"
           >
             <Copy size={20} />
           </button>
@@ -317,6 +319,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
               !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             disabled={!videoUrl || isUploading}
+            title="Share on Discord"
             onClick={() => shareOnDiscord(resultUrl)}
           >
             <Image
@@ -331,6 +334,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
               !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             disabled={!videoUrl || isUploading}
+            title="Share on Reddit"
             onClick={() =>
               shareOnReddit(
                 resultUrl,
@@ -350,6 +354,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
               !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             disabled={!videoUrl || isUploading}
+            title="Share on Twitter"
             onClick={() =>
               shareOnTwitter(
                 resultUrl,
@@ -369,6 +374,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
               !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             disabled={!videoUrl || isUploading}
+            title="Share on Facebook"
             onClick={() => shareOnFacebook(resultUrl)}
           >
             <Image
@@ -383,6 +389,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
               !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             disabled={!videoUrl || isUploading}
+            title="Share on WhatsApp"
             onClick={() =>
               shareOnWhatsApp(
                 resultUrl,
