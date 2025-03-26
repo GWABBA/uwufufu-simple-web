@@ -1,8 +1,8 @@
 import { Worldcup } from '@/dtos/worldcup.dtos';
-import { Copy, RefreshCcw, X } from 'lucide-react';
+import { Copy, Download, RefreshCcw, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { StartedGameResponseDto } from '@/dtos/startedGames.dtos';
 import { ImageResponse } from '@/dtos/images.dtos';
 import toast from 'react-hot-toast';
@@ -146,6 +146,11 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
   };
 
   const handleOnShareResult = async () => {
+    if (!videoUrl || isUploading) {
+      toast.error('Please wait for the animation to finish!');
+      return;
+    }
+
     if (isUploading) return;
     setIsUploading(true);
     await saveResultImage();
@@ -154,25 +159,79 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
   };
 
   async function shareOnTwitter(url: string, text: string) {
+    if (!videoUrl || isUploading) {
+      toast.error('Please wait for the animation to finish!');
+      return;
+    }
+
     await saveResultImage();
     shareOnTwitterService(url, text);
   }
   async function shareOnDiscord(url: string) {
+    if (!videoUrl || isUploading) {
+      toast.error('Please wait for the animation to finish!');
+      return;
+    }
+
     await saveResultImage();
     shareOnDiscordService(url);
   }
   async function shareOnReddit(url: string, title: string) {
+    if (!videoUrl || isUploading) {
+      toast.error('Please wait for the animation to finish!');
+      return;
+    }
+
     await saveResultImage();
     shareOnRedditService(url, title);
   }
   async function shareOnFacebook(url: string) {
+    if (!videoUrl || isUploading) {
+      toast.error('Please wait for the animation to finish!');
+      return;
+    }
+
     await saveResultImage();
     shareOnFacebookService(url);
   }
   async function shareOnWhatsApp(url: string, text: string) {
+    if (!videoUrl || isUploading) {
+      toast.error('Please wait for the animation to finish!');
+      return;
+    }
+
     await saveResultImage();
     shareOnWhatsAppService(url, text);
   }
+
+  const startRecording = useCallback(() => {
+    const canvas = canvasRef.current?.getCanvas();
+    if (!canvas) return;
+
+    const stream = canvas.captureStream(60); // 60fps
+    streamRef.current = stream;
+
+    const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+    recordedChunks.current = [];
+
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) recordedChunks.current.push(e.data);
+    };
+
+    recorder.onstop = () => {
+      const blob = new Blob(recordedChunks.current, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      setVideoUrl(url);
+    };
+
+    mediaRecorder.current = recorder;
+    recorder.start();
+  }, []);
+
+  const stopRecording = useCallback(() => {
+    mediaRecorder.current?.stop();
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+  }, []);
 
   if (!isOpen || !finalStartedGame) return null;
 
@@ -188,6 +247,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
         <h1 className="text-center text-uwu-red text-xl md:text-2xl mb-4">
           {t('worldcup.share-final-winner')}
         </h1>
+
         {/* canvas */}
         <div className="w-full aspect-video rounded-md relative mb-4">
           <Animation1Canvas
@@ -195,29 +255,68 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
             ref={canvasRef}
             worldcup={worldcup}
             finalStartedGame={finalStartedGame}
-            // imageA={finalStartedGame.match.selection1.resourceUrl}
-            // imageB={finalStartedGame.match.selection2.resourceUrl}
             finalWinnerId={finalWinnerId}
+            onAnimationStart={startRecording}
+            onAnimationEnd={stopRecording}
           />
           <button
             onClick={handleReshowAnimation}
-            className="absolute bottom-2 right-2 bg-uwu-red text-white p-2 rounded-full z-10"
+            disabled={!videoUrl || isUploading}
+            className={`absolute bottom-2 right-2 p-2 rounded-full z-10 transition-opacity ${
+              !videoUrl || isUploading
+                ? 'bg-uwu-red opacity-50 cursor-not-allowed'
+                : 'bg-uwu-red'
+            }`}
             title="Replay animation"
           >
             <RefreshCcw size={16} />
           </button>
+
+          <button
+            onClick={() => {
+              if (!videoUrl) return;
+              const a = document.createElement('a');
+              a.href = videoUrl;
+              a.download = 'uwufufu-animation.webm';
+              a.click();
+            }}
+            disabled={!videoUrl}
+            className={`absolute bottom-2 right-12 bg-uwu-red text-white p-2 rounded-full z-10 transition-opacity ${
+              !videoUrl ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            title="Download animation"
+          >
+            <Download size={16} />
+          </button>
         </div>
-        <div className="flex cursor-pointer" onClick={handleOnShareResult}>
-          <div className="p-2 pl-4 pr-8 w-full rounded-l-md bg-uwu-dark-gray text-white outline-none h-10 cursor-pointer flex items-center whitespace-nowrap overflow-x-scroll scrollbar-hide">
+        <div
+          className={`flex ${
+            !videoUrl || isUploading
+              ? 'opacity-50 cursor-not-allowed'
+              : 'cursor-pointer'
+          }`}
+          onClick={() => {
+            if (!videoUrl || isUploading) return;
+            handleOnShareResult();
+          }}
+        >
+          <div className="p-2 pl-4 pr-8 w-full rounded-l-md bg-uwu-dark-gray text-white outline-none h-10 flex items-center whitespace-nowrap overflow-x-scroll scrollbar-hide">
             {resultUrl}
           </div>
-          <button className="h-10 w-14 bg-uwu-red rounded-r-md flex justify-center items-center">
+          <button
+            className="h-10 w-14 bg-uwu-red rounded-r-md flex justify-center items-center"
+            disabled={!videoUrl || isUploading}
+          >
             <Copy size={20} />
           </button>
         </div>
+
         <div className="flex justify-evenly mt-4">
           <button
-            className="w-12 h-12 bg-[#5865F2] rounded-full flex justify-center items-center"
+            className={`w-12 h-12 bg-[#5865F2] rounded-full flex justify-center items-center ${
+              !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            disabled={!videoUrl || isUploading}
             onClick={() => shareOnDiscord(resultUrl)}
           >
             <Image
@@ -228,7 +327,10 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
             />
           </button>
           <button
-            className="w-12 h-12 bg-[#FF4500] rounded-full flex justify-center items-center"
+            className={`w-12 h-12 bg-[#FF4500] rounded-full flex justify-center items-center ${
+              !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            disabled={!videoUrl || isUploading}
             onClick={() =>
               shareOnReddit(
                 resultUrl,
@@ -244,7 +346,10 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
             />
           </button>
           <button
-            className="w-12 h-12 bg-[#1DA1F2] rounded-full flex justify-center items-center"
+            className={`w-12 h-12 bg-[#1DA1F2] rounded-full flex justify-center items-center ${
+              !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            disabled={!videoUrl || isUploading}
             onClick={() =>
               shareOnTwitter(
                 resultUrl,
@@ -260,7 +365,10 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
             />
           </button>
           <button
-            className="w-12 h-12 bg-[#1877F2] rounded-full flex justify-center items-center"
+            className={`w-12 h-12 bg-[#1877F2] rounded-full flex justify-center items-center ${
+              !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            disabled={!videoUrl || isUploading}
             onClick={() => shareOnFacebook(resultUrl)}
           >
             <Image
@@ -271,7 +379,10 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
             />
           </button>
           <button
-            className="w-12 h-12 bg-[#25D366] rounded-full flex justify-center items-center"
+            className={`w-12 h-12 bg-[#25D366] rounded-full flex justify-center items-center ${
+              !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            disabled={!videoUrl || isUploading}
             onClick={() =>
               shareOnWhatsApp(
                 resultUrl,
