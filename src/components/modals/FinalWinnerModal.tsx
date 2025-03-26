@@ -48,6 +48,8 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [canRecordVideo, setCanRecordVideo] = useState(true);
+  const [animationFinished, setAnimationFinished] = useState(false);
 
   useEffect(() => {
     setResultImage(null);
@@ -146,7 +148,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
   };
 
   const handleOnShareResult = async () => {
-    if (!videoUrl || isUploading) {
+    if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
       toast.error('Please wait for the animation to finish!');
       return;
     }
@@ -159,7 +161,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
   };
 
   async function shareOnTwitter(url: string, text: string) {
-    if (!videoUrl || isUploading) {
+    if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
       toast.error('Please wait for the animation to finish!');
       return;
     }
@@ -168,7 +170,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
     shareOnTwitterService(url, text);
   }
   async function shareOnDiscord(url: string) {
-    if (!videoUrl || isUploading) {
+    if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
       toast.error('Please wait for the animation to finish!');
       return;
     }
@@ -177,7 +179,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
     shareOnDiscordService(url);
   }
   async function shareOnReddit(url: string, title: string) {
-    if (!videoUrl || isUploading) {
+    if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
       toast.error('Please wait for the animation to finish!');
       return;
     }
@@ -186,7 +188,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
     shareOnRedditService(url, title);
   }
   async function shareOnFacebook(url: string) {
-    if (!videoUrl || isUploading) {
+    if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
       toast.error('Please wait for the animation to finish!');
       return;
     }
@@ -195,7 +197,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
     shareOnFacebookService(url);
   }
   async function shareOnWhatsApp(url: string, text: string) {
-    if (!videoUrl || isUploading) {
+    if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
       toast.error('Please wait for the animation to finish!');
       return;
     }
@@ -211,27 +213,49 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
     const stream = canvas.captureStream(60); // 60fps
     streamRef.current = stream;
 
-    const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-    recordedChunks.current = [];
+    const mimeType = 'video/webm';
+    if (!MediaRecorder.isTypeSupported(mimeType)) {
+      setCanRecordVideo(false);
+      toast(
+        'Your browser doesn’t support video recording. The result image will still be saved.',
+        { icon: '⚠️' }
+      );
+      return;
+    }
 
-    recorder.ondataavailable = (e) => {
-      if (e.data.size > 0) recordedChunks.current.push(e.data);
-    };
+    try {
+      const recorder = new MediaRecorder(stream, { mimeType });
+      recordedChunks.current = [];
 
-    recorder.onstop = () => {
-      const blob = new Blob(recordedChunks.current, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-      setVideoUrl(url);
-    };
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) recordedChunks.current.push(e.data);
+      };
 
-    mediaRecorder.current = recorder;
-    recorder.start();
+      recorder.onstop = () => {
+        const blob = new Blob(recordedChunks.current, { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        setVideoUrl(url);
+      };
+
+      mediaRecorder.current = recorder;
+      recorder.start();
+    } catch (err) {
+      console.error('MediaRecorder error:', err);
+      setCanRecordVideo(false);
+      toast.error('Video recording failed on this browser.');
+    }
   }, []);
 
   const stopRecording = useCallback(() => {
     mediaRecorder.current?.stop();
     streamRef.current?.getTracks().forEach((track) => track.stop());
+
+    // Ensure this is triggered even when recording isn't supported
+    setAnimationFinished(true);
   }, []);
+
+  const isSharingDisabled =
+    isUploading || (!videoUrl && !(!canRecordVideo && animationFinished));
 
   if (!isOpen || !finalStartedGame) return null;
 
@@ -290,14 +314,16 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
           <Download size={16} className="mr-2" />
           Download Video
         </button>
+
+        {/* copy url */}
         <div
           className={`flex ${
-            !videoUrl || isUploading
+            isSharingDisabled
               ? 'opacity-50 cursor-not-allowed'
               : 'cursor-pointer'
           }`}
           onClick={() => {
-            if (!videoUrl || isUploading) return;
+            if (isSharingDisabled) return;
             handleOnShareResult();
           }}
         >
@@ -306,19 +332,21 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
           </div>
           <button
             className="h-10 w-14 bg-uwu-red rounded-r-md flex justify-center items-center"
-            disabled={!videoUrl || isUploading}
+            disabled={isSharingDisabled}
             title="Copy link"
           >
             <Copy size={20} />
           </button>
         </div>
 
+        {/* social media shares */}
+        {/* discord */}
         <div className="flex justify-evenly mt-4">
           <button
             className={`w-12 h-12 bg-[#5865F2] rounded-full flex justify-center items-center ${
-              !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+              isSharingDisabled ? 'opacity-50 cursor-not-allowed' : ''
             }`}
-            disabled={!videoUrl || isUploading}
+            disabled={isSharingDisabled}
             title="Share on Discord"
             onClick={() => shareOnDiscord(resultUrl)}
           >
@@ -329,11 +357,13 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
               height={24}
             />
           </button>
+
+          {/* reddit */}
           <button
             className={`w-12 h-12 bg-[#FF4500] rounded-full flex justify-center items-center ${
-              !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+              isSharingDisabled ? 'opacity-50 cursor-not-allowed' : ''
             }`}
-            disabled={!videoUrl || isUploading}
+            disabled={isSharingDisabled}
             title="Share on Reddit"
             onClick={() =>
               shareOnReddit(
@@ -349,11 +379,13 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
               height={24}
             />
           </button>
+
+          {/* twitter */}
           <button
             className={`w-12 h-12 bg-[#1DA1F2] rounded-full flex justify-center items-center ${
-              !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+              isSharingDisabled ? 'opacity-50 cursor-not-allowed' : ''
             }`}
-            disabled={!videoUrl || isUploading}
+            disabled={isSharingDisabled}
             title="Share on Twitter"
             onClick={() =>
               shareOnTwitter(
@@ -369,11 +401,13 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
               height={24}
             />
           </button>
+
+          {/* facebook */}
           <button
             className={`w-12 h-12 bg-[#1877F2] rounded-full flex justify-center items-center ${
-              !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+              isSharingDisabled ? 'opacity-50 cursor-not-allowed' : ''
             }`}
-            disabled={!videoUrl || isUploading}
+            disabled={isSharingDisabled}
             title="Share on Facebook"
             onClick={() => shareOnFacebook(resultUrl)}
           >
@@ -384,11 +418,13 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
               height={14}
             />
           </button>
+
+          {/* whatsapp */}
           <button
             className={`w-12 h-12 bg-[#25D366] rounded-full flex justify-center items-center ${
-              !videoUrl || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+              isSharingDisabled ? 'opacity-50 cursor-not-allowed' : ''
             }`}
-            disabled={!videoUrl || isUploading}
+            disabled={isSharingDisabled}
             title="Share on WhatsApp"
             onClick={() =>
               shareOnWhatsApp(
