@@ -143,5 +143,15 @@
     "enter-email": "Indtast din e-mailadresse og følg vejledningen.",
     "email-confirm-successfully": "E-mailen blev bekræftet med succes",
     "failed-to-send-email": "Kunne ikke sende e-mailbekræftelsen. Prøv igen senere."
+  },
+  "animation": {
+    "failed-to-save-image": "Kunne ikke gemme billede.",
+    "copied-to-clipboard": "Kopieret til udklipsholder!",
+    "failed-to-copy": "Kunne ikke kopiere til udklipsholder.",
+    "copy-not-supported": "Kopiering understøttes ikke i denne browser.",
+    "wait-for-finish": "Vent venligst, indtil animationen er færdig.",
+    "animation-not-supported": "Din browser understøtter ikke videooptagelse. Billedet af resultatet vil stadig blive gemt.",
+    "video-record-failed": "Videooptagelse mislykkedes i denne browser.",
+    "download-video": "Download video"
   }
 }

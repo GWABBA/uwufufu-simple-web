@@ -143,5 +143,15 @@
     "enter-email": "Entrez votre email et suivez les instructions.",
     "email-confirm-successfully": "Email confirmé avec succès",
     "failed-to-send-email": "Échec de l'envoi de l'email de confirmation. Réessayez plus tard."
+  },
+  "animation": {
+    "failed-to-save-image": "Échec de l'enregistrement de l'image.",
+    "copied-to-clipboard": "Copié dans le presse-papiers !",
+    "failed-to-copy": "Échec de la copie dans le presse-papiers.",
+    "copy-not-supported": "La copie n'est pas prise en charge par ce navigateur.",
+    "wait-for-finish": "Veuillez attendre la fin de l'animation.",
+    "animation-not-supported": "Votre navigateur ne prend pas en charge l'enregistrement vidéo. L’image du résultat sera quand même enregistrée.",
+    "video-record-failed": "L'enregistrement vidéo a échoué dans ce navigateur.",
+    "download-video": "Télécharger la vidéo"
   }
 }

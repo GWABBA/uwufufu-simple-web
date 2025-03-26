@@ -1,26 +1,61 @@
-import WorldcupClient from './WorldcupClient';
 import { fetchWorldcupBySlug } from '@/services/worldcup.service';
+import { notFound } from 'next/navigation';
+import WorldcupClient from './WorldcupClient';
+import { Metadata } from 'next';
 
-type ParamsPromise = Promise<{ slug: string }>;
+type WorldcupPageProps = {
+  params: {
+    slug: string;
+  };
+};
 
-export default async function WorldcupPage({
-  params,
-}: {
-  params: ParamsPromise;
-}) {
-  const { slug } = await params;
-  let worldcup;
+export async function generateMetadata(
+  props: WorldcupPageProps
+): Promise<Metadata> {
+  // Await the params object before destructuring
+  const params = await props.params;
+  const slug = params.slug;
 
-  try {
-    worldcup = await fetchWorldcupBySlug(slug);
-  } catch (error) {
-    console.error(error);
-  }
+  const worldcup = await fetchWorldcupBySlug(slug);
 
   if (!worldcup) {
-    return (
-      <div className="mt-14 flex justify-center :(">Worldcup not found</div>
-    );
+    return {
+      title: 'Worldcup Not Found | UwUFUFU',
+      description: 'The requested worldcup could not be found.',
+    };
+  }
+
+  const title = `${worldcup.title} | UwUFUFU`;
+  const description =
+    worldcup.description ?? 'Play and share your favorite worldcup brackets!';
+  const image = worldcup.coverImage || '/assets/common/default-thumbnail.webp';
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: image }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [{ url: image }],
+    },
+  };
+}
+
+export default async function WorldcupPage(props: WorldcupPageProps) {
+  // Await the params object before destructuring
+  const params = await props.params;
+  const slug = params.slug;
+
+  const worldcup = await fetchWorldcupBySlug(slug);
+
+  if (!worldcup) {
+    notFound();
   }
 
   return <WorldcupClient worldcup={worldcup} />;

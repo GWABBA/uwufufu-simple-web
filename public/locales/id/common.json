@@ -143,5 +143,15 @@
     "enter-email": "Masukkan alamat email Anda dan ikuti petunjuk.",
     "email-confirm-successfully": "Email berhasil dikonfirmasi",
     "failed-to-send-email": "Gagal mengirim email konfirmasi. Coba lagi nanti."
+  },
+  "animation": {
+    "failed-to-save-image": "Gagal menyimpan gambar.",
+    "copied-to-clipboard": "Disalin ke clipboard!",
+    "failed-to-copy": "Gagal menyalin ke clipboard.",
+    "copy-not-supported": "Menyalin tidak didukung di browser ini.",
+    "wait-for-finish": "Harap tunggu hingga animasi selesai.",
+    "animation-not-supported": "Browser Anda tidak mendukung perekaman video. Gambar hasil akan tetap disimpan.",
+    "video-record-failed": "Perekaman video gagal di browser ini.",
+    "download-video": "Unduh Video"
   }
 }

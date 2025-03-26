@@ -143,5 +143,15 @@
     "enter-email": "Nhập email và làm theo hướng dẫn.",
     "email-confirm-successfully": "Xác minh email thành công",
     "failed-to-send-email": "Không thể gửi email xác nhận. Vui lòng thử lại sau."
+  },
+  "animation": {
+    "failed-to-save-image": "Không thể lưu hình ảnh.",
+    "copied-to-clipboard": "Đã sao chép vào clipboard!",
+    "failed-to-copy": "Không thể sao chép.",
+    "copy-not-supported": "Trình duyệt của bạn không hỗ trợ sao chép.",
+    "wait-for-finish": "Vui lòng chờ hoạt ảnh kết thúc.",
+    "animation-not-supported": "Trình duyệt của bạn không hỗ trợ ghi video. Hình ảnh vẫn sẽ được lưu.",
+    "video-record-failed": "Ghi video thất bại trên trình duyệt này.",
+    "download-video": "Tải video"
   }
 }

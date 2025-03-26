@@ -143,5 +143,15 @@
     "enter-email": "メールアドレスを入力して案内に従ってください。",
     "email-confirm-successfully": "メール認証が完了しました",
     "failed-to-send-email": "確認メールの送信に失敗しました。後ほど再試行してください。"
+  },
+  "animation": {
+    "failed-to-save-image": "画像の保存に失敗しました。",
+    "copied-to-clipboard": "クリップボードにコピーしました！",
+    "failed-to-copy": "クリップボードへのコピーに失敗しました。",
+    "copy-not-supported": "このブラウザではコピー機能がサポートされていません。",
+    "wait-for-finish": "アニメーションが終了するまでお待ちください。",
+    "animation-not-supported": "このブラウザはビデオ録画をサポートしていません。結果の画像は保存されます。",
+    "video-record-failed": "このブラウザではビデオ録画に失敗しました。",
+    "download-video": "動画をダウンロード"
   }
 }

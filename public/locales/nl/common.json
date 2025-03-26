@@ -143,5 +143,15 @@
     "enter-email": "Voer je e-mailadres in en volg de instructies.",
     "email-confirm-successfully": "E-mail succesvol bevestigd",
     "failed-to-send-email": "Bevestigingsmail verzenden mislukt. Probeer het later opnieuw."
+  },
+  "animation": {
+    "failed-to-save-image": "Afbeelding opslaan mislukt.",
+    "copied-to-clipboard": "Gekopieerd naar klembord!",
+    "failed-to-copy": "Kopiëren mislukt.",
+    "copy-not-supported": "Kopiëren wordt niet ondersteund in deze browser.",
+    "wait-for-finish": "Wacht tot de animatie is voltooid.",
+    "animation-not-supported": "Uw browser ondersteunt geen videorecording. De afbeelding wordt wel opgeslagen.",
+    "video-record-failed": "Video opnemen is mislukt in deze browser.",
+    "download-video": "Video downloaden"
   }
 }

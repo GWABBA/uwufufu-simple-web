@@ -143,5 +143,15 @@
     "enter-email": "请输入您的邮箱并按照说明操作。",
     "email-confirm-successfully": "邮箱验证成功",
     "failed-to-send-email": "确认邮件发送失败，请稍后再试。"
+  },
+  "animation": {
+    "failed-to-save-image": "保存图片失败。",
+    "copied-to-clipboard": "已复制到剪贴板！",
+    "failed-to-copy": "复制失败。",
+    "copy-not-supported": "该浏览器不支持复制功能。",
+    "wait-for-finish": "请等待动画完成。",
+    "animation-not-supported": "您的浏览器不支持视频录制，但结果图像将会被保存。",
+    "video-record-failed": "该浏览器中视频录制失败。",
+    "download-video": "下载视频"
   }
 }

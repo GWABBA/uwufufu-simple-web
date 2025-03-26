@@ -85,7 +85,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
             const response = await uploadImage(formData);
             resolve(response);
           } catch (error) {
-            toast.error('Failed to save image');
+            toast.error(t('animation.failed-to-save-image'));
             reject(error);
           }
         },
@@ -113,7 +113,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard
         .writeText(resultUrl)
-        .then(() => toast.success('Copied to clipboard!'))
+        .then(() => toast.success(t('animation.copied-to-clipboard')))
         .catch(() => fallbackCopy(resultUrl));
     } else {
       fallbackCopy(resultUrl);
@@ -133,11 +133,11 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
 
     try {
       const success = document.execCommand('copy');
-      if (success) toast.success('Copied to clipboard!');
-      else toast.error('Failed to copy!');
+      if (success) toast.success(t('animation.copied-to-clipboard'));
+      else toast.error(t('animation.failed-to-copy'));
     } catch (err) {
       console.error('Fallback copy failed', err);
-      toast.error('Copy not supported in this browser.');
+      toast.error(t('animation.copy-not-supported'));
     }
 
     document.body.removeChild(textarea);
@@ -149,7 +149,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
 
   const handleOnShareResult = async () => {
     if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
-      toast.error('Please wait for the animation to finish!');
+      toast.error(t('animation.wait-for-finish'));
       return;
     }
 
@@ -162,7 +162,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
 
   async function shareOnTwitter(url: string, text: string) {
     if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
-      toast.error('Please wait for the animation to finish!');
+      toast.error(t('animation.wait-for-finish'));
       return;
     }
 
@@ -171,7 +171,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
   }
   async function shareOnDiscord(url: string) {
     if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
-      toast.error('Please wait for the animation to finish!');
+      toast.error(t('animation.wait-for-finish'));
       return;
     }
 
@@ -180,7 +180,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
   }
   async function shareOnReddit(url: string, title: string) {
     if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
-      toast.error('Please wait for the animation to finish!');
+      toast.error(t('animation.wait-for-finish'));
       return;
     }
 
@@ -189,7 +189,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
   }
   async function shareOnFacebook(url: string) {
     if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
-      toast.error('Please wait for the animation to finish!');
+      toast.error(t('animation.wait-for-finish'));
       return;
     }
 
@@ -198,7 +198,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
   }
   async function shareOnWhatsApp(url: string, text: string) {
     if (isUploading || (!videoUrl && !(!canRecordVideo && animationFinished))) {
-      toast.error('Please wait for the animation to finish!');
+      toast.error(t('animation.wait-for-finish'));
       return;
     }
 
@@ -216,10 +216,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
     const mimeType = 'video/webm';
     if (!MediaRecorder.isTypeSupported(mimeType)) {
       setCanRecordVideo(false);
-      toast(
-        'Your browser doesn’t support video recording. The result image will still be saved.',
-        { icon: '⚠️' }
-      );
+      toast(t('animation.animation-not-supported'));
       return;
     }
 
@@ -242,8 +239,9 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
     } catch (err) {
       console.error('MediaRecorder error:', err);
       setCanRecordVideo(false);
-      toast.error('Video recording failed on this browser.');
+      toast.error(t('animation.video-record-failed'));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stopRecording = useCallback(() => {
@@ -312,7 +310,7 @@ export default function FinalWinnerModal(props: FinalWinnerModalProps) {
           }`}
         >
           <Download size={16} className="mr-2" />
-          Download Video
+          {t('animation.download-video')}
         </button>
 
         {/* copy url */}

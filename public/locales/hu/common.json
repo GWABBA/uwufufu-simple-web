@@ -143,5 +143,15 @@
     "enter-email": "Add meg az email címed és kövesd az utasításokat.",
     "email-confirm-successfully": "Email sikeresen megerősítve",
     "failed-to-send-email": "Megerősítő email küldése nem sikerült. Próbáld újra később."
+  },
+  "animation": {
+    "failed-to-save-image": "Nem sikerült a kép mentése.",
+    "copied-to-clipboard": "Vágólapra másolva!",
+    "failed-to-copy": "Nem sikerült másolni a vágólapra.",
+    "copy-not-supported": "A másolás nem támogatott ebben a böngészőben.",
+    "wait-for-finish": "Kérlek, várd meg, amíg az animáció befejeződik.",
+    "animation-not-supported": "A böngésződ nem támogatja a videófelvételt. Az eredményképet ettől függetlenül elmentjük.",
+    "video-record-failed": "A videófelvétel sikertelen volt ebben a böngészőben.",
+    "download-video": "Videó letöltése"
   }
 }

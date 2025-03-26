@@ -143,5 +143,15 @@
     "enter-email": "Please enter your email address below and follow the instructions.",
     "email-confirm-successfully": "Email confirmed successfully",
     "failed-to-send-email": "Failed to send email confirmation. Please try again later."
+  },
+  "animation": {
+    "failed-to-save-image": "Failed to save image.",
+    "copied-to-clipboard": "Copied to clipboard!",
+    "failed-to-copy": "Failed to copy to clipboard.",
+    "copy-not-supported": "Copy not supported in this browser.",
+    "wait-for-finish": "Please wait for the animation to finish.",
+    "animation-not-supported": "Your browser doesn’t support video recording. The result image will still be saved.",
+    "video-record-failed": "Video recording failed on this browser.",
+    "download-video": "Download Video"
   }
 }

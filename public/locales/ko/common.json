@@ -143,5 +143,15 @@
     "enter-email": "이메일을 입력하고 안내를 따르세요.",
     "email-confirm-successfully": "이메일 인증이 성공적으로 완료되었습니다",
     "failed-to-send-email": "인증 이메일 전송에 실패했습니다. 나중에 다시 시도해 주세요."
+  },
+  "animation": {
+    "failed-to-save-image": "이미지를 저장하지 못했습니다.",
+    "copied-to-clipboard": "클립보드에 복사되었습니다!",
+    "failed-to-copy": "클립보드에 복사하지 못했습니다.",
+    "copy-not-supported": "이 브라우저에서는 복사 기능이 지원되지 않습니다.",
+    "wait-for-finish": "애니메이션이 끝날 때까지 기다려주세요.",
+    "animation-not-supported": "이 브라우저는 비디오 녹화를 지원하지 않습니다. 결과 이미지는 저장됩니다.",
+    "video-record-failed": "이 브라우저에서 비디오 녹화에 실패했습니다.",
+    "download-video": "비디오 다운로드"
   }
 }

@@ -143,5 +143,15 @@
     "enter-email": "Ilagay ang iyong email at sundin ang mga instructions.",
     "email-confirm-successfully": "Matagumpay na na-confirm ang email",
     "failed-to-send-email": "Hindi naipadala ang confirmation email. Subukan muli mamaya."
+  },
+  "animation": {
+    "failed-to-save-image": "Nabigong i-save ang larawan.",
+    "copied-to-clipboard": "Nakopya sa clipboard!",
+    "failed-to-copy": "Hindi nakopya sa clipboard.",
+    "copy-not-supported": "Hindi sinusuportahan ang pagkopya sa browser na ito.",
+    "wait-for-finish": "Pakihintay matapos ang animation.",
+    "animation-not-supported": "Hindi sinusuportahan ng browser mo ang video recording. Mase-save pa rin ang resultang larawan.",
+    "video-record-failed": "Nabigo ang pag-record ng video sa browser na ito.",
+    "download-video": "I-download ang Video"
   }
 }

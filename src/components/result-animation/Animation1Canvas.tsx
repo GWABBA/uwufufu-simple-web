@@ -5,8 +5,6 @@ import { Worldcup } from '@/dtos/worldcup.dtos';
 import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
 type Props = {
-  // imageA: string;
-  // imageB: string;
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
   worldcup: Worldcup;
@@ -273,8 +271,8 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
         }
 
         // 🐾 Draw uwufufu logo (bottom right)
-        const logoAspectRatio = 0.2388;
-        const logoWidth = canvas.width * 0.15;
+        const logoAspectRatio = 0.145;
+        const logoWidth = canvas.width * 0.18;
         const logoHeight = logoWidth * logoAspectRatio;
         const padding = 12;
 
@@ -295,7 +293,7 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
           await Promise.all([imgA.decode(), imgB.decode(), logoImg.decode()]);
           requestAnimationFrame(draw);
         } catch (err) {
-          console.error('Image decode failed:', err);
+          console.error('Image decode failed', err);
         }
       };
 

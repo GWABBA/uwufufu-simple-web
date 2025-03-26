@@ -143,5 +143,15 @@
     "enter-email": "Wpisz swój adres e-mail i postępuj zgodnie z instrukcjami.",
     "email-confirm-successfully": "E-mail został pomyślnie potwierdzony",
     "failed-to-send-email": "Nie udało się wysłać e-maila potwierdzającego. Spróbuj ponownie później."
+  },
+  "animation": {
+    "failed-to-save-image": "Nie udało się zapisać obrazu.",
+    "copied-to-clipboard": "Skopiowano do schowka!",
+    "failed-to-copy": "Nie udało się skopiować.",
+    "copy-not-supported": "Twoja przeglądarka nie obsługuje kopiowania.",
+    "wait-for-finish": "Poczekaj, aż animacja się zakończy.",
+    "animation-not-supported": "Twoja przeglądarka nie obsługuje nagrywania wideo. Obraz zostanie zapisany.",
+    "video-record-failed": "Nagrywanie wideo nie powiodło się w tej przeglądarce.",
+    "download-video": "Pobierz wideo"
   }
 }

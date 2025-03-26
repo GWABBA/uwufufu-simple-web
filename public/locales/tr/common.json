@@ -143,5 +143,15 @@
     "enter-email": "E-posta adresinizi girin ve talimatları takip edin.",
     "email-confirm-successfully": "E-posta başarıyla onaylandı",
     "failed-to-send-email": "Onay e-postası gönderilemedi. Daha sonra tekrar deneyin."
+  },
+  "animation": {
+    "failed-to-save-image": "Görsel kaydedilemedi.",
+    "copied-to-clipboard": "Panoya kopyalandı!",
+    "failed-to-copy": "Kopyalama başarısız.",
+    "copy-not-supported": "Bu tarayıcı kopyalamayı desteklemiyor.",
+    "wait-for-finish": "Lütfen animasyonun bitmesini bekleyin.",
+    "animation-not-supported": "Tarayıcınız video kaydını desteklemiyor. Sonuç görseli yine de kaydedilecek.",
+    "video-record-failed": "Bu tarayıcıda video kaydı başarısız oldu.",
+    "download-video": "Videoyu indir"
   }
 }

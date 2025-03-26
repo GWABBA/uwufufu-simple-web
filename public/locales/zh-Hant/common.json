@@ -143,5 +143,15 @@
     "enter-email": "輸入您的電子郵件並按照指示進行操作。",
     "email-confirm-successfully": "電子郵件驗證成功",
     "failed-to-send-email": "驗證郵件發送失敗，請稍後再試。"
+  },
+  "animation": {
+    "failed-to-save-image": "無法儲存圖片。",
+    "copied-to-clipboard": "已複製到剪貼簿！",
+    "failed-to-copy": "複製失敗。",
+    "copy-not-supported": "此瀏覽器不支援複製功能。",
+    "wait-for-finish": "請等待動畫結束。",
+    "animation-not-supported": "您的瀏覽器不支援錄製影片，但仍會儲存圖片。",
+    "video-record-failed": "此瀏覽器中的影片錄製失敗。",
+    "download-video": "下載影片"
   }
 }

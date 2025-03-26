@@ -143,5 +143,15 @@
     "enter-email": "Ange din e-postadress och följ instruktionerna.",
     "email-confirm-successfully": "E-post bekräftad",
     "failed-to-send-email": "Misslyckades att skicka bekräftelsemejl. Försök igen senare."
+  },
+  "animation": {
+    "failed-to-save-image": "Misslyckades med att spara bilden.",
+    "copied-to-clipboard": "Kopierat till urklipp!",
+    "failed-to-copy": "Kopieringen misslyckades.",
+    "copy-not-supported": "Kopiering stöds inte i denna webbläsare.",
+    "wait-for-finish": "Vänta tills animationen är klar.",
+    "animation-not-supported": "Din webbläsare stöder inte videoinspelning. Bilden kommer att sparas ändå.",
+    "video-record-failed": "Videoinspelning misslyckades i denna webbläsare.",
+    "download-video": "Ladda ner video"
   }
 }

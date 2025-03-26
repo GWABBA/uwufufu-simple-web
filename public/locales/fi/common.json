@@ -143,5 +143,15 @@
     "enter-email": "Anna sähköpostisi ja seuraa ohjeita.",
     "email-confirm-successfully": "Sähköposti vahvistettu onnistuneesti",
     "failed-to-send-email": "Vahvistusviestin lähetys epäonnistui. Yritä myöhemmin uudelleen."
+  },
+  "animation": {
+    "failed-to-save-image": "Kuvan tallentaminen epäonnistui.",
+    "copied-to-clipboard": "Kopioitu leikepöydälle!",
+    "failed-to-copy": "Kopionti leikepöydälle epäonnistui.",
+    "copy-not-supported": "Kopiointi ei ole tuettu tässä selaimessa.",
+    "wait-for-finish": "Odota, että animaatio on valmis.",
+    "animation-not-supported": "Selaimesi ei tue videon tallennusta. Tuloksen kuva tallennetaan silti.",
+    "video-record-failed": "Videon tallennus epäonnistui tässä selaimessa.",
+    "download-video": "Lataa video"
   }
 }

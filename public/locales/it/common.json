@@ -143,5 +143,15 @@
     "enter-email": "Inserisci il tuo indirizzo email e segui le istruzioni.",
     "email-confirm-successfully": "Email confermata con successo",
     "failed-to-send-email": "Invio email di conferma fallito. Riprova più tardi."
+  },
+  "animation": {
+    "failed-to-save-image": "Impossibile salvare l'immagine.",
+    "copied-to-clipboard": "Copiato negli appunti!",
+    "failed-to-copy": "Copia negli appunti non riuscita.",
+    "copy-not-supported": "La copia non è supportata da questo browser.",
+    "wait-for-finish": "Attendi il termine dell'animazione.",
+    "animation-not-supported": "Il tuo browser non supporta la registrazione video. L'immagine del risultato verrà comunque salvata.",
+    "video-record-failed": "Registrazione video non riuscita in questo browser.",
+    "download-video": "Scarica il video"
   }
 }
