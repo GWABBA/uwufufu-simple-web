@@ -67,54 +67,58 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
     useEffect(() => {
       const canvas = canvasRef.current!;
       const ctx = canvas.getContext('2d')!;
-      canvas.width = 600;
-      canvas.height = 400;
+      const CANVAS_WIDTH = 1200;
+      const CANVAS_HEIGHT = 628;
+      canvas.width = CANVAS_WIDTH;
+      canvas.height = CANVAS_HEIGHT;
 
       const imgA = new Image();
       const imgB = new Image();
+      const logoImg = new Image();
       imgA.crossOrigin = 'anonymous';
       imgB.crossOrigin = 'anonymous';
+      logoImg.crossOrigin = 'anonymous';
       imgA.src = `${
         finalStartedGame!.match.selection1.resourceUrl
       }?canvas=true`;
       imgB.src = `${
         finalStartedGame!.match.selection2.resourceUrl
       }?canvas=true`;
-      const logoImg = new Image();
-      logoImg.crossOrigin = 'anonymous';
       logoImg.src = '/assets/logos/uwufufu-logo-rgb.svg';
 
-      let frame = 0;
+      let startTime: number | null = null;
       let animFrame: number;
       titleRef.current = '';
       charIndexRef.current = 0;
       const fullTitle = worldcup.title;
       const creatorName = worldcup.user?.name || '';
 
-      const duration = 60;
-      const vsDelay = 60;
-      const vsDuration = 30;
+      // All times in ms (based on 60fps reference)
+      const durationMs = 1000; // image scale animation
+      const vsDelayMs = 1000;
+      const vsDurationMs = 500;
+      const imageStartMs = 1500;
+      const vsStartMs = imageStartMs + vsDelayMs;
+      const fadeStartMs = vsStartMs + vsDurationMs;
+      const fadeDurationMs = 1000;
+      const totalDurationMs = fadeStartMs + fadeDurationMs + 1000;
 
-      const imageStartFrame = 90;
-      const vsStartFrame = imageStartFrame + vsDelay;
-      const fadeStart = vsStartFrame + vsDuration;
-      const fadeDuration = 60;
-      const totalFrames = fadeStart + fadeDuration + 60;
+      const draw = (timestamp: number) => {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
 
-      const draw = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = '#3e3e3e';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        const centerY = canvas.height / 2;
-        const topY = 30;
-        const margin = 10;
+        const topY = 40;
+        const margin = 40;
+        const centerY = CANVAS_HEIGHT / 2;
+        const finalWidth = CANVAS_WIDTH / 2 - margin * 2;
+        const finalHeight = CANVAS_HEIGHT - 40 - margin * 2;
 
-        const finalWidth = canvas.width / 2 - margin * 2;
-        const finalHeight = canvas.height - 40 - margin * 2;
-
-        const t = Math.min((frame - imageStartFrame) / duration, 1);
-        const easeInStrong = Math.pow(t, 5);
+        const t = Math.min((elapsed - imageStartMs) / durationMs, 1);
+        const easeInStrong = Math.pow(Math.max(t, 0), 5);
         const overshoot = t < 1 ? 1.08 + 0.08 * (1 - t) : 1;
         const scale = easeInStrong * overshoot;
         const yStretch = t > 0.8 ? 1 + (1 - t) * 0.15 : 1;
@@ -127,25 +131,25 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
         const xB = canvas.width / 2 + margin + (finalWidth - drawWidth) / 2;
 
         // 🔴 Winner aura BEHIND image
-        if (frame >= fadeStart) {
-          const auraProgress = Math.min((frame - fadeStart) / fadeDuration, 1);
-
+        if (elapsed >= fadeStartMs) {
+          const auraProgress = Math.min(
+            (elapsed - fadeStartMs) / fadeDurationMs,
+            1
+          );
           ctx.save();
           ctx.shadowColor = '#e73929';
           ctx.shadowBlur = 60 * auraProgress;
           ctx.globalAlpha = 0.4 + 0.6 * auraProgress;
-
           if (finalWinnerId === finalStartedGame!.match.selection1.id) {
             drawImageCover(ctx, imgA, xA, offsetY, drawWidth, drawHeight);
           } else {
             drawImageCover(ctx, imgB, xB, offsetY, drawWidth, drawHeight);
           }
-
           ctx.restore();
         }
 
         // 🖼️ Draw both images using cover logic
-        if (frame >= imageStartFrame) {
+        if (elapsed >= imageStartMs) {
           ctx.save();
           drawImageCover(ctx, imgA, xA, offsetY, drawWidth, drawHeight);
           drawImageCover(ctx, imgB, xB, offsetY, drawWidth, drawHeight);
@@ -153,8 +157,11 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
         }
 
         // 🕶️ Loser fade BEFORE VS text
-        if (frame >= fadeStart) {
-          const fadeProgress = Math.min((frame - fadeStart) / fadeDuration, 1);
+        if (elapsed >= fadeStartMs) {
+          const fadeProgress = Math.min(
+            (elapsed - fadeStartMs) / fadeDurationMs,
+            1
+          );
           const loserAlpha = 0.65 * fadeProgress;
 
           ctx.save();
@@ -166,18 +173,15 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
           const loserIsB =
             finalWinnerId === finalStartedGame!.match.selection1.id;
 
-          if (loserIsA) {
-            ctx.fillRect(xA, offsetY, drawWidth, drawHeight);
-          } else if (loserIsB) {
-            ctx.fillRect(xB, offsetY, drawWidth, drawHeight);
-          }
+          if (loserIsA) ctx.fillRect(xA, offsetY, drawWidth, drawHeight);
+          else if (loserIsB) ctx.fillRect(xB, offsetY, drawWidth, drawHeight);
 
           ctx.restore();
         }
 
         // 🔠 VS text
-        if (frame >= vsStartFrame) {
-          const vsProgress = Math.min((frame - vsStartFrame) / vsDuration, 1);
+        if (elapsed >= vsStartMs) {
+          const vsProgress = Math.min((elapsed - vsStartMs) / vsDurationMs, 1);
           const vsScale = 0.8 + 0.7 * Math.sin(vsProgress * Math.PI);
           const vsAlpha = vsProgress;
 
@@ -185,8 +189,7 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
           ctx.globalAlpha = vsAlpha;
           ctx.translate(canvas.width / 2, canvas.height / 2);
           ctx.scale(vsScale, vsScale);
-
-          ctx.font = 'bold 72px Arial';
+          ctx.font = 'bold 100px Arial';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.lineWidth = 8;
@@ -197,20 +200,24 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
           ctx.restore();
         }
 
-        // 📝 Title typing
-        if (charIndexRef.current < fullTitle.length && frame < 60) {
+        // 📝 Title typing (within 1 second)
+        const typingInterval = 1000 / fullTitle.length;
+        while (
+          charIndexRef.current < fullTitle.length &&
+          elapsed >= charIndexRef.current * typingInterval
+        ) {
           titleRef.current += fullTitle[charIndexRef.current];
           charIndexRef.current++;
         }
 
         // ⬆️ Title movement
+        const moveStart = 1000;
+        const moveEnd = 1500;
         let titleY = centerY;
-        const moveStart = 60;
-        const moveEnd = 90;
-        if (frame >= moveStart && frame < moveEnd) {
-          const moveProgress = (frame - moveStart) / (moveEnd - moveStart);
+        if (elapsed >= moveStart && elapsed < moveEnd) {
+          const moveProgress = (elapsed - moveStart) / (moveEnd - moveStart);
           titleY = centerY - (centerY - topY) * moveProgress;
-        } else if (frame >= moveEnd) {
+        } else if (elapsed >= moveEnd) {
           titleY = topY;
         }
 
@@ -221,8 +228,8 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
         const textWidth = ctx.measureText(fullTitle).width;
         ctx.font =
           textWidth < canvas.width * 0.7
-            ? 'bold 32px Arial'
-            : 'bold 24px Arial';
+            ? 'bold 40px Arial'
+            : 'bold 32px Arial';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -246,7 +253,7 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
         }
         if (currentLine) lines.push(currentLine);
 
-        const lineHeight = 30;
+        const lineHeight = 40;
         lines.forEach((line, i) => {
           ctx.fillText(line, canvas.width / 2, titleY + i * lineHeight);
         });
@@ -255,7 +262,7 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
         // 👤 Creator credit
         if (creatorName) {
           ctx.save();
-          ctx.font = '16px Arial';
+          ctx.font = '32px Arial';
           ctx.fillStyle = '#AAAAAA';
           ctx.textAlign = 'left';
           ctx.textBaseline = 'bottom';
@@ -263,16 +270,9 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
           ctx.restore();
         }
 
-        frame++;
-        if (frame === 1 && onAnimationStart) onAnimationStart();
-        if (frame === totalFrames && onAnimationEnd) onAnimationEnd();
-        if (frame < totalFrames) {
-          animFrame = requestAnimationFrame(draw);
-        }
-
-        // 🐾 Draw uwufufu logo (bottom right)
+        // 🐾 uwufufu logo
         const logoAspectRatio = 0.145;
-        const logoWidth = canvas.width * 0.18;
+        const logoWidth = canvas.width * 0.2;
         const logoHeight = logoWidth * logoAspectRatio;
         const padding = 12;
 
@@ -286,6 +286,13 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
           logoHeight
         );
         ctx.restore();
+
+        if (elapsed === 0 && onAnimationStart) onAnimationStart();
+        if (elapsed < totalDurationMs) {
+          animFrame = requestAnimationFrame(draw);
+        } else {
+          if (onAnimationEnd) onAnimationEnd();
+        }
       };
 
       const start = async () => {

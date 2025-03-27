@@ -3,18 +3,15 @@ import { notFound } from 'next/navigation';
 import WorldcupClient from './WorldcupClient';
 import { Metadata } from 'next';
 
-type WorldcupPageProps = {
-  params: {
-    slug: string;
-  };
-};
+type ParamsPromise = Promise<{ slug: string }>;
 
-export async function generateMetadata(
-  props: WorldcupPageProps
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: ParamsPromise;
+}): Promise<Metadata> {
   // Await the params object before destructuring
-  const params = await props.params;
-  const slug = params.slug;
+  const { slug } = await params;
 
   const worldcup = await fetchWorldcupBySlug(slug);
 
@@ -47,10 +44,13 @@ export async function generateMetadata(
   };
 }
 
-export default async function WorldcupPage(props: WorldcupPageProps) {
+export default async function WorldcupPage({
+  params,
+}: {
+  params: ParamsPromise;
+}) {
   // Await the params object before destructuring
-  const params = await props.params;
-  const slug = params.slug;
+  const { slug } = await params;
 
   const worldcup = await fetchWorldcupBySlug(slug);
 
