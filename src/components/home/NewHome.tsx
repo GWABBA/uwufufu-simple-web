@@ -57,6 +57,23 @@ export default function NewHomeComponent() {
   const [totalCount, setTotalCount] = useState(0);
   const hasMore = games.length < totalCount;
 
+  // calculate grid height
+  const topRef = useRef<HTMLDivElement | null>(null); // Ref to measure from
+  const [gridHeight, setGridHeight] = useState(600); // Initial fallback height
+
+  useEffect(() => {
+    const updateHeight = () => {
+      const topOffset = topRef.current?.getBoundingClientRect().top ?? 0;
+      const available = window.innerHeight - topOffset;
+      setGridHeight(available > 300 ? available : 300); // prevent too-small height
+    };
+
+    updateHeight(); // Initial run
+    window.addEventListener('resize', updateHeight); // Update on resize
+
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
+
   // ✅ Separate temp state for modals (modals will update temp states first)
   const [tempSelectedCategories, setTempSelectedCategories] = useState<
     string[]
@@ -266,90 +283,95 @@ export default function NewHomeComponent() {
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 flex flex-col h-full">
       {/* filters */}
-      <div className="grid grid-cols-2 md:flex md:space-x-2 gap-2 px-2 md:p-0 mb-4">
-        {/* Sort */}
-        <select
-          id="sort"
-          className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-32"
-          value={sortBy}
-          onChange={handleSortChange}
-        >
-          <option value="latest">{t('home.latest')}</option>
-          <option value="popularity">{t('home.popularity')}</option>
-        </select>
+      <div ref={topRef}>
+        <div className="grid grid-cols-2 md:flex md:space-x-2 gap-2 px-2 md:p-0 mb-4">
+          {/* Sort */}
+          <select
+            id="sort"
+            className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-32"
+            value={sortBy}
+            onChange={handleSortChange}
+          >
+            <option value="latest">{t('home.latest')}</option>
+            <option value="popularity">{t('home.popularity')}</option>
+          </select>
 
-        {/* Categories */}
-        <select
-          id="category"
-          className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-52"
-          value={formatSelectedCategories(
-            selectedCategories,
-            `${t('home.select-categories')}`
-          )}
-          onMouseDown={(e) => {
-            e.preventDefault();
-            openCategoryModal();
-          }}
-          onChange={() => {}}
-        >
-          <option>
-            {formatSelectedCategories(
+          {/* Categories */}
+          <select
+            id="category"
+            className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-52"
+            value={formatSelectedCategories(
               selectedCategories,
               `${t('home.select-categories')}`
             )}
-          </option>
-        </select>
+            onMouseDown={(e) => {
+              e.preventDefault();
+              openCategoryModal();
+            }}
+            onChange={() => {}}
+          >
+            <option>
+              {formatSelectedCategories(
+                selectedCategories,
+                `${t('home.select-categories')}`
+              )}
+            </option>
+          </select>
 
-        {/* Languages */}
-        <select
-          id="language"
-          className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-40"
-          value={formatSelected(
-            selectedLanguages,
-            `${t('home.select-languages')}`
-          )}
-          onMouseDown={(e) => {
-            e.preventDefault();
-            openLanguageModal();
-          }}
-          onChange={() => {}}
-        >
-          <option>
-            {formatSelected(selectedLanguages, `${t('home.select-languages')}`)}
-          </option>
-        </select>
+          {/* Languages */}
+          <select
+            id="language"
+            className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-40"
+            value={formatSelected(
+              selectedLanguages,
+              `${t('home.select-languages')}`
+            )}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              openLanguageModal();
+            }}
+            onChange={() => {}}
+          >
+            <option>
+              {formatSelected(
+                selectedLanguages,
+                `${t('home.select-languages')}`
+              )}
+            </option>
+          </select>
 
-        {/* Search */}
-        <div className="relative flex-1 md:min-w-40">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="p-2 pl-10 pr-8 w-full rounded-md bg-uwu-dark-gray text-white outline-none"
-            value={tempSearchQuery}
-            onChange={handleSearchChange}
-          />
-          <Search className="absolute left-2 top-2 text-gray-400 w-5 h-5" />
-          {searchQuery && (
-            <button
-              className="absolute right-2 top-2 text-gray-400 hover:text-white"
-              onClick={() => dispatch(setSearchQuery(''))}
-            >
-              <X className="w-5 h-5" />
-            </button>
-          )}
+          {/* Search */}
+          <div className="relative flex-1 md:min-w-40">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="p-2 pl-10 pr-8 w-full rounded-md bg-uwu-dark-gray text-white outline-none"
+              value={tempSearchQuery}
+              onChange={handleSearchChange}
+            />
+            <Search className="absolute left-2 top-2 text-gray-400 w-5 h-5" />
+            {searchQuery && (
+              <button
+                className="absolute right-2 top-2 text-gray-400 hover:text-white"
+                onClick={() => dispatch(setSearchQuery(''))}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="pt-0 px-2 md:px-0 mb-4">
-        <input
-          id="includeNsfw"
-          type="checkbox"
-          onChange={(e) => handleIncludeNsfwChange(e)}
-          checked={includeNsfw}
-        />
-        <label htmlFor="includeNsfw" className="text-uwu-red ml-2">
-          {t('home.include-nsfw')}
-        </label>
+        <div className="pt-0 px-2 md:px-0 mb-4">
+          <input
+            id="includeNsfw"
+            type="checkbox"
+            onChange={(e) => handleIncludeNsfwChange(e)}
+            checked={includeNsfw}
+          />
+          <label htmlFor="includeNsfw" className="text-uwu-red ml-2">
+            {t('home.include-nsfw')}
+          </label>
+        </div>
       </div>
 
       {/* Games grid container - this now takes remaining height */}
