@@ -56,6 +56,19 @@ const MatchModal: React.FC<MatchModalProps> = ({
     }, 1000); // Add delay for visual effect
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    // Cleanup when modal unmounts
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   const handleOnClickMagnify = (
     event: React.MouseEvent<HTMLDivElement>,
     selection: Selection
