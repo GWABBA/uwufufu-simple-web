@@ -19,9 +19,8 @@ import {
   setSortBy,
 } from '@/store/slices/worldcups.reducer';
 import LoadingAnimation from '../animation/Loading';
-import { FixedSizeGrid } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import { useTranslation } from 'react-i18next';
+import { Virtuoso } from 'react-virtuoso';
 
 export default function NewHomeComponent() {
   const { t } = useTranslation();
@@ -29,6 +28,7 @@ export default function NewHomeComponent() {
 
   const nsfwDebounceTimer = useRef<NodeJS.Timeout | null>(null);
   const dispatch = useAppDispatch();
+  const virtuosoRef = useRef(null);
 
   // for categories list
   const categories = useAppSelector(
@@ -57,22 +57,10 @@ export default function NewHomeComponent() {
   const [totalCount, setTotalCount] = useState(0);
   const hasMore = games.length < totalCount;
 
-  // calculate grid height
-  const topRef = useRef<HTMLDivElement | null>(null); // Ref to measure from
-  const [gridHeight, setGridHeight] = useState(600); // Initial fallback height
-
-  useEffect(() => {
-    const updateHeight = () => {
-      const topOffset = topRef.current?.getBoundingClientRect().top ?? 0;
-      const available = window.innerHeight - topOffset;
-      setGridHeight(available > 300 ? available : 300); // prevent too-small height
-    };
-
-    updateHeight(); // Initial run
-    window.addEventListener('resize', updateHeight); // Update on resize
-
-    return () => window.removeEventListener('resize', updateHeight);
-  }, []);
+  // Window dimensions for responsive column count
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  );
 
   // ✅ Separate temp state for modals (modals will update temp states first)
   const [tempSelectedCategories, setTempSelectedCategories] = useState<
@@ -86,6 +74,27 @@ export default function NewHomeComponent() {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
 
+  // Calculate appropriate column count based on screen width
+  const getColumnCount = (width: number) => {
+    if (width < 640) return 1;
+    if (width < 1024) return 2;
+    return 3;
+  };
+
+  const columnCount = getColumnCount(windowWidth);
+  const isFetchingRef = useRef(false);
+  const lastPageLoaded = useRef(1);
+
+  // Update window width on resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     setTempSearchQuery(searchQuery);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,21 +104,27 @@ export default function NewHomeComponent() {
   useEffect(() => {
     const fetchInitialGames = async () => {
       setIsFetching(true);
-      const { worldcups, total } = await fetchWorldcups({
-        page: 1,
-        perPage,
-        sortBy,
-        categories: selectedCategories,
-        locale: selectedLanguages as Locales[],
-        search: searchQuery,
-        includeNsfw,
-      });
+      isFetchingRef.current = true;
 
-      setGames(worldcups);
-      setTotalCount(total);
-      dispatch(setPage(1));
-      lastPageLoaded.current = 1; // Important initialization
-      setIsFetching(false);
+      try {
+        const { worldcups, total } = await fetchWorldcups({
+          page: 1,
+          perPage,
+          sortBy,
+          categories: selectedCategories,
+          locale: selectedLanguages as Locales[],
+          search: searchQuery,
+          includeNsfw,
+        });
+
+        setGames(worldcups);
+        setTotalCount(total);
+        dispatch(setPage(1));
+        lastPageLoaded.current = 1; // Important initialization
+      } finally {
+        setIsFetching(false);
+        isFetchingRef.current = false;
+      }
     };
 
     fetchInitialGames();
@@ -160,10 +175,6 @@ export default function NewHomeComponent() {
     dispatch,
     hasMore,
   ]);
-
-  // Tracking state for virtualized grid loading
-  const isFetchingRef = useRef(false);
-  const lastPageLoaded = useRef(1);
 
   // ✅ Sort Change
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -273,17 +284,107 @@ export default function NewHomeComponent() {
     return `${categoryIds.length} selected`;
   };
 
-  // Calculate appropriate column count based on screen width
-  const getColumnCount = (width: number) => {
-    if (width < 640) return 1;
-    if (width < 1024) return 2;
-    return 3;
+  // Function to render a row of items
+  const renderRow = (index: number) => {
+    // Each row has `columnCount` number of items
+    const startIdx = index * columnCount;
+    const rowItems = games.slice(startIdx, startIdx + columnCount);
+
+    return (
+      <div className="flex w-full mb-8">
+        {rowItems.map((game) => (
+          <div
+            key={game.id}
+            className="p-2"
+            style={{ width: `${100 / columnCount}%` }}
+          >
+            <Link
+              href={`/worldcup/${game.slug}`}
+              className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
+            >
+              <div className="w-full h-60 relative">
+                <div className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 top-2 left-2 flex items-center">
+                  <GalleryHorizontalEnd className="mr-2"></GalleryHorizontalEnd>
+                  {game.selectionCount}
+                </div>
+                {game.isNsfw && (
+                  <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md z-20 top-2 right-2">
+                    NSFW
+                  </span>
+                )}
+                {game.isNsfw && (!user || (user && user.tier === 'basic')) && (
+                  <div className="absolute w-full h-full backdrop-blur-lg z-10"></div>
+                )}
+                <Image
+                  src={
+                    game.coverImage || '/assets/common/default-thumbnail.webp'
+                  }
+                  alt={game.title}
+                  fill
+                  className="rounded-t-2xl object-cover z-0"
+                  unoptimized
+                />
+              </div>
+              <div className="p-4 flex flex-col justify-between h-[calc(100%-240px)]">
+                <div>
+                  <div className="flex items-center text-sm text-gray-300 mb-2 justify-between">
+                    <span className="text-uwuRed font-semibold">
+                      {game.category?.name || 'Unknown'}
+                    </span>
+                    {game.user && (
+                      <div className="flex items-center">
+                        {game.user.profileImage ? (
+                          <Image
+                            src={game.user.profileImage!}
+                            alt="profile"
+                            width={24}
+                            height={24}
+                            className="rounded-full mr-1"
+                          ></Image>
+                        ) : (
+                          <Image
+                            src="/assets/icons/account-circle.svg"
+                            alt="profile"
+                            width={24}
+                            height={24}
+                            className="rounded-full mr-1"
+                          ></Image>
+                        )}
+                        <span className="text-gray-400">{game.user.name}</span>
+                      </div>
+                    )}
+                  </div>
+                  <h2 className="text-lg md:text-xl font-semibold text-white line-clamp-1">
+                    {game.title}
+                  </h2>
+                  <p className="text-sm text-gray-400 mt-2 line-clamp-1">
+                    {game.description}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          </div>
+        ))}
+      </div>
+    );
   };
 
+  // Footer component for loading
+  const Footer = () => {
+    return (
+      <div className="py-4 flex justify-center">
+        {isFetching && hasMore ? <LoadingAnimation /> : null}
+      </div>
+    );
+  };
+
+  // Calculate number of rows
+  const rowCount = Math.ceil(games.length / columnCount);
+
   return (
-    <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 flex flex-col h-full">
+    <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 flex flex-col">
       {/* filters */}
-      <div ref={topRef}>
+      <div>
         <div className="grid grid-cols-2 md:flex md:space-x-2 gap-2 px-2 md:p-0 mb-4">
           {/* Sort */}
           <select
@@ -374,128 +475,24 @@ export default function NewHomeComponent() {
         </div>
       </div>
 
-      {/* Games grid container - this now takes remaining height */}
-      <div className="flex-grow w-full">
+      {/* Games grid - virtualized with body scroll */}
+      <div className="w-full">
         {games.length === 0 && !isFetching ? (
           <div className="text-center text-white py-8">No games found</div>
         ) : (
-          <div className="w-full h-full">
-            <AutoSizer>
-              {({ height, width }) => {
-                const columnCount = getColumnCount(width);
-                const rowCount = Math.ceil(games.length / columnCount);
-
-                return (
-                  <FixedSizeGrid
-                    columnCount={columnCount}
-                    rowCount={rowCount}
-                    columnWidth={width / columnCount}
-                    rowHeight={400}
-                    height={height || 600}
-                    width={width}
-                    onItemsRendered={({ visibleRowStopIndex }) => {
-                      // Load more when approaching the end
-                      const threshold = rowCount - 3;
-                      if (
-                        visibleRowStopIndex >= threshold &&
-                        !isFetchingRef.current &&
-                        hasMore
-                      ) {
-                        loadMoreGames();
-                      }
-                    }}
-                  >
-                    {({ columnIndex, rowIndex, style }) => {
-                      const index = rowIndex * columnCount + columnIndex;
-                      if (index >= games.length) return null;
-
-                      const game = games[index];
-
-                      return (
-                        <div style={{ ...style, padding: '8px' }}>
-                          <Link
-                            href={`/worldcup/${game.slug}`}
-                            className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
-                          >
-                            <div className="w-full h-60 relative">
-                              <div className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 top-2 left-2 flex items-center">
-                                <GalleryHorizontalEnd className="mr-2"></GalleryHorizontalEnd>
-                                {game.selectionCount}
-                              </div>
-                              {game.isNsfw && (
-                                <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md z-20 top-2 right-2">
-                                  NSFW
-                                </span>
-                              )}
-                              {game.isNsfw &&
-                                (!user || (user && user.tier === 'basic')) && (
-                                  <div className="absolute w-full h-full backdrop-blur-lg z-10"></div>
-                                )}
-                              <Image
-                                src={
-                                  game.coverImage ||
-                                  '/assets/common/default-thumbnail.webp'
-                                }
-                                alt={game.title}
-                                fill
-                                className="rounded-t-2xl object-cover z-0"
-                                unoptimized
-                              />
-                            </div>
-                            <div className="p-4 flex flex-col justify-between h-[calc(100%-240px)]">
-                              <div>
-                                <div className="flex items-center text-sm text-gray-300 mb-2 justify-between">
-                                  <span className="text-uwuRed font-semibold">
-                                    {game.category?.name || 'Unknown'}
-                                  </span>
-                                  {game.user && (
-                                    <div className="flex items-center">
-                                      {game.user.profileImage ? (
-                                        <Image
-                                          src={game.user.profileImage!}
-                                          alt="profile"
-                                          width={24}
-                                          height={24}
-                                          className="rounded-full mr-1"
-                                        ></Image>
-                                      ) : (
-                                        <Image
-                                          src="/assets/icons/account-circle.svg"
-                                          alt="profile"
-                                          width={24}
-                                          height={24}
-                                          className="rounded-full mr-1"
-                                        ></Image>
-                                      )}
-                                      <span className="text-gray-400">
-                                        {game.user.name}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                                <h2 className="text-lg md:text-xl font-semibold text-white line-clamp-1">
-                                  {game.title}
-                                </h2>
-                                <p className="text-sm text-gray-400 mt-2 line-clamp-1">
-                                  {game.description}
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-                        </div>
-                      );
-                    }}
-                  </FixedSizeGrid>
-                );
-              }}
-            </AutoSizer>
-          </div>
-        )}
-
-        {isFetching && (
-          <div className="w-full flex justify-center items-center py-4">
-            <LoadingAnimation />
-          </div>
+          <Virtuoso
+            ref={virtuosoRef}
+            useWindowScroll
+            totalCount={rowCount}
+            overscan={5}
+            itemContent={renderRow}
+            components={{ Footer }}
+            endReached={() => {
+              if (hasMore && !isFetchingRef.current) {
+                loadMoreGames();
+              }
+            }}
+          />
         )}
       </div>
 
