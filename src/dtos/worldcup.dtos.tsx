@@ -26,6 +26,7 @@ export interface Worldcup {
   user?: SimpleUser;
   selectionCount?: number;
   plays?: number;
+  finishedPlays?: number;
   createdAt?: Date;
   updatedAt?: Date;
   selectionsCount?: number;

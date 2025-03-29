@@ -217,8 +217,9 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
             <tbody>
               {selections.map((selection) => {
                 let finalWinRatio = 0;
-                if (worldcup.plays! > 0) {
-                  finalWinRatio = (selection.finalWins / worldcup.plays!) * 100;
+                if (worldcup.finishedPlays! > 0) {
+                  finalWinRatio =
+                    (selection.finalWins / worldcup.finishedPlays!) * 100;
                 }
 
                 return (
@@ -231,7 +232,7 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
                     <td className="p-3 cursor-pointer">
                       {selection.isVideo ? (
                         <div className="relative">
-                          <div className="bg-uwu-red absolute top-1 right-3 text-white px-2 rounded-md">
+                          <div className="bg-uwu-red absolute top-1 left-1 text-white px-2 rounded-md">
                             Video
                           </div>
                           <Image
@@ -327,8 +328,9 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
         <div className="md:hidden grid grid-cols-1 gap-4">
           {selections.map((selection) => {
             let finalWinRatio = 0;
-            if (worldcup.plays! > 0) {
-              finalWinRatio = (selection.finalWins / worldcup.plays!) * 100;
+            if (worldcup.finishedPlays! > 0) {
+              finalWinRatio =
+                (selection.finalWins / worldcup.finishedPlays!) * 100;
             }
 
             return (
@@ -343,12 +345,26 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
                 {/* ✅ Media (Clickable) */}
                 <div className="w-36 h-36 relative cursor-pointer">
                   {selection.isVideo ? (
-                    <iframe
-                      className="w-full h-full rounded-md"
-                      src={normalizeYouTubeUrl(selection.videoUrl)!}
-                      title={selection.name}
-                      allowFullScreen
-                    ></iframe>
+                    <div className="relative">
+                      <div className="bg-uwu-red absolute top-1 left-1 text-white px-2 rounded-md z-10">
+                        Video
+                      </div>
+                      <Image
+                        src={
+                          selection.resourceUrl || '/assets/default-image.jpg'
+                        }
+                        alt={selection.name}
+                        className="object-cover rounded-md w-full h-40"
+                        width={128}
+                        height={120}
+                        onClick={() =>
+                          openModal({
+                            type: 'video',
+                            src: selection.videoUrl,
+                          })
+                        }
+                      />
+                    </div>
                   ) : (
                     <div className="relative">
                       {worldcup.isNsfw &&
@@ -360,7 +376,7 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
                           selection.resourceUrl || '/assets/default-image.jpg'
                         }
                         alt={selection.name}
-                        className="object-cover rounded-md w-full h-40" // ✅ Set fixed height (adjust as needed)
+                        className="object-cover rounded-md w-full h-40"
                         width={128}
                         height={120}
                         onClick={() =>
