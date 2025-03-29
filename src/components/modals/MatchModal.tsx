@@ -56,6 +56,22 @@ const MatchModal: React.FC<MatchModalProps> = ({
     }, 1000); // Add delay for visual effect
   };
 
+  const [viewportHeight, setViewportHeight] = useState<number>(0);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      setViewportHeight(window.innerHeight);
+    };
+
+    updateHeight(); // Set on mount
+
+    window.addEventListener('resize', updateHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateHeight);
+    };
+  }, []);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -94,7 +110,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
     <>
       {startedGame && startedGame.startedGame.status !== 'IS_COMPLETED' ? (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center">
-          <div className="relative w-full h-full max-h-screen overflow-hidden">
+          <div className="relative w-full h-full max-h-screen">
             {/* Header */}
             <div className="p-4 bg-uwu-black text-white flex justify-between items-center md:h-16">
               <h2
@@ -110,7 +126,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
             <div
               className="overflow-y-auto p-4 bg-uwu-black relative"
               style={{
-                height: `calc(100vh - 4rem)`, // 4rem accounts for the header
+                height: `${viewportHeight - 64}px`, // 4rem accounts for the header
               }}
             >
               <div className="absolute inset-0 flex justify-center text-white">
