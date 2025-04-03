@@ -32,6 +32,7 @@ export const fetchSelectionsForEdit = async (params: {
   perPage: number;
   worldcupId: number;
   keyword?: string;
+  sortBy: string;
 }): Promise<SelectionsResponseDto> => {
   try {
     const { data } = await api.get<SelectionsResponseDto>('/selections/mine', {

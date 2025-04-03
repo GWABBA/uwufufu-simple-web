@@ -34,6 +34,8 @@ enum SelectionTabType {
   VIDEO = 'video',
 }
 
+type SortOption = 'name' | 'createdAt' | 'winLossRatio' | 'finalWinLossRatio';
+
 export default function SelectionsComponent({
   game,
   onSetMainTab,
@@ -68,6 +70,7 @@ export default function SelectionsComponent({
   const [endTime, setEndTime] = useState(0);
 
   const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [sortBy, setSortBy] = useState<SortOption>('name');
 
   const fetchSelections = async () => {
     const selections = await fetchSelectionsForEdit({
@@ -75,6 +78,7 @@ export default function SelectionsComponent({
       page,
       perPage,
       keyword: searchKeyword,
+      sortBy,
     });
     setSelections(selections.data);
     setSelectionsCount(selections.total);
@@ -84,7 +88,7 @@ export default function SelectionsComponent({
     if (!game) return;
     fetchSelections();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  }, [page, sortBy]);
 
   const handleSelectionImagesChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -149,6 +153,7 @@ export default function SelectionsComponent({
         worldcupId: game.id,
         page,
         perPage,
+        sortBy,
       });
       setSelections(selections.data);
       setSelectionsCount(selections.total);
@@ -186,6 +191,7 @@ export default function SelectionsComponent({
         worldcupId: game.id,
         page,
         perPage,
+        sortBy,
       });
       setSelections(selections.data);
       setSelectionsCount(selections.total);
@@ -461,6 +467,20 @@ export default function SelectionsComponent({
             {t('create-worldcup.search')}
           </button>
         </form>
+
+        <div className="flex justify-end">
+          <select
+            name="sortBy"
+            id="sortBy"
+            className="rounded-l-md bg-uwu-dark-gray text-white px-2 h-10 mb-4 cursor-pointer"
+            onChange={(e) => setSortBy(e.target.value as SortOption)}
+          >
+            <option value="name">Sort by Name</option>
+            <option value="createdAt">Sort by Created</option>
+            <option value="winLossRatio">Sort by Win Ratio</option>
+            <option value="finalWinLossRatio">Sort by Champ. Ratio</option>
+          </select>
+        </div>
 
         {selections.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
