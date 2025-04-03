@@ -14,8 +14,12 @@ import { uploadImage } from '@/services/images.service';
 import toast from 'react-hot-toast';
 import { CircleCheckBig } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { cancelSubscription } from '@/services/payment.service';
+import {
+  cancelSubscription,
+  fetchActiveSubscription,
+} from '@/services/payment.service';
 import Link from 'next/link';
+import { PaymentResponseDto } from '@/dtos/payment.dtos';
 
 export default function ProfilePage() {
   const { t } = useTranslation();
@@ -23,11 +27,21 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [newPassword, setNewPassword] = useState('');
+  const [subscription, setSubscription] = useState<PaymentResponseDto | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       const user = await fetchMe();
       setUser(user);
+      try {
+        const subscription = await fetchActiveSubscription();
+        setSubscription(subscription);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
+        setSubscription(null);
+      }
     };
     fetchUserInfo();
   }, []);
@@ -218,12 +232,12 @@ export default function ProfilePage() {
                 {user && user.tier !== 'basic' && (
                   <p className="text-white">
                     {' '}
-                    renews on{' '}
+                    until{' '}
                     {user && user.subscriptionEndDate?.toString().split('T')[0]}
                   </p>
                 )}
               </div>
-              {user && user.tier !== 'basic' ? (
+              {subscription ? (
                 <div
                   className="text-uwu-gray underline cursor-pointer"
                   onClick={handleOnCancelSubscription}
