@@ -368,7 +368,7 @@ export default function SelectionsComponent({
                   {/* <ImageUpload className="w-12 h-12" /> */}
                   <LucidImage size={48} />
                   <p className="text-sm mt-2">
-                    Drag and drop or click to upload images
+                    Drag and drop or click to upload images (12mb max)
                   </p>
                 </div>
               )}

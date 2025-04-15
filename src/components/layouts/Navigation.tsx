@@ -83,11 +83,21 @@ const Navigation = () => {
           />
         </Link>
         <div className="flex h-full">
+          {/* UwU */}
+          <Link href="/uwu" className="flex items-center">
+            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg mr-4">
+              UwU
+            </button>
+          </Link>
+
+          {/* plans */}
           <Link href="/plans" className="flex items-center">
             <button className="bg-uwu-red py-2 px-2 text-white rounded-lg mr-4">
               {t('navigation.subscription')}
             </button>
           </Link>
+
+          {/* discord */}
           <Link
             href="https://discord.gg/jFcuMQdTzC"
             target="_blank"
@@ -104,6 +114,8 @@ const Navigation = () => {
               Discord
             </button>
           </Link>
+
+          {/* create game */}
           <Link href="/create-game" className="flex items-center">
             <button className="bg-uwu-red py-2 px-2 text-white rounded-lg">
               {t('navigation.create-game')}

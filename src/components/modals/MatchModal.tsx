@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Selection, StartedGameResponseDto } from '@/dtos/startedGames.dtos';
 import Image from 'next/image';
 import ChevronLeft from '@/../public/assets/icons/chevron-left.svg';
@@ -7,6 +7,13 @@ import { Worldcup } from '@/dtos/worldcup.dtos';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import FinalWinnerModal from './FinalWinnerModal';
+
+declare global {
+  interface Window {
+    YT: typeof YT;
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
 
 interface MatchModalProps {
   isOpen: boolean;
@@ -95,6 +102,76 @@ const MatchModal: React.FC<MatchModalProps> = ({
 
   const handleFullSizeClose = () => {
     setFullSizeMedia(null); // Close full-size modal
+  };
+
+  const getYouTubeEmbedUrl = (url: string) => {
+    const embedUrl = url.includes('youtu.be')
+      ? url.replace('youtu.be/', 'www.youtube.com/embed/')
+      : url.replace('watch?v=', 'embed/');
+
+    return `${embedUrl}?enablejsapi=1`;
+  };
+
+  // const handleVideoControl = (
+  //   iframeId: string,
+  //   command: 'playVideo' | 'pauseVideo'
+  // ) => {
+  //   const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
+  //   if (!iframe) return;
+
+  //   iframe.contentWindow?.postMessage(
+  //     JSON.stringify({
+  //       event: 'command',
+  //       func: command,
+  //       args: [],
+  //     }),
+  //     '*'
+  //   );
+  // };
+
+  const playerRefs = useRef<Record<string, YT.Player>>({});
+
+  const initPlayer = async (iframeId: string) => {
+    await loadYouTubeAPI();
+
+    if (!playerRefs.current[iframeId]) {
+      const player = new YT.Player(iframeId, {
+        events: {
+          onReady: () => {
+            playerRefs.current[iframeId] = player;
+            player.mute(); // Optional: mute on first load
+            player.playVideo();
+          },
+        },
+      });
+    } else {
+      playerRefs.current[iframeId].playVideo();
+    }
+  };
+
+  const pausePlayer = (iframeId: string) => {
+    const player = playerRefs.current[iframeId];
+    if (player && player.pauseVideo) {
+      player.pauseVideo();
+    }
+  };
+
+  const loadYouTubeAPI = () => {
+    return new Promise<void>((resolve) => {
+      if (window.YT && window.YT.Player) {
+        resolve();
+      } else {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        if (firstScriptTag && firstScriptTag.parentNode) {
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+
+        // Set global callback for API ready
+        window.onYouTubeIframeAPIReady = () => resolve();
+      }
+    });
   };
 
   useEffect(() => {
@@ -210,25 +287,25 @@ const MatchModal: React.FC<MatchModalProps> = ({
                       {startedGame.match.selection1.isVideo ? (
                         <div className="w-full aspect-video">
                           <iframe
+                            id={`ytplayer-${startedGame.match.selection1.id}`}
+                            src={getYouTubeEmbedUrl(
+                              startedGame.match.selection1.videoUrl
+                            )}
                             className="rounded mx-auto w-full h-full object-contain"
-                            src={
-                              startedGame.match.selection1.videoUrl.includes(
-                                'youtu.be'
-                              )
-                                ? startedGame.match.selection1.videoUrl.replace(
-                                    'youtu.be',
-                                    'www.youtube.com/embed'
-                                  )
-                                : startedGame.match.selection1.videoUrl.replace(
-                                    'watch?v=',
-                                    'embed/'
-                                  )
-                            }
                             allowFullScreen
                             style={{
-                              // width: '100%',
                               border: 'none',
                             }}
+                            onMouseEnter={() =>
+                              initPlayer(
+                                `ytplayer-${startedGame.match.selection1.id}`
+                              )
+                            }
+                            onMouseLeave={() =>
+                              pausePlayer(
+                                `ytplayer-${startedGame.match.selection1.id}`
+                              )
+                            }
                           ></iframe>
                         </div>
                       ) : (
@@ -313,25 +390,26 @@ const MatchModal: React.FC<MatchModalProps> = ({
                       {startedGame.match.selection2.isVideo ? (
                         <div className="w-full aspect-video">
                           <iframe
+                            id={`ytplayer-${startedGame.match.selection2.id}`}
+                            src={getYouTubeEmbedUrl(
+                              startedGame.match.selection2.videoUrl
+                            )}
                             className="rounded mx-auto w-full h-full object-contain"
-                            src={
-                              startedGame.match.selection2.videoUrl.includes(
-                                'youtu.be'
-                              )
-                                ? startedGame.match.selection2.videoUrl.replace(
-                                    'youtu.be',
-                                    'www.youtube.com/embed'
-                                  )
-                                : startedGame.match.selection2.videoUrl.replace(
-                                    'watch?v=',
-                                    'embed/'
-                                  )
-                            }
                             allowFullScreen
                             style={{
                               // width: '100%',
                               border: 'none',
                             }}
+                            onMouseEnter={() =>
+                              initPlayer(
+                                `ytplayer-${startedGame.match.selection2.id}`
+                              )
+                            }
+                            onMouseLeave={() =>
+                              pausePlayer(
+                                `ytplayer-${startedGame.match.selection2.id}`
+                              )
+                            }
                           ></iframe>
                         </div>
                       ) : (
@@ -376,19 +454,21 @@ const MatchModal: React.FC<MatchModalProps> = ({
           onClick={handleFullSizeClose}
         >
           {fullSizeMedia.isVideo ? (
-            <div className="w-full aspect-video">
-              <iframe
-                className="w-full h-full"
-                src={
-                  fullSizeMedia.videoUrl.includes('youtu.be')
-                    ? fullSizeMedia.videoUrl.replace(
-                        'youtu.be',
-                        'www.youtube.com/embed'
-                      )
-                    : fullSizeMedia.videoUrl.replace('watch?v=', 'embed/')
-                }
-                allowFullScreen
-              ></iframe>
+            <div className="w-full flex justify-center items-center">
+              <div className="w-full max-w-[720px] aspect-video">
+                <iframe
+                  className="w-full h-full rounded"
+                  src={
+                    fullSizeMedia.videoUrl.includes('youtu.be')
+                      ? fullSizeMedia.videoUrl.replace(
+                          'youtu.be',
+                          'www.youtube.com/embed'
+                        )
+                      : fullSizeMedia.videoUrl.replace('watch?v=', 'embed/')
+                  }
+                  allowFullScreen
+                ></iframe>
+              </div>
             </div>
           ) : (
             <Image
