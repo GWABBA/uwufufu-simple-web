@@ -7,12 +7,13 @@ import {
   StartedGameResultDto,
 } from '@/dtos/startedGames.dtos';
 import axios from 'axios';
+import api from './api.service';
 
 export const createStartedGame = async (
   body: CreateStartedGameDto
 ): Promise<StartedGameResponseDto> => {
   try {
-    const { data } = await axios.post<StartedGameResponseDto>(
+    const { data } = await api.post<StartedGameResponseDto>(
       `${config.apiUrl}/started-games`,
       body
     );
