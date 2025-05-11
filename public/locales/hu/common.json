@@ -3,6 +3,7 @@
     "create-game": "Játék létrehozása",
     "profile": "Profil",
     "my-games": "Saját Világkupáim",
+    "play-history": "Játéktörténet",
     "join-discord": "Csatlakozás Discordhoz",
     "log-in": "Bejelentkezés",
     "log-out": "Kijelentkezés",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Biztosan le szeretnéd mondani az előfizetésed?",
     "failed-to-cancel-subscription": "Az előfizetés lemondása nem sikerült",
     "cancel-subscription": "Előfizetés lemondása",
-    "upgrade-subscription": "Előfizetés frissítése"
+    "upgrade-subscription": "Előfizetés frissítése",
+    "save-username": "Felhasználónév mentése",
+    "name-updated-successfully": "A név sikeresen frissítve",
+    "failed-to-update-user": "A felhasználó frissítése nem sikerült"
   },
   "common": {
     "unknown-error-occurred": "Ismeretlen hiba történt",
@@ -153,5 +157,24 @@
     "animation-not-supported": "A böngésződ nem támogatja a videófelvételt. Az eredményképet ettől függetlenül elmentjük.",
     "video-record-failed": "A videófelvétel sikertelen volt ebben a böngészőben.",
     "download-video": "Videó letöltése"
+  },
+  "report": {
+    "report": "Jelentés",
+    "report-this-game": "Worldcup jelentése",
+    "select-placeholder": "Válasszon okot",
+    "select-reason": "Kérjük, válasszon egy okot",
+    "inappropriate-content": "Nem megfelelő tartalom",
+    "misleading-or-spam": "Félrevezető vagy spam",
+    "offensive-language": "Sértő nyelvezet",
+    "nsfw-without-tag": "NSFW címke nélkül",
+    "copyright-violation": "Szerzői jog megsértése",
+    "other": "Egyéb",
+    "submit": "Beküldés"
+  },
+  "play-history": {
+    "play-history": "Játéktörténet",
+    "completed": "Befejezve",
+    "in-progress": "Folyamatban",
+    "no-plays": "Nincs játék"
   }
 }

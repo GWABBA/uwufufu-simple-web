@@ -49,6 +49,21 @@ export const updateUser = async (body: User): Promise<User> => {
   }
 };
 
+export const updateUserName = async (body: { name: string }): Promise<User> => {
+  try {
+    const { data } = await api.put<User>('/auth/me/name', body);
+    return data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || 'Failed to update user name'
+      );
+    }
+
+    throw new Error('An unexpected error occurred');
+  }
+};
+
 export const register = async (body: RegisterDto): Promise<TokensResponse> => {
   try {
     const { data } = await api.post<TokensResponse>('/auth/register', body);

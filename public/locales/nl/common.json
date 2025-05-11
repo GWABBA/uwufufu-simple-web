@@ -3,6 +3,7 @@
     "create-game": "Spel maken",
     "profile": "Profiel",
     "my-games": "Mijn Worldcups",
+    "play-history": "Spelgeschiedenis",
     "join-discord": "Neem deel aan Discord",
     "log-in": "Inloggen",
     "log-out": "Uitloggen",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Weet je zeker dat je je abonnement wilt annuleren?",
     "failed-to-cancel-subscription": "Annuleren van abonnement mislukt",
     "cancel-subscription": "Abonnement annuleren",
-    "upgrade-subscription": "Abonnement upgraden"
+    "upgrade-subscription": "Abonnement upgraden",
+    "save-username": "Gebruikersnaam opslaan",
+    "name-updated-successfully": "Naam succesvol bijgewerkt",
+    "failed-to-update-user": "Gebruiker kon niet worden bijgewerkt"
   },
   "common": {
     "unknown-error-occurred": "Er is een onbekende fout opgetreden",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Uw browser ondersteunt geen videorecording. De afbeelding wordt wel opgeslagen.",
     "video-record-failed": "Video opnemen is mislukt in deze browser.",
     "download-video": "Video downloaden"
+  },
+  "report": {
+    "report": "Rapporteren",
+    "report-this-game": "Worldcup rapporteren",
+    "select-placeholder": "Selecteer een reden",
+    "select-reason": "Selecteer alstublieft een reden",
+    "inappropriate-content": "Ongepaste inhoud",
+    "misleading-or-spam": "Misleidend of spam",
+    "offensive-language": "Beledigende taal",
+    "nsfw-without-tag": "NSFW zonder tag",
+    "copyright-violation": "Auteursrechtschending",
+    "other": "Anders",
+    "submit": "Verzenden"
+  },
+  "play-history": {
+    "play-history": "Spelgeschiedenis",
+    "completed": "Voltooid",
+    "in-progress": "In behandeling",
+    "no-plays": "Geen spelgeschiedenis gevonden"
   }
 }

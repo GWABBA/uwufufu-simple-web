@@ -3,6 +3,7 @@
     "create-game": "Δημιουργία παιχνιδιού",
     "profile": "Προφίλ",
     "my-games": "Τα Worldcup μου",
+    "play-history": "Ιστορικό παιχνιδιών",
     "join-discord": "Εγγραφή στο Discord",
     "log-in": "Σύνδεση",
     "log-out": "Αποσύνδεση",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Είστε σίγουροι ότι θέλετε να ακυρώσετε τη συνδρομή σας;",
     "failed-to-cancel-subscription": "Αποτυχία ακύρωσης συνδρομής",
     "cancel-subscription": "Ακύρωση συνδρομής",
-    "upgrade-subscription": "Αναβάθμιση συνδρομής"
+    "upgrade-subscription": "Αναβάθμιση συνδρομής",
+    "save-username": "Αποθήκευση ονόματος χρήστη",
+    "name-updated-successfully": "Το όνομα ενημερώθηκε με επιτυχία",
+    "failed-to-update-user": "Αποτυχία ενημέρωσης χρήστη"
   },
   "common": {
     "unknown-error-occurred": "Παρουσιάστηκε άγνωστο σφάλμα",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Ο περιηγητής σας δεν υποστηρίζει εγγραφή βίντεο. Η εικόνα του αποτελέσματος θα αποθηκευτεί κανονικά.",
     "video-record-failed": "Η εγγραφή βίντεο απέτυχε σε αυτόν τον περιηγητή.",
     "download-video": "Λήψη βίντεο"
+  },
+  "report": {
+    "report": "Αναφορά",
+    "report-this-game": "Αναφορά Worldcup",
+    "select-placeholder": "Επιλέξτε λόγο",
+    "select-reason": "Παρακαλώ επιλέξτε έναν λόγο",
+    "inappropriate-content": "Ακατάλληλο περιεχόμενο",
+    "misleading-or-spam": "Παραπλανητικό ή ανεπιθύμητο",
+    "offensive-language": "Προσβλητική γλώσσα",
+    "nsfw-without-tag": "NSFW χωρίς ετικέτα",
+    "copyright-violation": "Παραβίαση πνευματικών δικαιωμάτων",
+    "other": "Άλλο",
+    "submit": "Υποβολή"
+  },
+  "play-history": {
+    "play-history": "Ιστορικό παιχνιδιών",
+    "completed": "Ολοκληρωμένο",
+    "in-progress": "Σε εξέλιξη",
+    "no-plays": "Δεν υπάρχουν παιχνίδια"
   }
 }

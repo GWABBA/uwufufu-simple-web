@@ -7,8 +7,9 @@ export default function Page() {
   return (
     <div className="w-full max-w-7xl mx-auto px-4">
       <h1 className="text-4xl font-bold text-center mt-16 text-white">
-        UwUFUFU Family
+        UwUFUFU Universe
       </h1>
+      <p className="text-lg text-center text-white">aka UwUverse</p>
       <p className="mt-4 text-lg text-center text-white">
         Check out our affiliated or partner sites.
       </p>

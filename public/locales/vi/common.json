@@ -3,6 +3,7 @@
     "create-game": "Tạo trò chơi",
     "profile": "Hồ sơ",
     "my-games": "Worldcup của tôi",
+    "play-history": "Lịch sử trò chơi",
     "join-discord": "Tham gia Discord",
     "log-in": "Đăng nhập",
     "log-out": "Đăng xuất",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Bạn chắc chắn muốn hủy gói đăng ký?",
     "failed-to-cancel-subscription": "Không thể hủy gói đăng ký",
     "cancel-subscription": "Hủy gói đăng ký",
-    "upgrade-subscription": "Nâng cấp gói đăng ký"
+    "upgrade-subscription": "Nâng cấp gói đăng ký",
+    "save-username": "Lưu tên người dùng",
+    "name-updated-successfully": "Cập nhật tên thành công",
+    "failed-to-update-user": "Không thể cập nhật người dùng"
   },
   "common": {
     "unknown-error-occurred": "Có lỗi không xác định xảy ra",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Trình duyệt của bạn không hỗ trợ ghi video. Hình ảnh vẫn sẽ được lưu.",
     "video-record-failed": "Ghi video thất bại trên trình duyệt này.",
     "download-video": "Tải video"
+  },
+  "report": {
+    "report": "Báo cáo",
+    "report-this-game": "Báo cáo Worldcup",
+    "select-placeholder": "Chọn lý do",
+    "select-reason": "Vui lòng chọn lý do",
+    "inappropriate-content": "Nội dung không phù hợp",
+    "misleading-or-spam": "Gây hiểu lầm hoặc spam",
+    "offensive-language": "Ngôn ngữ xúc phạm",
+    "nsfw-without-tag": "NSFW không có gắn thẻ",
+    "copyright-violation": "Vi phạm bản quyền",
+    "other": "Khác",
+    "submit": "Gửi"
+  },
+  "play-history": {
+    "play-history": "Lịch sử trò chơi",
+    "completed": "Hoàn thành",
+    "in-progress": "Đang tiếp tục",
+    "no-plays": "Không có trò chơi"
   }
 }

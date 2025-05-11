@@ -3,6 +3,7 @@
     "create-game": "إنشاء لعبة",
     "profile": "الملف الشخصي",
     "my-games": "بطولاتي",
+    "play-history": "سجل اللعب",
     "join-discord": "انضم إلى ديسكورد",
     "log-in": "تسجيل الدخول",
     "log-out": "تسجيل الخروج",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "هل أنت متأكد من إلغاء اشتراكك؟",
     "failed-to-cancel-subscription": "فشل في إلغاء الاشتراك",
     "cancel-subscription": "إلغاء الاشتراك",
-    "upgrade-subscription": "ترقية الاشتراك"
+    "upgrade-subscription": "ترقية الاشتراك",
+    "save-username": "حفظ اسم المستخدم",
+    "name-updated-successfully": "تم تحديث الاسم بنجاح",
+    "failed-to-update-user": "فشل في تحديث المستخدم"
   },
   "common": {
     "unknown-error-occurred": "حدث خطأ غير معروف",
@@ -153,5 +157,24 @@
     "animation-not-supported": "المتصفح لا يدعم تسجيل الفيديو. سيتم حفظ صورة النتيجة فقط.",
     "video-record-failed": "فشل تسجيل الفيديو على هذا المتصفح.",
     "download-video": "تحميل الفيديو"
+  },
+  "report": {
+    "report": "الإبلاغ",
+    "report-this-game": "الإبلاغ عن كأس العالم",
+    "select-placeholder": "اختر سببًا",
+    "select-reason": "يرجى اختيار سبب",
+    "inappropriate-content": "محتوى غير لائق",
+    "misleading-or-spam": "مضلل أو بريد عشوائي",
+    "offensive-language": "لغة مسيئة",
+    "nsfw-without-tag": "محتوى للبالغين بدون علامة",
+    "copyright-violation": "انتهاك حقوق النشر",
+    "other": "أخرى",
+    "submit": "إرسال"
+  },
+  "play-history": {
+    "play-history": "سجل اللعب",
+    "completed": "مكتمل",
+    "in-progress": "قيد التنفيذ",
+    "no-plays": "لا يوجد لعبات"
   }
 }

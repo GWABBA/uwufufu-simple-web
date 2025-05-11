@@ -4,6 +4,7 @@ import { useAppSelector } from '@/store/hooks';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { fetchActiveSubscription } from '@/services/payment.service';
 
 interface CustomPayPalButtonsProps {
   planId: string;
@@ -20,6 +21,24 @@ export default function CustomPayPalButtons({
     router.push('/auth/login?redirect=/plans');
   };
 
+  const validateSubscription = async () => {
+    try {
+      const activeSubscription = await fetchActiveSubscription();
+      if (activeSubscription) {
+        toast.error('You already have an active subscription.');
+        return false;
+      }
+      return false;
+    } catch (error) {
+      // If error is 404, it means no active subscription
+      if (error instanceof Error && error.message.includes('404')) {
+        return true;
+      }
+      // toast.error('Failed to validate subscription status.');
+      return true;
+    }
+  };
+
   return (
     <div className="flex flex-col gap-3 w-full relative">
       {!user ? (
@@ -32,7 +51,11 @@ export default function CustomPayPalButtons({
       <div className="z-0">
         {/* ✅ Custom PayPal Subscription Button */}
         <PayPalButtons
-          createSubscription={(data, actions) => {
+          createSubscription={async (data, actions) => {
+            const isValid = await validateSubscription();
+            if (!isValid) {
+              throw new Error('Subscription validation failed');
+            }
             return actions.subscription.create({
               plan_id: planId,
               custom_id: user!.id?.toString(),
@@ -40,44 +63,45 @@ export default function CustomPayPalButtons({
           }}
           onApprove={async (data) => {
             console.log('Subscription Approved:', data);
-            alert(
-              'Thank you for subscribing! 🎉. Please wait until paypal has processed the payment.'
-            );
+            toast.success('Thank you for subscribing! 🎉 Please wait while we process your payment.');
           }}
           onError={(err) => {
             console.error('PayPal Subscription Error:', err);
-            alert('Something went wrong with the subscription.');
+            toast.error('Something went wrong with the subscription. Please try again.');
           }}
-          fundingSource="paypal" // ✅ Forces only the PayPal Wallet button
+          fundingSource="paypal"
           style={{
-            color: 'blue', // blue, silver, white, black
-            shape: 'pill', // pill, rect
+            color: 'blue',
+            shape: 'pill',
             label: 'subscribe',
-            tagline: false, // Removes "Powered by PayPal"
+            tagline: false,
             height: 45,
           }}
         />
 
         {/* ✅ Custom Debit/Credit Card Subscription Button */}
         <PayPalButtons
-          createSubscription={(data, actions) => {
+          createSubscription={async (data, actions) => {
+            const isValid = await validateSubscription();
+            if (!isValid) {
+              throw new Error('Subscription validation failed');
+            }
             return actions.subscription.create({
               plan_id: planId,
+              custom_id: user!.id?.toString(),
             });
           }}
           onApprove={async (data) => {
             console.log('Subscription Approved:', data);
-            alert(
-              'Thank you for subscribing! 🎉. Please wait until paypal has processed the payment.'
-            );
+            toast.success('Thank you for subscribing! 🎉 Please wait while we process your payment.');
           }}
           onError={(err) => {
             console.error('PayPal Subscription Error:', err);
-            alert('Something went wrong with the subscription.');
+            toast.error('Something went wrong with the subscription. Please try again.');
           }}
-          fundingSource="card" // ✅ Forces only the Debit/Credit Card button
+          fundingSource="card"
           style={{
-            color: 'black', // Matches a clean UI
+            color: 'black',
             shape: 'pill',
             label: 'subscribe',
             tagline: false,

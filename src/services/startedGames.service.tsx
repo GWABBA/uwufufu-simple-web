@@ -5,9 +5,41 @@ import {
   PickSelectionDto,
   StartedGameResponseDto,
   StartedGameResultDto,
+  StartedGameWithGameResponseDto,
 } from '@/dtos/startedGames.dtos';
 import axios from 'axios';
 import api from './api.service';
+
+export const fetchMyStartedGames = async (
+  query: {
+    page: number;
+    perPage: number;
+  }
+): Promise<StartedGameWithGameResponseDto[]> => {
+  const page = query.page || 1;
+  const perPage = query.perPage || 10;
+
+  try {
+    const { data } = await api.get<StartedGameWithGameResponseDto[]>(
+      `${config.apiUrl}/started-games`,
+      {
+        params: {
+          page,
+          perPage,
+        },
+      }
+    );
+    return data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || 'Failed to fetch my started games'
+      );
+    }
+
+    throw new Error('An unexpected error occurred');
+  }
+};
 
 export const createStartedGame = async (
   body: CreateStartedGameDto
@@ -76,6 +108,25 @@ export const fetchStartedGameBySlugAndId = async (
   try {
     const { data } = await axios.get<StartedGameResultDto>(
       `${config.apiUrl}/started-games/${id}/${slug}/result`
+    );
+    return data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || 'Failed to fetch started game'
+      );
+    }
+
+    throw new Error('An unexpected error occurred');
+  }
+};
+
+export const fetchStartedGameById = async (
+  id: number
+): Promise<StartedGameResponseDto> => {
+  try {
+    const { data } = await api.get<StartedGameResponseDto>(
+      `${config.apiUrl}/started-games/${id}`
     );
     return data;
   } catch (error: unknown) {

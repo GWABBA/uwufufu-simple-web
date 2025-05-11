@@ -3,6 +3,7 @@
     "create-game": "สร้างเกม",
     "profile": "โปรไฟล์",
     "my-games": "Worldcup ของฉัน",
+    "play-history": "ประวัติการเล่น",
     "join-discord": "เข้าร่วม Discord",
     "log-in": "เข้าสู่ระบบ",
     "log-out": "ออกจากระบบ",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "คุณแน่ใจหรือว่าต้องการยกเลิกการสมัครสมาชิก?",
     "failed-to-cancel-subscription": "ยกเลิกการสมัครสมาชิกไม่สำเร็จ",
     "cancel-subscription": "ยกเลิกการสมัครสมาชิก",
-    "upgrade-subscription": "อัปเกรดการสมัครสมาชิก"
+    "upgrade-subscription": "อัปเกรดการสมัครสมาชิก",
+    "save-username": "บันทึกชื่อผู้ใช้",
+    "name-updated-successfully": "อัปเดตชื่อสำเร็จแล้ว",
+    "failed-to-update-user": "ไม่สามารถอัปเดตผู้ใช้ได้"
   },
   "common": {
     "unknown-error-occurred": "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ",
@@ -153,5 +157,24 @@
     "animation-not-supported": "เบราว์เซอร์ของคุณไม่รองรับการบันทึกวิดีโอ แต่รูปภาพจะยังถูกบันทึก",
     "video-record-failed": "ไม่สามารถบันทึกวิดีโอในเบราว์เซอร์นี้ได้",
     "download-video": "ดาวน์โหลดวิดีโอ"
+  },
+  "report": {
+    "report": "รายงาน",
+    "report-this-game": "รายงาน Worldcup",
+    "select-placeholder": "เลือกเหตุผล",
+    "select-reason": "กรุณาเลือกเหตุผล",
+    "inappropriate-content": "เนื้อหาไม่เหมาะสม",
+    "misleading-or-spam": "ทำให้เข้าใจผิดหรือสแปม",
+    "offensive-language": "ภาษาหยาบคาย",
+    "nsfw-without-tag": "NSFW ไม่มีแท็ก",
+    "copyright-violation": "ละเมิดลิขสิทธิ์",
+    "other": "อื่นๆ",
+    "submit": "ส่ง"
+  },
+  "play-history": {
+    "play-history": "ประวัติการเล่น",
+    "completed": "สำเร็จ",
+    "in-progress": "กำลังดำเนินการ",
+    "no-plays": "ไม่มีการเล่น"
   }
 }

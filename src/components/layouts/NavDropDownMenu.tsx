@@ -5,9 +5,13 @@ import { useTranslation } from 'react-i18next';
 
 interface NavDropdownMenuProps {
   onLogout: () => void;
+  onClose: () => void;
 }
 
-const NavDropdownMenu: React.FC<NavDropdownMenuProps> = ({ onLogout }) => {
+const NavDropdownMenu: React.FC<NavDropdownMenuProps> = ({
+  onLogout,
+  onClose,
+}) => {
   const { t } = useTranslation();
 
   return (
@@ -15,7 +19,17 @@ const NavDropdownMenu: React.FC<NavDropdownMenuProps> = ({ onLogout }) => {
       <ul>
         <li className="md:hidden">
           <Link
+            href="/uwu"
+            onClick={onClose}
+            className="block px-4 py-2 text-white hover:bg-gray-100 hover:text-gray-800"
+          >
+            UwU
+          </Link>
+        </li>
+        <li className="md:hidden">
+          <Link
             href="/plans"
+            onClick={onClose}
             className="block px-4 py-2 text-white hover:bg-gray-100 hover:text-gray-800"
           >
             {t('navigation.subscription')}
@@ -24,14 +38,25 @@ const NavDropdownMenu: React.FC<NavDropdownMenuProps> = ({ onLogout }) => {
         <li>
           <Link
             href="/profile"
+            onClick={onClose}
             className="block px-4 py-2 text-white hover:bg-gray-100 hover:text-gray-800"
           >
             {t('navigation.profile')}
           </Link>
         </li>
+        <li>
+          <Link
+            href="/my/plays"
+            onClick={onClose}
+            className="block px-4 py-2 text-white hover:bg-gray-100 hover:text-gray-800"
+          >
+            {t('navigation.play-history')}
+          </Link>
+        </li>
         <li className="md:hidden">
           <Link
             href="/create-game"
+            onClick={onClose}
             className="block px-4 py-2 text-white hover:bg-gray-100 hover:text-gray-800"
           >
             {t('navigation.create-game')}
@@ -40,6 +65,7 @@ const NavDropdownMenu: React.FC<NavDropdownMenuProps> = ({ onLogout }) => {
         <li>
           <Link
             href="/my/games"
+            onClick={onClose}
             className="block px-4 py-2 text-white hover:bg-gray-100 hover:text-gray-800"
           >
             {t('navigation.my-games')}
@@ -48,6 +74,7 @@ const NavDropdownMenu: React.FC<NavDropdownMenuProps> = ({ onLogout }) => {
         <li>
           <Link
             href="https://discord.gg/jFcuMQdTzC"
+            onClick={onClose}
             target="_blank"
             className="block px-4 py-2 text-white hover:bg-gray-100 hover:text-gray-800"
           >

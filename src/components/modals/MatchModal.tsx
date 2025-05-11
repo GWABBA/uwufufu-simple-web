@@ -104,12 +104,20 @@ const MatchModal: React.FC<MatchModalProps> = ({
     setFullSizeMedia(null); // Close full-size modal
   };
 
-  const getYouTubeEmbedUrl = (url: string) => {
+  const getYouTubeEmbedUrl = (url: string, startTime: number = 0, endTime: number = 0) => {
     const embedUrl = url.includes('youtu.be')
       ? url.replace('youtu.be/', 'www.youtube.com/embed/')
       : url.replace('watch?v=', 'embed/');
 
-    return `${embedUrl}?enablejsapi=1`;
+    const params = new URLSearchParams({
+      enablejsapi: '1',
+      start: startTime.toString(),
+      end: endTime.toString(),
+      rel: '0',
+      autoplay: '0'
+    });
+
+    return `${embedUrl}?${params.toString()}`;
   };
 
   // const handleVideoControl = (
@@ -289,7 +297,9 @@ const MatchModal: React.FC<MatchModalProps> = ({
                           <iframe
                             id={`ytplayer-${startedGame.match.selection1.id}`}
                             src={getYouTubeEmbedUrl(
-                              startedGame.match.selection1.videoUrl
+                              startedGame.match.selection1.videoUrl,
+                              startedGame.match.selection1.startTime,
+                              startedGame.match.selection1.endTime
                             )}
                             className="rounded mx-auto w-full h-full object-contain"
                             allowFullScreen
@@ -392,12 +402,13 @@ const MatchModal: React.FC<MatchModalProps> = ({
                           <iframe
                             id={`ytplayer-${startedGame.match.selection2.id}`}
                             src={getYouTubeEmbedUrl(
-                              startedGame.match.selection2.videoUrl
+                              startedGame.match.selection2.videoUrl,
+                              startedGame.match.selection2.startTime,
+                              startedGame.match.selection2.endTime
                             )}
                             className="rounded mx-auto w-full h-full object-contain"
                             allowFullScreen
                             style={{
-                              // width: '100%',
                               border: 'none',
                             }}
                             onMouseEnter={() =>

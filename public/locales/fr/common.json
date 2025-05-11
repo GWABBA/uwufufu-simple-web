@@ -3,6 +3,7 @@
     "create-game": "Créer un jeu",
     "profile": "Profil",
     "my-games": "Mes Worldcups",
+    "play-history": "Historique des parties",
     "join-discord": "Rejoindre Discord",
     "log-in": "Connexion",
     "log-out": "Déconnexion",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Êtes-vous sûr de vouloir annuler votre abonnement ?",
     "failed-to-cancel-subscription": "Échec de l'annulation de l'abonnement",
     "cancel-subscription": "Annuler l'abonnement",
-    "upgrade-subscription": "Améliorer l'abonnement"
+    "upgrade-subscription": "Améliorer l'abonnement",
+    "save-username": "Enregistrer le nom d’utilisateur",
+    "name-updated-successfully": "Nom mis à jour avec succès",
+    "failed-to-update-user": "Échec de la mise à jour de l’utilisateur"
   },
   "common": {
     "unknown-error-occurred": "Une erreur inconnue s'est produite",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Votre navigateur ne prend pas en charge l'enregistrement vidéo. L’image du résultat sera quand même enregistrée.",
     "video-record-failed": "L'enregistrement vidéo a échoué dans ce navigateur.",
     "download-video": "Télécharger la vidéo"
+  },
+  "report": {
+    "report": "Signaler",
+    "report-this-game": "Signaler cette Worldcup",
+    "select-placeholder": "Sélectionnez une raison",
+    "select-reason": "Veuillez sélectionner une raison",
+    "inappropriate-content": "Contenu inapproprié",
+    "misleading-or-spam": "Trompeur ou spam",
+    "offensive-language": "Langage offensant",
+    "nsfw-without-tag": "NSFW sans étiquette",
+    "copyright-violation": "Violation de droits d’auteur",
+    "other": "Autre",
+    "submit": "Envoyer"
+  },
+  "play-history": {
+    "play-history": "Historique des parties",
+    "completed": "Terminé",
+    "in-progress": "En cours",
+    "no-plays": "Aucune partie trouvée"
   }
 }

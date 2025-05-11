@@ -3,6 +3,7 @@
     "create-game": "Создать игру",
     "profile": "Профиль",
     "my-games": "Мои Worldcup",
+    "play-history": "История игр",
     "join-discord": "Присоединиться к Discord",
     "log-in": "Войти",
     "log-out": "Выйти",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Вы уверены, что хотите отменить подписку?",
     "failed-to-cancel-subscription": "Не удалось отменить подписку",
     "cancel-subscription": "Отменить подписку",
-    "upgrade-subscription": "Обновить подписку"
+    "upgrade-subscription": "Обновить подписку",
+    "save-username": "Сохранить имя пользователя",
+    "name-updated-successfully": "Имя успешно обновлено",
+    "failed-to-update-user": "Не удалось обновить пользователя"
   },
   "common": {
     "unknown-error-occurred": "Произошла неизвестная ошибка",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Ваш браузер не поддерживает запись видео. Изображение будет сохранено.",
     "video-record-failed": "Не удалось записать видео в этом браузере.",
     "download-video": "Скачать видео"
+  },
+  "report": {
+    "report": "Пожаловаться",
+    "report-this-game": "Пожаловаться на Worldcup",
+    "select-placeholder": "Выберите причину",
+    "select-reason": "Пожалуйста, выберите причину",
+    "inappropriate-content": "Неподходящий контент",
+    "misleading-or-spam": "Обман или спам",
+    "offensive-language": "Оскорбительный язык",
+    "nsfw-without-tag": "Контент для взрослых без пометки",
+    "copyright-violation": "Нарушение авторских прав",
+    "other": "Другое",
+    "submit": "Отправить"
+  },
+  "play-history": {
+    "play-history": "История игр",
+    "completed": "Завершено",
+    "in-progress": "В процессе",
+    "no-plays": "Нет игр"
   }
 }

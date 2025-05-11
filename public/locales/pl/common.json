@@ -3,6 +3,7 @@
     "create-game": "Utwórz grę",
     "profile": "Profil",
     "my-games": "Moje Worldcupy",
+    "play-history": "Historia gier",
     "join-discord": "Dołącz do Discorda",
     "log-in": "Zaloguj się",
     "log-out": "Wyloguj się",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Czy na pewno chcesz anulować subskrypcję?",
     "failed-to-cancel-subscription": "Nie udało się anulować subskrypcji",
     "cancel-subscription": "Anuluj subskrypcję",
-    "upgrade-subscription": "Zmień subskrypcję"
+    "upgrade-subscription": "Zmień subskrypcję",
+    "save-username": "Zapisz nazwę użytkownika",
+    "name-updated-successfully": "Nazwa została pomyślnie zaktualizowana",
+    "failed-to-update-user": "Nie udało się zaktualizować użytkownika"
   },
   "common": {
     "unknown-error-occurred": "Wystąpił nieznany błąd",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Twoja przeglądarka nie obsługuje nagrywania wideo. Obraz zostanie zapisany.",
     "video-record-failed": "Nagrywanie wideo nie powiodło się w tej przeglądarce.",
     "download-video": "Pobierz wideo"
+  },
+  "report": {
+    "report": "Zgłoś",
+    "report-this-game": "Zgłoś Worldcup",
+    "select-placeholder": "Wybierz powód",
+    "select-reason": "Proszę wybrać powód",
+    "inappropriate-content": "Nieodpowiednia treść",
+    "misleading-or-spam": "Wprowadzające w błąd lub spam",
+    "offensive-language": "Obraźliwy język",
+    "nsfw-without-tag": "NSFW bez oznaczenia",
+    "copyright-violation": "Naruszenie praw autorskich",
+    "other": "Inne",
+    "submit": "Wyślij"
+  },
+  "play-history": {
+    "play-history": "Historia gier",
+    "completed": "Zakończone",
+    "in-progress": "W toku",
+    "no-plays": "Brak gier"
   }
 }

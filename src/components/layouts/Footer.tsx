@@ -9,7 +9,7 @@ export default function Footer() {
   const { t } = useTranslation();
 
   const pathname = usePathname();
-  if (pathname === '/') {
+  if (pathname === '/' || pathname === '/my/plays') {
     return null;
   }
 

@@ -3,6 +3,7 @@
 import {
   createStartedGame,
   pickSelection,
+  fetchStartedGameById,
 } from '@/services/startedGames.service';
 import { Selection, StartedGameResponseDto } from '@/dtos/startedGames.dtos';
 import { Worldcup } from '@/dtos/worldcup.dtos';
@@ -17,9 +18,13 @@ import LoadingAnimation from '@/components/animation/Loading';
 import { useTranslation } from 'react-i18next';
 import { useAppSelector } from '@/store/hooks';
 import { useRouter } from 'next/navigation';
+import ReportGameModal from '@/components/modals/ReportGameModal';
+import { Siren } from 'lucide-react';
+import { createReport } from '@/services/report.service';
 
 interface WorldcupClientProps {
   worldcup: Worldcup;
+  startedGameId?: number;
 }
 
 type ModalContent = {
@@ -27,7 +32,7 @@ type ModalContent = {
   src: string;
 } | null;
 
-export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
+export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClientProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const user = useAppSelector((state) => state.auth.user);
@@ -47,12 +52,15 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
   const [startedGame, setStartedGame] = useState<StartedGameResponseDto | null>(
     null
   );
+  const [reportModalOpen, setReportModalOpen] = useState(false);
   const [roundsModalOpen, setRoundsModalOpen] = useState(false);
   const [matchModalOpen, setMatchModalOpen] = useState(false);
   const [selections, setSelections] = useState<SelectionDto[]>([]);
   const [selectionsPage, setSelectionsPage] = useState<number>(1);
   const [selectionsTotalPages, setSelectionsTotalPages] = useState(1);
   const selectionsPerPage = 10;
+
+  const [loadingExistingGame, setLoadingExistingGame] = useState(false);
 
   const handleOnPlayNow = () => {
     if (worldcup.isNsfw && (!user || (user && user.tier === 'basic'))) {
@@ -78,6 +86,28 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
       setMatchModalOpen(true);
     }
   }, [startedGame]);
+
+  // Load existing game if startedGameId is provided
+  useEffect(() => {
+    const loadExistingGame = async () => {
+      if (startedGameId) {
+        try {
+          setLoadingExistingGame(true);
+          setIsFetching(true);
+          const game = await fetchStartedGameById(startedGameId);
+          setStartedGame(game);
+          setMatchModalOpen(true);
+        } catch (error) {
+          console.error('Error loading existing game:', error);
+        } finally {
+          setIsFetching(false);
+          setLoadingExistingGame(false);
+        }
+      }
+    };
+    
+    loadExistingGame();
+  }, [startedGameId]);
 
   useEffect(() => {
     const getSelections = async () => {
@@ -167,6 +197,19 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
     } catch (error) {
       console.error('Error normalizing YouTube URL:', error);
       return null;
+    }
+  };
+
+  const handleReportSubmit = async (reason: string) => {
+    try {
+      await createReport({
+        gameId: worldcup.id,
+        reason,
+      });
+      alert('Report submitted successfully');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to submit report');
     }
   };
 
@@ -444,6 +487,15 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  if (loadingExistingGame) {
+    console.log('loadingExistingGame');
+    return (
+      <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 px-2 md:px-0">
+        <LoadingAnimation />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 px-2 md:px-0">
       <div className="md:flex justify-between mb-8">
@@ -455,42 +507,67 @@ export default function WorldcupClient({ worldcup }: WorldcupClientProps) {
           <p className="text-base md:text-lg text-gray-400 mb-4">
             {worldcup.description}
           </p>
-          {worldcup.user && (
-            <div className="flex items-center">
-              {worldcup.user.profileImage ? (
-                <Image
-                  src={worldcup.user.profileImage!}
-                  alt="profile"
-                  width={24}
-                  height={24}
-                  className="rounded-full mr-1"
-                ></Image>
-              ) : (
-                <Image
-                  src="/assets/icons/account-circle.svg"
-                  alt="profile"
-                  width={24}
-                  height={24}
-                  className="rounded-full mr-1"
-                ></Image>
-              )}
-              <span className="text-base md:text-lg text-gray-400">
-                {worldcup.user.name}
-              </span>
+          <div className="flex justify-between items-center">
+            {worldcup.user && (
+              <div className="flex items-center">
+                {worldcup.user.profileImage ? (
+                  <Image
+                    src={worldcup.user.profileImage!}
+                    alt="profile"
+                    width={24}
+                    height={24}
+                    className="rounded-full mr-1"
+                  ></Image>
+                ) : (
+                  <Image
+                    src="/assets/icons/account-circle.svg"
+                    alt="profile"
+                    width={24}
+                    height={24}
+                    className="rounded-full mr-1"
+                  ></Image>
+                )}
+                <span className="text-base md:text-lg text-gray-400">
+                  {worldcup.user.name}
+                </span>
+              </div>
+            )}
+            <div
+              className="text-uwu-red flex items-center w-full justify-end cursor-pointer md:hidden"
+              onClick={() => setReportModalOpen(true)}
+            >
+              <Siren className="mr-2" />
             </div>
-          )}
+          </div>
         </div>
         {/* play button area */}
-        <div className="flex justify-center md:block mt-4 md:mt-0">
-          <button
-            onClick={handleOnPlayNow}
-            className="relative overflow-hidden p-2 rounded-lg text-lg md:text-2xl font-extrabold text-white px-16 bg-gradient-to-r from-[#ff6f54] via-uwu-red to-[#8b1e12] bg-[length:200%_200%] animate-gradient-glow"
+        <div className="md:block mt-4 md:mt-0">
+          <div className="w-full flex justify-center ">
+            <button
+              onClick={handleOnPlayNow}
+              className="relative overflow-hidden p-2 rounded-lg text-lg md:text-2xl font-extrabold text-white px-16 bg-gradient-to-r from-[#ff6f54] via-uwu-red to-[#8b1e12] bg-[length:200%_200%] animate-gradient-glow"
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-[#ff6f54] via-uwu-red to-[#8b1e12] opacity-50 blur-lg"></span>
+              <span className="relative">{t('worldcup.play-now')}</span>
+            </button>
+          </div>
+          {/* report button for desktop */}
+          <div
+            className="text-uwu-red hidden items-center mt-8 w-full justify-end cursor-pointer md:flex"
+            onClick={() => setReportModalOpen(true)}
           >
-            <span className="absolute inset-0 bg-gradient-to-r from-[#ff6f54] via-uwu-red to-[#8b1e12] opacity-50 blur-lg"></span>
-            <span className="relative">{t('worldcup.play-now')}</span>
-          </button>
+            <Siren className="mr-2" />
+            <span className="underline">{t('report.report-this-game')}</span>
+          </div>
         </div>
       </div>
+
+      {/* Report Game Modal */}
+      <ReportGameModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        onSubmit={handleReportSubmit}
+      />
 
       {/* Render the RoundsModal */}
       <RoundsModal

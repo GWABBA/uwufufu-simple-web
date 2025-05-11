@@ -36,6 +36,13 @@ export interface Match {
   winnerId: number;
 }
 
+export interface StartedGameWithGameResponseDto {
+  id: number;
+  status: string;
+  roundsOf: number;
+  game: Worldcup;
+}
+
 export interface StartedGameResponseDto {
   startedGame: StartedGame;
   previousMatch: Match;

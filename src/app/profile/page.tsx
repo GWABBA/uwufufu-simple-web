@@ -6,6 +6,7 @@ import {
   sendEmailConfirmationEmail,
   updatedPassword,
   updateUser,
+  updateUserName,
 } from '@/services/auth.service';
 import { useEffect, useState } from 'react';
 import ImageUpload from '@/../public/assets/icons/image-upload.svg';
@@ -30,11 +31,13 @@ export default function ProfilePage() {
   const [subscription, setSubscription] = useState<PaymentResponseDto | null>(
     null
   );
+  const [newUserName, setNewUserName] = useState('');
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       const user = await fetchMe();
       setUser(user);
+      setNewUserName(user.name || '');
       try {
         const subscription = await fetchActiveSubscription();
         setSubscription(subscription);
@@ -45,10 +48,6 @@ export default function ProfilePage() {
     };
     fetchUserInfo();
   }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target);
-  };
 
   const handleProfileImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -117,6 +116,21 @@ export default function ProfilePage() {
     }
   };
 
+  const onSaveUsername = async () => {
+    if (!user) return;
+    try {
+      await updateUserName({ name: newUserName });
+      setUser({ ...user, name: newUserName });
+      toast.success(t('user-profile.name-updated-successfully'));
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : t('user-profile.failed-to-update-user')
+      );
+    }
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 px-2 md:px-0">
       <h1 className="text-xl md:text-4xl font-extrabold text-white mb-4">
@@ -179,11 +193,19 @@ export default function ProfilePage() {
             <input
               type="text"
               id="name"
-              className="p-2 rounded-md w-full bg-uwu-dark-gray text-white"
+              className="p-2 rounded-md w-full bg-uwu-dark-gray text-white mb-4"
               placeholder="Name"
-              value={user?.name || ''}
-              onChange={handleInputChange}
+              value={newUserName}
+              onChange={(e) => setNewUserName(e.target.value)}
             />
+            <div className="flex justify-end">
+              <button
+                className="h-10 bg-uwu-red rounded-md text-white px-2"
+                onClick={onSaveUsername}
+              >
+                {t('user-profile.save-username')}
+              </button>
+            </div>
           </div>
 
           {/* Password */}

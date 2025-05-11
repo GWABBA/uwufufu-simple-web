@@ -3,6 +3,7 @@
     "create-game": "ゲーム作成",
     "profile": "プロフィール",
     "my-games": "マイワールドカップ",
+    "play-history": "プレイ履歴",
     "join-discord": "Discordに参加",
     "log-in": "ログイン",
     "log-out": "ログアウト",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "本当にサブスクリプションをキャンセルしますか？",
     "failed-to-cancel-subscription": "サブスクリプションのキャンセルに失敗しました",
     "cancel-subscription": "サブスクリプションをキャンセル",
-    "upgrade-subscription": "サブスクリプションをアップグレード"
+    "upgrade-subscription": "サブスクリプションをアップグレード",
+    "save-username": "ユーザー名を保存",
+    "name-updated-successfully": "名前が正常に更新されました",
+    "failed-to-update-user": "ユーザーの更新に失敗しました"
   },
   "common": {
     "unknown-error-occurred": "不明なエラーが発生しました",
@@ -153,5 +157,24 @@
     "animation-not-supported": "このブラウザはビデオ録画をサポートしていません。結果の画像は保存されます。",
     "video-record-failed": "このブラウザではビデオ録画に失敗しました。",
     "download-video": "動画をダウンロード"
+  },
+  "report": {
+    "report": "報告する",
+    "report-this-game": "ワールドカップを報告する",
+    "select-placeholder": "理由を選択してください",
+    "select-reason": "理由を選んでください",
+    "inappropriate-content": "不適切なコンテンツ",
+    "misleading-or-spam": "誤解を招く内容またはスパム",
+    "offensive-language": "攻撃的な言葉",
+    "nsfw-without-tag": "NSFWタグなし",
+    "copyright-violation": "著作権侵害",
+    "other": "その他",
+    "submit": "送信"
+  },
+  "play-history": {
+    "play-history": "プレイ履歴",
+    "completed": "完了",
+    "in-progress": "進行中",
+    "no-plays": "プレイ履歴がありません"
   }
 }

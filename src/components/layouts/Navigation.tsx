@@ -62,7 +62,12 @@ const Navigation = () => {
           />
         )}
       </div>
-      {dropdownOpen && <NavDropdownMenu onLogout={handleLogout} />}
+      {dropdownOpen && (
+        <NavDropdownMenu
+          onLogout={handleLogout}
+          onClose={() => setDropdownOpen(false)}
+        />
+      )}
     </div>
   );
 
@@ -85,14 +90,14 @@ const Navigation = () => {
         <div className="flex h-full">
           {/* UwU */}
           <Link href="/uwu" className="flex items-center">
-            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg mr-4">
+            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg mr-4 text-sm">
               UwU
             </button>
           </Link>
 
           {/* plans */}
           <Link href="/plans" className="flex items-center">
-            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg mr-4">
+            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg mr-4 text-sm">
               {t('navigation.subscription')}
             </button>
           </Link>
@@ -103,13 +108,13 @@ const Navigation = () => {
             target="_blank"
             className="flex items-center"
           >
-            <button className="bg-[#5865F2] py-2 px-2 text-white rounded-lg mr-4 flex items-center">
+            <button className="bg-[#5865F2] py-2 px-2 text-white rounded-lg mr-4 flex items-center text-sm">
               <Image
-                className="mr-2"
+                className="mr-1"
                 src="/assets/social-medias/share_discord.svg"
                 alt="Twitter"
-                width={24}
-                height={24}
+                width={18}
+                height={18}
               />
               Discord
             </button>
@@ -117,7 +122,7 @@ const Navigation = () => {
 
           {/* create game */}
           <Link href="/create-game" className="flex items-center">
-            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg">
+            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg text-sm">
               {t('navigation.create-game')}
             </button>
           </Link>

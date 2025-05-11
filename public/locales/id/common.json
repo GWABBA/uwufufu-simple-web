@@ -3,6 +3,7 @@
     "create-game": "Buat Game",
     "profile": "Profil",
     "my-games": "Worldcup Saya",
+    "play-history": "Riwayat Permainan",
     "join-discord": "Gabung Discord",
     "log-in": "Masuk",
     "log-out": "Keluar",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Yakin ingin membatalkan langganan Anda?",
     "failed-to-cancel-subscription": "Gagal membatalkan langganan",
     "cancel-subscription": "Batalkan Langganan",
-    "upgrade-subscription": "Upgrade Langganan"
+    "upgrade-subscription": "Upgrade Langganan",
+    "save-username": "Simpan nama pengguna",
+    "name-updated-successfully": "Nama berhasil diperbarui",
+    "failed-to-update-user": "Gagal memperbarui pengguna"
   },
   "common": {
     "unknown-error-occurred": "Terjadi kesalahan yang tidak diketahui",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Browser Anda tidak mendukung perekaman video. Gambar hasil akan tetap disimpan.",
     "video-record-failed": "Perekaman video gagal di browser ini.",
     "download-video": "Unduh Video"
+  },
+  "report": {
+    "report": "Laporkan",
+    "report-this-game": "Laporkan Worldcup ini",
+    "select-placeholder": "Pilih alasan",
+    "select-reason": "Silakan pilih alasan",
+    "inappropriate-content": "Konten tidak pantas",
+    "misleading-or-spam": "Menyesatkan atau spam",
+    "offensive-language": "Bahasa ofensif",
+    "nsfw-without-tag": "NSFW tanpa tag",
+    "copyright-violation": "Pelanggaran hak cipta",
+    "other": "Lainnya",
+    "submit": "Kirim"
+  },
+  "play-history": {
+    "play-history": "Riwayat Permainan",
+    "completed": "Selesai",
+    "in-progress": "Sedang Berlangsung",
+    "no-plays": "Tidak ada permainan"
   }
 }

@@ -3,6 +3,7 @@
     "create-game": "Opret spil",
     "profile": "Profil",
     "my-games": "Mine Worldcups",
+    "play-history": "Spilhistorik",
     "join-discord": "Deltag i Discord",
     "log-in": "Log ind",
     "log-out": "Log ud",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Er du sikker på, at du vil opsige dit abonnement?",
     "failed-to-cancel-subscription": "Kunne ikke opsige abonnementet",
     "cancel-subscription": "Opsig abonnement",
-    "upgrade-subscription": "Opgrader abonnement"
+    "upgrade-subscription": "Opgrader abonnement",
+    "save-username": "Gem brugernavn",
+    "name-updated-successfully": "Navnet blev opdateret",
+    "failed-to-update-user": "Det lykkedes ikke at opdatere brugeren"
   },
   "common": {
     "unknown-error-occurred": "Der opstod en ukendt fejl",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Din browser understøtter ikke videooptagelse. Billedet af resultatet vil stadig blive gemt.",
     "video-record-failed": "Videooptagelse mislykkedes i denne browser.",
     "download-video": "Download video"
+  },
+  "report": {
+    "report": "Rapportér",
+    "report-this-game": "Rapportér Worldcup",
+    "select-placeholder": "Vælg en grund",
+    "select-reason": "Vælg venligst en grund",
+    "inappropriate-content": "Upassende indhold",
+    "misleading-or-spam": "Vildledende eller spam",
+    "offensive-language": "Stødende sprog",
+    "nsfw-without-tag": "NSFW uden mærkning",
+    "copyright-violation": "Ophavsretskrænkelse",
+    "other": "Andet",
+    "submit": "Indsend"
+  },
+  "play-history": {
+    "play-history": "Spilhistorik",
+    "completed": "Fuldført",
+    "in-progress": "Igangværende",
+    "no-plays": "Ingen spil fundet"
   }
 }

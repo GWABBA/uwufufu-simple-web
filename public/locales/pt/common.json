@@ -3,6 +3,7 @@
     "create-game": "Criar Jogo",
     "profile": "Perfil",
     "my-games": "Meus Worldcups",
+    "play-history": "Histórico de Jogos",
     "join-discord": "Entrar no Discord",
     "log-in": "Entrar",
     "log-out": "Sair",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Tem certeza de que deseja cancelar sua assinatura?",
     "failed-to-cancel-subscription": "Falha ao cancelar a assinatura",
     "cancel-subscription": "Cancelar assinatura",
-    "upgrade-subscription": "Melhorar assinatura"
+    "upgrade-subscription": "Melhorar assinatura",
+    "save-username": "Guardar nome de utilizador",
+    "name-updated-successfully": "Nome atualizado com sucesso",
+    "failed-to-update-user": "Falha ao atualizar o utilizador"
   },
   "common": {
     "unknown-error-occurred": "Ocorreu um erro desconhecido",
@@ -153,5 +157,24 @@
     "animation-not-supported": "O seu navegador não suporta gravação de vídeo. A imagem será guardada.",
     "video-record-failed": "Falha ao gravar vídeo neste navegador.",
     "download-video": "Descarregar vídeo"
+  },
+  "report": {
+    "report": "Denunciar",
+    "report-this-game": "Denunciar Worldcup",
+    "select-placeholder": "Selecione um motivo",
+    "select-reason": "Por favor, selecione um motivo",
+    "inappropriate-content": "Conteúdo impróprio",
+    "misleading-or-spam": "Enganoso ou spam",
+    "offensive-language": "Linguagem ofensiva",
+    "nsfw-without-tag": "NSFW sem etiqueta",
+    "copyright-violation": "Violação de direitos autorais",
+    "other": "Outro",
+    "submit": "Enviar"
+  },
+  "play-history": {
+    "play-history": "Histórico de Jogos",
+    "completed": "Completo",
+    "in-progress": "Em andamento",
+    "no-plays": "Nenhum jogo"
   }
 }

@@ -52,6 +52,7 @@ export default function NewHomeComponent() {
   );
   const [tempSearchQuery, setTempSearchQuery] = useState('');
   const [isFetching, setIsFetching] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const [games, setGames] = useState<Worldcup[]>([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -124,6 +125,7 @@ export default function NewHomeComponent() {
       } finally {
         setIsFetching(false);
         isFetchingRef.current = false;
+        setInitialLoading(false);
       }
     };
 
@@ -477,7 +479,11 @@ export default function NewHomeComponent() {
 
       {/* Games grid - virtualized with body scroll */}
       <div className="w-full">
-        {games.length === 0 && !isFetching ? (
+        {initialLoading ? (
+          <div className="flex justify-center py-8">
+            <LoadingAnimation />
+          </div>
+        ) : games.length === 0 ? (
           <div className="text-center text-white py-8">No games found</div>
         ) : (
           <Virtuoso

@@ -3,6 +3,7 @@
     "create-game": "创建游戏",
     "profile": "个人资料",
     "my-games": "我的世界杯",
+    "play-history": "游戏历史",
     "join-discord": "加入 Discord",
     "log-in": "登录",
     "log-out": "登出",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "确定要取消订阅吗？",
     "failed-to-cancel-subscription": "取消订阅失败",
     "cancel-subscription": "取消订阅",
-    "upgrade-subscription": "升级订阅"
+    "upgrade-subscription": "升级订阅",
+    "save-username": "保存用户名",
+    "name-updated-successfully": "用户名更新成功",
+    "failed-to-update-user": "更新用户失败"
   },
   "common": {
     "unknown-error-occurred": "发生未知错误",
@@ -153,5 +157,24 @@
     "animation-not-supported": "您的浏览器不支持视频录制，但结果图像将会被保存。",
     "video-record-failed": "该浏览器中视频录制失败。",
     "download-video": "下载视频"
+  },
+  "report": {
+    "report": "举报",
+    "report-this-game": "举报此 Worldcup",
+    "select-placeholder": "请选择原因",
+    "select-reason": "请提供一个举报原因",
+    "inappropriate-content": "不当内容",
+    "misleading-or-spam": "误导或垃圾信息",
+    "offensive-language": "冒犯性语言",
+    "nsfw-without-tag": "未标记的 NSFW 内容",
+    "copyright-violation": "侵犯版权",
+    "other": "其他",
+    "submit": "提交"
+  },
+  "play-history": {
+    "play-history": "游戏历史",
+    "completed": "已完成",
+    "in-progress": "进行中",
+    "no-plays": "没有游戏"
   }
 }

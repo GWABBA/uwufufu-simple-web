@@ -3,6 +3,7 @@
     "create-game": "Тоглоом үүсгэх",
     "profile": "Профайл",
     "my-games": "Миний Worldcup-ууд",
+    "play-history": "Тоглолтын түүх",
     "join-discord": "Discord-д нэгдэх",
     "log-in": "Нэвтрэх",
     "log-out": "Гарах",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Захиалгаа цуцлахдаа итгэлтэй байна уу?",
     "failed-to-cancel-subscription": "Захиалга цуцлахад алдаа гарлаа",
     "cancel-subscription": "Захиалга цуцлах",
-    "upgrade-subscription": "Захиалга сайжруулах"
+    "upgrade-subscription": "Захиалга сайжруулах",
+    "save-username": "Хэрэглэгчийн нэр хадгалах",
+    "name-updated-successfully": "Нэр амжилттай шинэчлэгдлээ",
+    "failed-to-update-user": "Хэрэглэгчийг шинэчлэхэд амжилтгүй боллоо"
   },
   "common": {
     "unknown-error-occurred": "Үл мэдэгдэх алдаа гарлаа",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Таны хөтөч видео бичлэгийг дэмжихгүй байна. Гэсэн ч үр дүнгийн зураг хадгалагдана.",
     "video-record-failed": "Энэ хөтөч дээр видео бичлэг амжилтгүй боллоо.",
     "download-video": "Видео татах"
+  },
+  "report": {
+    "report": "Тайлагнах",
+    "report-this-game": "Worldcup-ийг тайлагнах",
+    "select-placeholder": "Шалтгаан сонгоно уу",
+    "select-reason": "Шалтгаанаа сонгоно уу",
+    "inappropriate-content": "Тохиромжгүй агуулга",
+    "misleading-or-spam": "Хуурмаг эсвэл спам",
+    "offensive-language": "Доромжилсон хэллэг",
+    "nsfw-without-tag": "NSFW шошгогүй",
+    "copyright-violation": "Зохиогчийн эрхийн зөрчил",
+    "other": "Бусад",
+    "submit": "Илгээх"
+  },
+  "play-history": {
+    "play-history": "Тоглолтын түүх",
+    "completed": "Дууссан",
+    "in-progress": "Дууссан",
+    "no-plays": "Тоглолтын түүх байхгүй"
   }
 }

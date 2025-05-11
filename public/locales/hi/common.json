@@ -3,6 +3,7 @@
     "create-game": "गेम बनाएं",
     "profile": "प्रोफ़ाइल",
     "my-games": "मेरे वर्ल्डकप्स",
+    "play-history": "खेल इतिहास",
     "join-discord": "डिस्कॉर्ड से जुड़ें",
     "log-in": "लॉग इन करें",
     "log-out": "लॉग आउट करें",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "क्या आप वाकई अपनी सदस्यता रद्द करना चाहते हैं?",
     "failed-to-cancel-subscription": "सदस्यता रद्द करने में विफल",
     "cancel-subscription": "सदस्यता रद्द करें",
-    "upgrade-subscription": "सदस्यता अपग्रेड करें"
+    "upgrade-subscription": "सदस्यता अपग्रेड करें",
+    "save-username": "यूज़रनेम सहेजें",
+    "name-updated-successfully": "नाम सफलतापूर्वक अपडेट किया गया",
+    "failed-to-update-user": "यूज़र को अपडेट करने में विफल"
   },
   "common": {
     "unknown-error-occurred": "एक अज्ञात त्रुटि हुई",
@@ -153,5 +157,24 @@
     "animation-not-supported": "आपका ब्राउज़र वीडियो रिकॉर्डिंग का समर्थन नहीं करता। परिणाम की छवि फिर भी सहेजी जाएगी।",
     "video-record-failed": "इस ब्राउज़र में वीडियो रिकॉर्डिंग विफल रही।",
     "download-video": "वीडियो डाउनलोड करें"
+  },
+  "report": {
+    "report": "रिपोर्ट करें",
+    "report-this-game": "वर्ल्डकप की रिपोर्ट करें",
+    "select-placeholder": "कोई कारण चुनें",
+    "select-reason": "कृपया एक कारण चुनें",
+    "inappropriate-content": "अनुचित सामग्री",
+    "misleading-or-spam": "भ्रामक या स्पैम",
+    "offensive-language": "अपमानजनक भाषा",
+    "nsfw-without-tag": "NSFW टैग के बिना",
+    "copyright-violation": "कॉपीराइट उल्लंघन",
+    "other": "अन्य",
+    "submit": "सबमिट करें"
+  },
+  "play-history": {
+    "play-history": "खेल इतिहास",
+    "completed": "पूरा हुआ",
+    "in-progress": "आगे बढ़ते हुए",
+    "no-plays": "कोई खेल नहीं"
   }
 }

@@ -3,6 +3,7 @@
     "create-game": "Luo peli",
     "profile": "Profiili",
     "my-games": "Omat Worldcupit",
+    "play-history": "Pelit historia",
     "join-discord": "Liity Discordiin",
     "log-in": "Kirjaudu sisään",
     "log-out": "Kirjaudu ulos",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Haluatko varmasti peruuttaa tilauksesi?",
     "failed-to-cancel-subscription": "Tilauksen peruutus epäonnistui",
     "cancel-subscription": "Peruuta tilaus",
-    "upgrade-subscription": "Päivitä tilaus"
+    "upgrade-subscription": "Päivitä tilaus",
+    "save-username": "Tallenna käyttäjänimi",
+    "name-updated-successfully": "Nimi päivitettiin onnistuneesti",
+    "failed-to-update-user": "Käyttäjän päivittäminen epäonnistui"
   },
   "common": {
     "unknown-error-occurred": "Tapahtui tuntematon virhe",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Selaimesi ei tue videon tallennusta. Tuloksen kuva tallennetaan silti.",
     "video-record-failed": "Videon tallennus epäonnistui tässä selaimessa.",
     "download-video": "Lataa video"
+  },
+  "report": {
+    "report": "Ilmoita",
+    "report-this-game": "Ilmoita Worldcupista",
+    "select-placeholder": "Valitse syy",
+    "select-reason": "Valitse syy",
+    "inappropriate-content": "Sopimaton sisältö",
+    "misleading-or-spam": "Harhaanjohtava tai roskaposti",
+    "offensive-language": "Loukaava kieli",
+    "nsfw-without-tag": "NSFW ilman merkintää",
+    "copyright-violation": "Tekijänoikeusrikkomus",
+    "other": "Muu",
+    "submit": "Lähetä"
+  },
+  "play-history": {
+    "play-history": "Pelitiedot",
+    "completed": "Valmis",
+    "in-progress": "Käynnissä",
+    "no-plays": "Ei peliä"
   }
 }

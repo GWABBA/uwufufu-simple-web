@@ -3,6 +3,7 @@
     "create-game": "Oyun Oluştur",
     "profile": "Profil",
     "my-games": "Worldcup'larım",
+    "play-history": "Oyun Geçmişi",
     "join-discord": "Discord'a Katıl",
     "log-in": "Giriş Yap",
     "log-out": "Çıkış Yap",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Aboneliğinizi iptal etmek istediğinizden emin misiniz?",
     "failed-to-cancel-subscription": "Abonelik iptal edilemedi",
     "cancel-subscription": "Aboneliği İptal Et",
-    "upgrade-subscription": "Aboneliği Yükselt"
+    "upgrade-subscription": "Aboneliği Yükselt",
+    "save-username": "Kullanıcı adını kaydet",
+    "name-updated-successfully": "İsim başarıyla güncellendi",
+    "failed-to-update-user": "Kullanıcı güncellenemedi"
   },
   "common": {
     "unknown-error-occurred": "Bilinmeyen bir hata oluştu",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Tarayıcınız video kaydını desteklemiyor. Sonuç görseli yine de kaydedilecek.",
     "video-record-failed": "Bu tarayıcıda video kaydı başarısız oldu.",
     "download-video": "Videoyu indir"
+  },
+  "report": {
+    "report": "Rapor Et",
+    "report-this-game": "Worldcup'u Rapor Et",
+    "select-placeholder": "Bir neden seçin",
+    "select-reason": "Lütfen bir neden seçin",
+    "inappropriate-content": "Uygunsuz içerik",
+    "misleading-or-spam": "Yanıltıcı veya spam",
+    "offensive-language": "Rahatsız edici dil",
+    "nsfw-without-tag": "Etiketsiz NSFW içerik",
+    "copyright-violation": "Telif hakkı ihlali",
+    "other": "Diğer",
+    "submit": "Gönder"
+  },
+  "play-history": {
+    "play-history": "Oyun Geçmişi",
+    "completed": "Tamamlandı",
+    "in-progress": "Devam Ediyor",
+    "no-plays": "Oyun geçmişi yok"
   }
 }

@@ -3,6 +3,7 @@
     "create-game": "Skapa spel",
     "profile": "Profil",
     "my-games": "Mina Worldcups",
+    "play-history": "Spelhistorik",
     "join-discord": "Gå med i Discord",
     "log-in": "Logga in",
     "log-out": "Logga ut",
@@ -83,7 +84,10 @@
     "cancel-subscription-question": "Är du säker på att du vill avsluta din prenumeration?",
     "failed-to-cancel-subscription": "Misslyckades att avsluta prenumerationen",
     "cancel-subscription": "Avsluta prenumeration",
-    "upgrade-subscription": "Uppgradera prenumeration"
+    "upgrade-subscription": "Uppgradera prenumeration",
+    "save-username": "Spara användarnamn",
+    "name-updated-successfully": "Namn uppdaterades framgångsrikt",
+    "failed-to-update-user": "Det gick inte att uppdatera användaren"
   },
   "common": {
     "unknown-error-occurred": "Ett okänt fel inträffade",
@@ -153,5 +157,24 @@
     "animation-not-supported": "Din webbläsare stöder inte videoinspelning. Bilden kommer att sparas ändå.",
     "video-record-failed": "Videoinspelning misslyckades i denna webbläsare.",
     "download-video": "Ladda ner video"
+  },
+  "report": {
+    "report": "Rapportera",
+    "report-this-game": "Rapportera Worldcup",
+    "select-placeholder": "Välj en anledning",
+    "select-reason": "Vänligen välj en anledning",
+    "inappropriate-content": "Olämpligt innehåll",
+    "misleading-or-spam": "Vilseledande eller skräppost",
+    "offensive-language": "Kränkande språk",
+    "nsfw-without-tag": "NSFW utan märkning",
+    "copyright-violation": "Upphovsrättsintrång",
+    "other": "Annat",
+    "submit": "Skicka"
+  },
+  "play-history": {
+    "play-history": "Spelhistorik",
+    "completed": "Slutfört",
+    "in-progress": "Pågående",
+    "no-plays": "Inga spel"
   }
 }
