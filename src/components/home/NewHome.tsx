@@ -286,6 +286,16 @@ export default function NewHomeComponent() {
     return `${categoryIds.length} selected`;
   };
 
+  function formatPlayCount(count: number): string {
+    if (count >= 1_000_000) return '1M+';
+    if (count >= 100_000) return '100K+';
+    if (count >= 10_000) return '10K+';
+    if (count >= 1_000) return '1K+';
+    if (count >= 100) return '100+';
+    if (count >= 10) return '10+';
+    return count.toString();
+  }
+
   // Function to render a row of items
   const renderRow = (index: number) => {
     // Each row has `columnCount` number of items
@@ -314,6 +324,14 @@ export default function NewHomeComponent() {
                     NSFW
                   </span>
                 )}
+                <div
+                  className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 bottom-2 left-2 flex items-center"
+                  title={`${game.plays?.toLocaleString() || 0} Plays`} // Tooltip shows full number
+                >
+                  {formatPlayCount(game.plays || 0)} Plays
+                </div>
+
+                {/* blur when nsfw */}
                 {game.isNsfw && (!user || (user && user.tier === 'basic')) && (
                   <div className="absolute w-full h-full backdrop-blur-lg z-10"></div>
                 )}
