@@ -21,7 +21,7 @@ const RoundsModal: React.FC<RoundsModalProps> = ({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const { t } = useTranslation();
 
-  // Generate round options (powers of 2)
+  // Generate round options (powers of 2) + next power of 2 (for bye support)
   const roundOptions: number[] = [];
   let round = 2;
   while (round <= selectionsCount) {
@@ -29,15 +29,30 @@ const RoundsModal: React.FC<RoundsModalProps> = ({
     round *= 2;
   }
 
+  // If selectionsCount is not a power of 2, add the next power as a final option
+  if (roundOptions[roundOptions.length - 1] < selectionsCount) {
+    const nextPower = Math.pow(2, Math.ceil(Math.log2(selectionsCount)));
+    if (!roundOptions.includes(nextPower)) {
+      roundOptions.push(nextPower);
+    }
+  }
+
   // Default to the highest round
   const [selectedRound, setSelectedRound] = useState<number>(
-    roundOptions[roundOptions.length - 1] || 2
+    roundOptions.length >= 2
+      ? roundOptions[roundOptions.length - 2]
+      : roundOptions[roundOptions.length - 1] || 2
   );
 
   // Update default value if selectionsCount changes
   useEffect(() => {
     if (roundOptions.length > 0) {
-      setSelectedRound(roundOptions[roundOptions.length - 1]);
+      const newDefault =
+        roundOptions.length >= 2
+          ? roundOptions[roundOptions.length - 2]
+          : roundOptions[roundOptions.length - 1];
+      setSelectedRound(newDefault);
+      onRoundsSelect(newDefault); // Update the parameter too
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectionsCount]);
