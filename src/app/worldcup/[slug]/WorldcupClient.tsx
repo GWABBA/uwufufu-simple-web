@@ -63,11 +63,18 @@ export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClie
   const [loadingExistingGame, setLoadingExistingGame] = useState(false);
 
   const handleOnPlayNow = () => {
-    if (worldcup.isNsfw && (!user || (user && user.tier === 'basic'))) {
+    const isOwner = user && worldcup?.user?.id === user.id;
+    const isRestricted =
+      worldcup.isNsfw &&
+      (!user || user.tier === 'basic') &&
+      !isOwner;
+  
+    if (isRestricted) {
       alert('You need to be a premium user to play this worldcup');
       router.push('/plans');
       return;
     }
+  
     setRoundsModalOpen(true);
   };
 
@@ -298,8 +305,8 @@ export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClie
                       ) : (
                         <div className="relative">
                           {worldcup.isNsfw &&
-                            (!user || (user && user.tier === 'basic')) && (
-                              <div className="absolute backdrop-blur-lg z-10 w-36 h-24 rounded-md" />
+                            (!user || (user.tier === 'basic' && worldcup.user?.id !== user.id)) && (
+                              <div className="absolute inset-0 backdrop-blur-md z-10 rounded-md" />
                             )}
                           <Image
                             src={
