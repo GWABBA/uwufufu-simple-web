@@ -89,7 +89,11 @@ const Navigation = () => {
         </Link>
         <div className="flex h-full">
           {/* UwU */}
-          <Link href="/uwu" className="flex items-center">
+          <Link
+            href="https://uwuverse.co/"
+            className="flex items-center"
+            target="_blank"
+          >
             <button className="bg-uwu-red py-2 px-2 text-white rounded-lg mr-4 text-sm">
               UwU
             </button>

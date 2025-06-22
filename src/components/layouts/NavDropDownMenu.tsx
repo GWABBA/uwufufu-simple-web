@@ -19,9 +19,10 @@ const NavDropdownMenu: React.FC<NavDropdownMenuProps> = ({
       <ul>
         <li className="md:hidden">
           <Link
-            href="/uwu"
+            href="https://uwuverse.co/"
             onClick={onClose}
             className="block px-4 py-2 text-white hover:bg-gray-100 hover:text-gray-800"
+            target="_blank"
           >
             UwU
           </Link>
