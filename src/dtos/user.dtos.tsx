@@ -11,4 +11,5 @@ export interface User extends SimpleUser {
   isVerified?: boolean;
   tier?: string;
   subscriptionEndDate?: Date;
+  isAdmin?: boolean;
 }

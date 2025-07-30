@@ -21,6 +21,11 @@ import { useRouter } from 'next/navigation';
 import ReportGameModal from '@/components/modals/ReportGameModal';
 import { Siren } from 'lucide-react';
 import { createReport } from '@/services/report.service';
+import {
+  deleteWorldcup,
+  toggleWorldcupNSFW,
+} from '@/services/worldcup.service';
+import toast from 'react-hot-toast';
 
 interface WorldcupClientProps {
   worldcup: Worldcup;
@@ -32,7 +37,10 @@ type ModalContent = {
   src: string;
 } | null;
 
-export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClientProps) {
+export default function WorldcupClient({
+  worldcup,
+  startedGameId,
+}: WorldcupClientProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const user = useAppSelector((state) => state.auth.user);
@@ -65,16 +73,14 @@ export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClie
   const handleOnPlayNow = () => {
     const isOwner = user && worldcup?.user?.id === user.id;
     const isRestricted =
-      worldcup.isNsfw &&
-      (!user || user.tier === 'basic') &&
-      !isOwner;
-  
+      worldcup.isNsfw && (!user || user.tier === 'basic') && !isOwner;
+
     if (isRestricted) {
       alert('You need to be a premium user to play this worldcup');
       router.push('/plans');
       return;
     }
-  
+
     setRoundsModalOpen(true);
   };
 
@@ -112,7 +118,7 @@ export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClie
         }
       }
     };
-    
+
     loadExistingGame();
   }, [startedGameId]);
 
@@ -305,7 +311,9 @@ export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClie
                       ) : (
                         <div className="relative">
                           {worldcup.isNsfw &&
-                            (!user || (user.tier === 'basic' && worldcup.user?.id !== user.id)) && (
+                            (!user ||
+                              (user.tier === 'basic' &&
+                                worldcup.user?.id !== user.id)) && (
                               <div className="absolute inset-0 backdrop-blur-md z-10 rounded-md" />
                             )}
                           <Image
@@ -503,8 +511,86 @@ export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClie
     );
   }
 
+  const onAdminEditClicked = (worldcup: Worldcup) => {
+    router.push(`/create-game/${worldcup.id}`);
+  };
+
+  const onAdminDeleteClicked = async (game: Worldcup) => {
+    const confirmDelete = confirm(
+      t('create-worldcup.are-your-sure-you-want-to-delete-this-worldcup')
+    );
+    if (confirmDelete) {
+      try {
+        await deleteWorldcup(game.id);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error(t('common.unknown-error-occurred'));
+        }
+      }
+
+      toast.success('deleted successfully');
+    }
+  };
+
+  const onAdminNSFWToggleClicked = async (worldcup: Worldcup) => {
+    if (!user || !user.isAdmin) return;
+    const { message } = await toggleWorldcupNSFW(worldcup.id);
+    toast.success(message);
+    try {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(t('common.unknown-error-occurred'));
+      }
+    }
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 px-2 md:px-0">
+      {/* admin only */}
+      {user?.isAdmin && (
+        <div className="flex md:justify-end">
+          <div className="text-white mb-4">
+            <span className="font-bold">Admin</span>
+            <br />
+            <div className="flex gap-8">
+              <div>
+                <div
+                  onClick={() => {
+                    onAdminNSFWToggleClicked(worldcup);
+                  }}
+                  className="cursor-pointer"
+                >
+                  Toggle NSFW
+                </div>
+              </div>
+              <div
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  onAdminEditClicked(worldcup);
+                }}
+                className="cursor-pointer"
+              >
+                Edit
+              </div>
+              <div
+                onClick={() => {
+                  onAdminDeleteClicked(worldcup);
+                }}
+                className="cursor-pointer"
+              >
+                Delete
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* main content */}
       <div className="md:flex justify-between mb-8">
         {/* title and description */}
         <div>
@@ -568,14 +654,12 @@ export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClie
           </div>
         </div>
       </div>
-
       {/* Report Game Modal */}
       <ReportGameModal
         isOpen={reportModalOpen}
         onClose={() => setReportModalOpen(false)}
         onSubmit={handleReportSubmit}
       />
-
       {/* Render the RoundsModal */}
       <RoundsModal
         isOpen={roundsModalOpen}
@@ -587,7 +671,6 @@ export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClie
         }}
         onRoundsSelect={(selectedRounds) => setRounds(selectedRounds)}
       />
-
       {/* Match Modal */}
       {matchModalOpen && (
         <MatchModal
@@ -598,7 +681,6 @@ export default function WorldcupClient({ worldcup, startedGameId }: WorldcupClie
           onSelect={handleOnSelect}
         />
       )}
-
       {/* selections */}
       {!isFetching ? (
         <div className="w-full">

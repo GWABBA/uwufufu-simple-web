@@ -173,7 +173,7 @@ export default function SelectionsComponent({
 
   const handleDeleteSelection = async (selectionId: number) => {
     // ✅ If visibility is Public and deleting would leave fewer than 4 selections
-    if (game?.visibility === Visibility.IsPublic && selections.length <= 4) {
+    if (game?.visibility === Visibility.IsPublic && selectionsCount <= 4) {
       toast.error(t('create-worldcup.public-needs-4'));
       return; // ⛔ Prevent deletion
     }

@@ -6,6 +6,7 @@ import {
 } from '@/dtos/worldcup.dtos';
 import axios from 'axios';
 import api from './api.service';
+import { MessageResponse } from '@/dtos/common.dtos';
 
 export const fetchWorldcups = async (
   params: WorldcupListQuery
@@ -136,6 +137,23 @@ export const deleteWorldcup = async (id: number): Promise<void> => {
     if (axios.isAxiosError(error)) {
       throw new Error(
         error.response?.data?.message || 'Delete worldcup request failed'
+      );
+    }
+
+    throw new Error('An unexpected error occurred');
+  }
+};
+
+export const toggleWorldcupNSFW = async (
+  id: number
+): Promise<MessageResponse> => {
+  try {
+    const { data } = await api.put(`/games/${id}/nsfw`);
+    return data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || 'Toggle NSFW request failed'
       );
     }
 

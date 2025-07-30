@@ -222,7 +222,7 @@ export default function ProfilePage() {
               id="newPassword"
               className="p-2 rounded-md w-full bg-uwu-dark-gray text-white mb-4"
               placeholder="New Password"
-              value={t('user-profile.new-password')}
+              value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
             <div className="flex justify-end">
