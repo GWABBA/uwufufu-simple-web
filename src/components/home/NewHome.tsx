@@ -296,6 +296,24 @@ export default function NewHomeComponent() {
     return count.toString();
   }
 
+  // 1) interval per viewport
+  const interval = windowWidth >= 1024 ? 3 : 4; // desktop:2, mobile:3
+
+  // 2) counts — memoize so they update when deps change
+  const rowCount = Math.ceil(games.length / columnCount);
+  const bannerCount = Math.floor(rowCount / interval);
+  const virtualTotalCount = rowCount + bannerCount;
+
+  // 3) virtual index -> banner or rowIndex
+  const getVirtualItem = (virtualIndex: number) => {
+    const groupSize = interval + 1; // e.g., R R [AD]
+    const isBanner = (virtualIndex + 1) % groupSize === 0;
+    if (isBanner) return { type: 'banner' as const };
+    const bannersBefore = Math.floor((virtualIndex + 1) / groupSize);
+    const rowIndex = virtualIndex - bannersBefore;
+    return { type: 'row' as const, rowIndex };
+  };
+
   // Function to render a row of items
   const renderRow = (index: number) => {
     // Each row has `columnCount` number of items
@@ -304,90 +322,102 @@ export default function NewHomeComponent() {
 
     return (
       <div className="flex w-full mb-8">
-        {rowItems.map((game) => (
-          <div
-            key={game.id}
-            className="p-2"
-            style={{ width: `${100 / columnCount}%` }}
-          >
-            <Link
-              href={`/worldcup/${game.slug}`}
-              className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
+        <div className="flex w-full">
+          {rowItems.map((game) => (
+            <div
+              key={game.id}
+              className="p-2"
+              style={{ width: `${100 / columnCount}%` }}
             >
-              <div className="w-full h-60 relative">
-                <div className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 top-2 left-2 flex items-center">
-                  <GalleryHorizontalEnd className="mr-2"></GalleryHorizontalEnd>
-                  {game.selectionCount}
-                </div>
-                {game.isNsfw && (
-                  <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md z-20 top-2 right-2">
-                    NSFW
-                  </span>
-                )}
-                <div
-                  className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 bottom-2 left-2 flex items-center"
-                  title={`${game.plays?.toLocaleString() || 0} Plays`} // Tooltip shows full number
-                >
-                  {formatPlayCount(game.plays || 0)} Plays
-                </div>
-
-                {/* blur when nsfw */}
-                {game.isNsfw && (!user || (user && user.tier === 'basic')) && (
-                  <div className="absolute w-full h-full backdrop-blur-lg z-10"></div>
-                )}
-                <Image
-                  src={
-                    game.coverImage || '/assets/common/default-thumbnail.webp'
-                  }
-                  alt={game.title}
-                  fill
-                  className="rounded-t-2xl object-cover z-0"
-                  unoptimized
-                />
-              </div>
-              <div className="p-4 flex flex-col justify-between h-[calc(100%-240px)]">
-                <div>
-                  <div className="flex items-center text-sm text-gray-300 mb-2 justify-between">
-                    <span className="text-uwuRed font-semibold">
-                      {game.category?.name || 'Unknown'}
-                    </span>
-                    {game.user && (
-                      <div className="flex items-center">
-                        {game.user.profileImage ? (
-                          <Image
-                            src={game.user.profileImage!}
-                            alt="profile"
-                            width={24}
-                            height={24}
-                            className="rounded-full mr-1"
-                          ></Image>
-                        ) : (
-                          <Image
-                            src="/assets/icons/account-circle.svg"
-                            alt="profile"
-                            width={24}
-                            height={24}
-                            className="rounded-full mr-1"
-                          ></Image>
-                        )}
-                        <span className="text-gray-400">{game.user.name}</span>
-                      </div>
-                    )}
+              <Link
+                href={`/worldcup/${game.slug}`}
+                className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
+              >
+                <div className="w-full h-60 relative">
+                  <div className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 top-2 left-2 flex items-center">
+                    <GalleryHorizontalEnd className="mr-2"></GalleryHorizontalEnd>
+                    {game.selectionCount}
                   </div>
-                  <h2 className="text-lg md:text-xl font-semibold text-white line-clamp-1">
-                    {game.title}
-                  </h2>
-                  <p className="text-sm text-gray-400 mt-2 line-clamp-1">
-                    {game.description}
-                  </p>
+                  {game.isNsfw && (
+                    <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md z-20 top-2 right-2">
+                      NSFW
+                    </span>
+                  )}
+                  <div
+                    className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 bottom-2 left-2 flex items-center"
+                    title={`${game.plays?.toLocaleString() || 0} Plays`} // Tooltip shows full number
+                  >
+                    {formatPlayCount(game.plays || 0)} Plays
+                  </div>
+
+                  {/* blur when nsfw */}
+                  {game.isNsfw &&
+                    (!user || (user && user.tier === 'basic')) && (
+                      <div className="absolute w-full h-full backdrop-blur-lg z-10"></div>
+                    )}
+                  <Image
+                    src={
+                      game.coverImage || '/assets/common/default-thumbnail.webp'
+                    }
+                    alt={game.title}
+                    fill
+                    className="rounded-t-2xl object-cover z-0"
+                    unoptimized
+                  />
                 </div>
-              </div>
-            </Link>
-          </div>
-        ))}
+                <div className="p-4 flex flex-col justify-between h-[calc(100%-240px)]">
+                  <div>
+                    <div className="flex items-center text-sm text-gray-300 mb-2 justify-between">
+                      <span className="text-uwuRed font-semibold">
+                        {game.category?.name || 'Unknown'}
+                      </span>
+                      {game.user && (
+                        <div className="flex items-center">
+                          {game.user.profileImage ? (
+                            <Image
+                              src={game.user.profileImage!}
+                              alt="profile"
+                              width={24}
+                              height={24}
+                              className="rounded-full mr-1"
+                            ></Image>
+                          ) : (
+                            <Image
+                              src="/assets/icons/account-circle.svg"
+                              alt="profile"
+                              width={24}
+                              height={24}
+                              className="rounded-full mr-1"
+                            ></Image>
+                          )}
+                          <span className="text-gray-400">
+                            {game.user.name}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <h2 className="text-lg md:text-xl font-semibold text-white line-clamp-1">
+                      {game.title}
+                    </h2>
+                    <p className="text-sm text-gray-400 mt-2 line-clamp-1">
+                      {game.description}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
     );
   };
+
+  // simple banner component
+  const BannerRow = () => (
+    <div className="w-full mb-8">
+      <div className="w-full bg-white" style={{ height: 180 }} />
+    </div>
+  );
 
   // Footer component for loading
   const Footer = () => {
@@ -397,9 +427,6 @@ export default function NewHomeComponent() {
       </div>
     );
   };
-
-  // Calculate number of rows
-  const rowCount = Math.ceil(games.length / columnCount);
 
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 flex flex-col">
@@ -507,14 +534,16 @@ export default function NewHomeComponent() {
           <Virtuoso
             ref={virtuosoRef}
             useWindowScroll
-            totalCount={rowCount}
+            totalCount={virtualTotalCount}
             overscan={5}
-            itemContent={renderRow}
             components={{ Footer }}
+            itemContent={(virtualIndex) => {
+              const v = getVirtualItem(virtualIndex);
+              if (v.type === 'banner') return <BannerRow />;
+              return renderRow(v.rowIndex);
+            }}
             endReached={() => {
-              if (hasMore && !isFetchingRef.current) {
-                loadMoreGames();
-              }
+              if (hasMore && !isFetchingRef.current) loadMoreGames();
             }}
           />
         )}

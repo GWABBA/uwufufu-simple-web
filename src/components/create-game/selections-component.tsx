@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
-import { MainTabsType, Visibility } from '@/enums/enums.enum';
+import { MainTabsType } from '@/enums/enums.enum';
 import {
   TvMinimalPlay,
   Images,
@@ -173,10 +173,10 @@ export default function SelectionsComponent({
 
   const handleDeleteSelection = async (selectionId: number) => {
     // ✅ If visibility is Public and deleting would leave fewer than 4 selections
-    if (game?.visibility === Visibility.IsPublic && selectionsCount <= 4) {
-      toast.error(t('create-worldcup.public-needs-4'));
-      return; // ⛔ Prevent deletion
-    }
+    // if (game?.visibility === Visibility.IsPublic && selectionsCount <= 4) {
+    //   toast.error(t('create-worldcup.public-needs-4'));
+    //   return; // ⛔ Prevent deletion
+    // }
 
     const confirmDelete = window.confirm(
       t('create-worldcup.are-you-sure-you-want-to-delete-selection')
