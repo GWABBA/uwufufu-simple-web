@@ -1,5 +1,17 @@
+import { Worldcup } from '@/dtos/worldcup.dtos';
 import { ListSortType, Locales } from '@/enums/enums.enum';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+export interface HomeCache {
+  key: string; // unique key from filters
+  games: Worldcup[];
+  total: number;
+  page: number;
+  lastPageLoaded: number;
+  topIndex?: number;
+  scrollY: number;
+  ts: number; // timestamp for optional expiry
+}
 
 interface WorldcupsState {
   page: number;
@@ -9,6 +21,7 @@ interface WorldcupsState {
   sortBy: ListSortType;
   searchQuery: string;
   includeNsfw: boolean;
+  homeCache: HomeCache | null;
 }
 
 const initialState: WorldcupsState = {
@@ -19,7 +32,25 @@ const initialState: WorldcupsState = {
   sortBy: ListSortType.latest,
   searchQuery: '',
   includeNsfw: false,
+  homeCache: null,
 };
+
+export const buildHomeKey = (params: {
+  perPage: number;
+  sortBy: string;
+  categories: string[];
+  languages: Locales[];
+  search: string;
+  includeNsfw: boolean;
+}) =>
+  JSON.stringify({
+    p: params.perPage,
+    s: params.sortBy,
+    c: [...params.categories].sort(),
+    l: [...params.languages].sort(),
+    q: params.search || '',
+    n: params.includeNsfw,
+  });
 
 const worldcupsSlice = createSlice({
   name: 'worldcups',
@@ -46,6 +77,12 @@ const worldcupsSlice = createSlice({
     setIncludeNsfw(state, action: PayloadAction<boolean>) {
       state.includeNsfw = action.payload;
     },
+    setHomeCache(state, action: PayloadAction<HomeCache>) {
+      state.homeCache = action.payload;
+    },
+    clearHomeCache(state) {
+      state.homeCache = null;
+    },
   },
 });
 
@@ -57,6 +94,8 @@ export const {
   setSortBy,
   setSearchQuery,
   setIncludeNsfw,
+  setHomeCache,
+  clearHomeCache,
 } = worldcupsSlice.actions;
 
 export default worldcupsSlice.reducer;

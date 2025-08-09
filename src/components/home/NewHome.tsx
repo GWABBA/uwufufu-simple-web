@@ -11,6 +11,10 @@ import { Worldcup } from '@/dtos/worldcup.dtos';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
+  buildHomeKey,
+  clearHomeCache,
+  HomeCache,
+  setHomeCache,
   setIncludeNsfw,
   setPage,
   setSearchQuery,
@@ -30,12 +34,10 @@ export default function NewHomeComponent() {
   const dispatch = useAppDispatch();
   const virtuosoRef = useRef(null);
 
-  // for categories list
   const categories = useAppSelector(
     (state: RootState) => state.categories.categories
   );
 
-  // query params
   const perPage = useAppSelector((state: RootState) => state.worldcups.perPage);
   const sortBy = useAppSelector((state: RootState) => state.worldcups.sortBy);
   const selectedCategories = useAppSelector(
@@ -58,12 +60,10 @@ export default function NewHomeComponent() {
   const [totalCount, setTotalCount] = useState(0);
   const hasMore = games.length < totalCount;
 
-  // Window dimensions for responsive column count
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200
   );
 
-  // ✅ Separate temp state for modals (modals will update temp states first)
   const [tempSelectedCategories, setTempSelectedCategories] = useState<
     string[]
   >([...selectedCategories]);
@@ -71,11 +71,17 @@ export default function NewHomeComponent() {
     [...selectedLanguages]
   );
 
-  // Modals
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
 
-  // Calculate appropriate column count based on screen width
+  const homeCache = useAppSelector(
+    (state: RootState) => state.worldcups.homeCache
+  );
+
+  // Use a ref to track if the initial load has been handled.
+  // Refs don't cause re-renders, preventing the infinite loop.
+  const initialLoadRef = useRef(false);
+
   const getColumnCount = (width: number) => {
     if (width < 640) return 1;
     if (width < 1024) return 2;
@@ -86,51 +92,124 @@ export default function NewHomeComponent() {
   const isFetchingRef = useRef(false);
   const lastPageLoaded = useRef(1);
 
-  // Update window width on resize
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
     setTempSearchQuery(searchQuery);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchQuery]);
 
-  // ✅ Fetch initial games
+  // Combined and corrected useEffect for initial loading
   useEffect(() => {
-    const fetchInitialGames = async () => {
-      setIsFetching(true);
-      isFetchingRef.current = true;
+    // Only run this effect on mount and when filters change, but not for cache-related re-renders.
+    // The `initialLoadRef` and the return function logic handle this.
 
-      try {
-        const { worldcups, total } = await fetchWorldcups({
-          page: 1,
-          perPage,
-          sortBy,
-          categories: selectedCategories,
-          locale: selectedLanguages as Locales[],
-          search: searchQuery,
-          includeNsfw,
-        });
+    // Check the ref to prevent running this effect on subsequent re-renders
+    // that are not caused by filter changes.
+    if (initialLoadRef.current) return;
 
-        setGames(worldcups);
-        setTotalCount(total);
-        dispatch(setPage(1));
-        lastPageLoaded.current = 1; // Important initialization
-      } finally {
-        setIsFetching(false);
-        isFetchingRef.current = false;
+    // Set the ref to true so this logic doesn't run again until a filter changes.
+    initialLoadRef.current = true;
+
+    const fetchAndRestore = async () => {
+      const currentKey = buildHomeKey({
+        perPage,
+        sortBy,
+        categories: selectedCategories,
+        languages: selectedLanguages,
+        search: searchQuery,
+        includeNsfw,
+      });
+
+      if (homeCache && homeCache.key === currentKey) {
+        console.log('Restoring from cache...');
+        setGames(homeCache.games);
+        setTotalCount(homeCache.total);
+        lastPageLoaded.current = homeCache.lastPageLoaded;
+        setTimeout(() => window.scrollTo(0, homeCache.scrollY), 0);
         setInitialLoading(false);
+        dispatch(clearHomeCache());
+      } else {
+        console.log('Fetching new data...');
+        setIsFetching(true);
+        isFetchingRef.current = true;
+        setInitialLoading(true);
+
+        try {
+          const { worldcups, total } = await fetchWorldcups({
+            page: 1,
+            perPage,
+            sortBy,
+            categories: selectedCategories,
+            locale: selectedLanguages as Locales[],
+            search: searchQuery,
+            includeNsfw,
+          });
+
+          setGames(worldcups);
+          setTotalCount(total);
+          dispatch(setPage(1));
+          lastPageLoaded.current = 1;
+        } finally {
+          setIsFetching(false);
+          isFetchingRef.current = false;
+          setInitialLoading(false);
+        }
       }
     };
 
-    fetchInitialGames();
+    fetchAndRestore();
+
+    // The return function resets the ref when the component unmounts or
+    // when dependencies change, allowing the effect to run again for a fresh state.
+    return () => {
+      initialLoadRef.current = false;
+    };
   }, [
+    // These are the only things that should trigger a fresh fetch
+    perPage,
+    sortBy,
+    selectedCategories,
+    selectedLanguages,
+    searchQuery,
+    includeNsfw,
+    dispatch,
+    // Note: homeCache is removed from dependencies to prevent the infinite loop
+  ]);
+
+  // This useEffect is solely for saving the cache on unmount, which is correct
+  useEffect(() => {
+    return () => {
+      if (games.length > 0) {
+        const currentScrollY = window.scrollY;
+        const homeCache: HomeCache = {
+          key: buildHomeKey({
+            perPage,
+            sortBy,
+            categories: selectedCategories,
+            languages: selectedLanguages,
+            search: searchQuery,
+            includeNsfw,
+          }),
+          games,
+          total: totalCount,
+          page: lastPageLoaded.current,
+          lastPageLoaded: lastPageLoaded.current,
+          scrollY: currentScrollY,
+          ts: Date.now(),
+        };
+        dispatch(setHomeCache(homeCache));
+      }
+    };
+  }, [
+    games,
+    totalCount,
+    lastPageLoaded,
     perPage,
     sortBy,
     selectedCategories,
@@ -142,12 +221,9 @@ export default function NewHomeComponent() {
 
   const loadMoreGames = useCallback(async () => {
     if (!hasMore || isFetchingRef.current) return;
-
     isFetchingRef.current = true;
     setIsFetching(true);
-
     const nextPage = lastPageLoaded.current + 1;
-
     try {
       const { worldcups, total } = await fetchWorldcups({
         page: nextPage,
@@ -158,34 +234,29 @@ export default function NewHomeComponent() {
         search: searchQuery,
         includeNsfw,
       });
-
       setGames((prev) => [...prev, ...worldcups]);
       setTotalCount(total);
-      dispatch(setPage(nextPage));
       lastPageLoaded.current = nextPage;
     } finally {
       isFetchingRef.current = false;
       setIsFetching(false);
     }
   }, [
+    hasMore,
     perPage,
     sortBy,
     selectedCategories,
     selectedLanguages,
     searchQuery,
     includeNsfw,
-    dispatch,
-    hasMore,
   ]);
 
-  // ✅ Sort Change
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newSort = event.target.value as ListSortType;
-    dispatch(setPage(1)); // ✅ Reset page to 1
+    dispatch(setPage(1));
     dispatch(setSortBy(newSort));
   };
 
-  // ✅ Category Selection (only updates temp state)
   const handleCategoryToggle = (categoryId: number) => {
     setTempSelectedCategories((prev) =>
       prev.includes(categoryId.toString())
@@ -194,7 +265,6 @@ export default function NewHomeComponent() {
     );
   };
 
-  // ✅ Language Selection (only updates temp state)
   const handleLanguageToggle = (locale: Locales) => {
     setTempSelectedLanguages((prev) =>
       prev.includes(locale)
@@ -209,13 +279,10 @@ export default function NewHomeComponent() {
     if (nsfwDebounceTimer.current) {
       clearTimeout(nsfwDebounceTimer.current);
     }
-
     const isChecked = event.target.checked;
-
-    // Debounce logic (500ms delay)
     nsfwDebounceTimer.current = setTimeout(() => {
-      dispatch(setPage(1)); // ✅ Reset page to 1
-      dispatch(setIncludeNsfw(isChecked)); // ✅ Properly dispatch action
+      dispatch(setPage(1));
+      dispatch(setIncludeNsfw(isChecked));
     }, 500);
   };
 
@@ -224,15 +291,12 @@ export default function NewHomeComponent() {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newSearchQuery = event.target.value;
     setTempSearchQuery(newSearchQuery);
-
-    // Clear existing debounce timer
     if (searchDebounceTimer.current) {
       clearTimeout(searchDebounceTimer.current);
     }
-
     searchDebounceTimer.current = setTimeout(() => {
       dispatch(setSearchQuery(newSearchQuery));
-      dispatch(setPage(1)); // ✅ Reset page to 1
+      dispatch(setPage(1));
     }, 500);
   };
 
@@ -242,29 +306,28 @@ export default function NewHomeComponent() {
 
   const openCategoryModal = () => {
     setIsCategoryModalOpen(true);
-    toggleBodyScroll(true); // Lock scroll
+    toggleBodyScroll(true);
   };
 
   const closeCategoryModal = () => {
     setIsCategoryModalOpen(false);
     dispatch(setSelectedCategories(tempSelectedCategories));
     dispatch(setPage(1));
-    toggleBodyScroll(false); // Unlock scroll
+    toggleBodyScroll(false);
   };
 
   const openLanguageModal = () => {
     setIsLanguageModalOpen(true);
-    toggleBodyScroll(true); // Lock scroll
+    toggleBodyScroll(true);
   };
 
   const closeLanguageModal = () => {
     setIsLanguageModalOpen(false);
     dispatch(setSelectedLanguages(tempSelectedLanguages));
     dispatch(setPage(1));
-    toggleBodyScroll(false); // Unlock scroll
+    toggleBodyScroll(false);
   };
 
-  // ✅ Properly format selected categories/languages display
   const formatSelected = (items: string[], defaultText: string) =>
     items.length === 0
       ? defaultText
@@ -296,17 +359,13 @@ export default function NewHomeComponent() {
     return count.toString();
   }
 
-  // 1) interval per viewport
-  const interval = windowWidth >= 1024 ? 3 : 4; // desktop:2, mobile:3
-
-  // 2) counts — memoize so they update when deps change
+  const interval = windowWidth >= 1024 ? 3 : 4;
   const rowCount = Math.ceil(games.length / columnCount);
   const bannerCount = Math.floor(rowCount / interval);
   const virtualTotalCount = rowCount + bannerCount;
 
-  // 3) virtual index -> banner or rowIndex
   const getVirtualItem = (virtualIndex: number) => {
-    const groupSize = interval + 1; // e.g., R R [AD]
+    const groupSize = interval + 1;
     const isBanner = (virtualIndex + 1) % groupSize === 0;
     if (isBanner) return { type: 'banner' as const };
     const bannersBefore = Math.floor((virtualIndex + 1) / groupSize);
@@ -314,9 +373,7 @@ export default function NewHomeComponent() {
     return { type: 'row' as const, rowIndex };
   };
 
-  // Function to render a row of items
   const renderRow = (index: number) => {
-    // Each row has `columnCount` number of items
     const startIdx = index * columnCount;
     const rowItems = games.slice(startIdx, startIdx + columnCount);
 
@@ -345,12 +402,10 @@ export default function NewHomeComponent() {
                   )}
                   <div
                     className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 bottom-2 left-2 flex items-center"
-                    title={`${game.plays?.toLocaleString() || 0} Plays`} // Tooltip shows full number
+                    title={`${game.plays?.toLocaleString() || 0} Plays`}
                   >
                     {formatPlayCount(game.plays || 0)} Plays
                   </div>
-
-                  {/* blur when nsfw */}
                   {game.isNsfw &&
                     (!user || (user && user.tier === 'basic')) && (
                       <div className="absolute w-full h-full backdrop-blur-lg z-10"></div>
@@ -412,14 +467,12 @@ export default function NewHomeComponent() {
     );
   };
 
-  // simple banner component
   const BannerRow = () => (
     <div className="w-full mb-8">
       <div className="w-full bg-white" style={{ height: 180 }} />
     </div>
   );
 
-  // Footer component for loading
   const Footer = () => {
     return (
       <div className="py-4 flex justify-center">
@@ -430,10 +483,8 @@ export default function NewHomeComponent() {
 
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 flex flex-col">
-      {/* filters */}
       <div>
         <div className="grid grid-cols-2 md:flex md:space-x-2 gap-2 px-2 md:p-0 mb-4">
-          {/* Sort */}
           <select
             id="sort"
             className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-32"
@@ -443,8 +494,6 @@ export default function NewHomeComponent() {
             <option value="latest">{t('home.latest')}</option>
             <option value="popularity">{t('home.popularity')}</option>
           </select>
-
-          {/* Categories */}
           <select
             id="category"
             className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-52"
@@ -465,8 +514,6 @@ export default function NewHomeComponent() {
               )}
             </option>
           </select>
-
-          {/* Languages */}
           <select
             id="language"
             className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-40"
@@ -487,8 +534,6 @@ export default function NewHomeComponent() {
               )}
             </option>
           </select>
-
-          {/* Search */}
           <div className="relative flex-1 md:min-w-40">
             <input
               type="text"
@@ -508,7 +553,6 @@ export default function NewHomeComponent() {
             )}
           </div>
         </div>
-
         <div className="pt-0 px-2 md:px-0 mb-4">
           <input
             id="includeNsfw"
@@ -521,8 +565,6 @@ export default function NewHomeComponent() {
           </label>
         </div>
       </div>
-
-      {/* Games grid - virtualized with body scroll */}
       <div className="w-full">
         {initialLoading ? (
           <div className="flex justify-center py-8">
@@ -548,8 +590,6 @@ export default function NewHomeComponent() {
           />
         )}
       </div>
-
-      {/* Category Selection Modal */}
       {isCategoryModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -586,8 +626,6 @@ export default function NewHomeComponent() {
           </div>
         </div>
       )}
-
-      {/* Language Selection Modal */}
       {isLanguageModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
