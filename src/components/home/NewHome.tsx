@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { LocaleNames } from '@/constants/locale';
-import { Search, X, GalleryHorizontalEnd } from 'lucide-react';
+import { Search, X, GalleryHorizontalEnd, ArrowUp } from 'lucide-react';
 import { fetchWorldcups } from '@/services/worldcup.service';
 import { Worldcup } from '@/dtos/worldcup.dtos';
 import Link from 'next/link';
@@ -24,7 +24,7 @@ import {
 } from '@/store/slices/worldcups.reducer';
 import LoadingAnimation from '../animation/Loading';
 import { useTranslation } from 'react-i18next';
-import { Virtuoso } from 'react-virtuoso';
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 
 export default function NewHomeComponent() {
   const { t } = useTranslation();
@@ -32,7 +32,7 @@ export default function NewHomeComponent() {
 
   const nsfwDebounceTimer = useRef<NodeJS.Timeout | null>(null);
   const dispatch = useAppDispatch();
-  const virtuosoRef = useRef(null);
+  const virtuosoRef = useRef<VirtuosoHandle | null>(null);
 
   const categories = useAppSelector(
     (state: RootState) => state.categories.categories
@@ -73,6 +73,12 @@ export default function NewHomeComponent() {
 
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
+
+  // near other refs
+  const topIndexRef = useRef(0); // track currently visible top index
+
+  // for initial restore
+  const [initialIndex, setInitialIndex] = useState<number | null>(null);
 
   const homeCache = useAppSelector(
     (state: RootState) => state.worldcups.homeCache
@@ -131,7 +137,10 @@ export default function NewHomeComponent() {
         setGames(homeCache.games);
         setTotalCount(homeCache.total);
         lastPageLoaded.current = homeCache.lastPageLoaded;
-        setTimeout(() => window.scrollTo(0, homeCache.scrollY), 0);
+
+        // NEW: set initial index for Virtuoso instead of scrollY
+        setInitialIndex(homeCache.firstVisibleIndex ?? 0);
+
         setInitialLoading(false);
         dispatch(clearHomeCache());
       } else {
@@ -186,7 +195,6 @@ export default function NewHomeComponent() {
   useEffect(() => {
     return () => {
       if (games.length > 0) {
-        const currentScrollY = window.scrollY;
         const homeCache: HomeCache = {
           key: buildHomeKey({
             perPage,
@@ -200,7 +208,7 @@ export default function NewHomeComponent() {
           total: totalCount,
           page: lastPageLoaded.current,
           lastPageLoaded: lastPageLoaded.current,
-          scrollY: currentScrollY,
+          firstVisibleIndex: topIndexRef.current, // <-- store index
           ts: Date.now(),
         };
         dispatch(setHomeCache(homeCache));
@@ -253,6 +261,7 @@ export default function NewHomeComponent() {
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newSort = event.target.value as ListSortType;
+    resetToTop();
     dispatch(setPage(1));
     dispatch(setSortBy(newSort));
   };
@@ -281,6 +290,7 @@ export default function NewHomeComponent() {
     }
     const isChecked = event.target.checked;
     nsfwDebounceTimer.current = setTimeout(() => {
+      resetToTop();
       dispatch(setPage(1));
       dispatch(setIncludeNsfw(isChecked));
     }, 500);
@@ -295,6 +305,7 @@ export default function NewHomeComponent() {
       clearTimeout(searchDebounceTimer.current);
     }
     searchDebounceTimer.current = setTimeout(() => {
+      resetToTop();
       dispatch(setSearchQuery(newSearchQuery));
       dispatch(setPage(1));
     }, 500);
@@ -310,6 +321,7 @@ export default function NewHomeComponent() {
   };
 
   const closeCategoryModal = () => {
+    resetToTop();
     setIsCategoryModalOpen(false);
     dispatch(setSelectedCategories(tempSelectedCategories));
     dispatch(setPage(1));
@@ -322,6 +334,7 @@ export default function NewHomeComponent() {
   };
 
   const closeLanguageModal = () => {
+    resetToTop();
     setIsLanguageModalOpen(false);
     dispatch(setSelectedLanguages(tempSelectedLanguages));
     dispatch(setPage(1));
@@ -373,12 +386,27 @@ export default function NewHomeComponent() {
     return { type: 'row' as const, rowIndex };
   };
 
+  const resetToTop = (smooth = false) => {
+    topIndexRef.current = 0;
+    setInitialIndex(0);
+    virtuosoRef.current?.scrollToIndex({
+      index: 0,
+      align: 'start',
+      behavior: smooth ? 'smooth' : 'auto',
+    });
+  };
+
   const renderRow = (index: number) => {
     const startIdx = index * columnCount;
     const rowItems = games.slice(startIdx, startIdx + columnCount);
 
+    if (rowItems.length === 0) {
+      return <div style={{ height: 1 }} />; // spacer, avoids 0-size warnings
+    }
+
     return (
-      <div className="flex w-full mb-8">
+      <div className="flex w-full mb-8 min-h-px">
+        {/* prevents zero height */}
         <div className="flex w-full">
           {rowItems.map((game) => (
             <div
@@ -579,9 +607,24 @@ export default function NewHomeComponent() {
             totalCount={virtualTotalCount}
             overscan={5}
             components={{ Footer }}
+            initialTopMostItemIndex={initialIndex ?? 0} // <-- NEW
+            rangeChanged={({ startIndex }) => {
+              // <-- NEW
+              topIndexRef.current = startIndex;
+            }}
             itemContent={(virtualIndex) => {
+              // Safety: ignore indices that momentarily exceed total
+              if (virtualIndex >= virtualTotalCount)
+                return <div style={{ height: 1 }} />;
+
               const v = getVirtualItem(virtualIndex);
               if (v.type === 'banner') return <BannerRow />;
+
+              // Safety: if rowIndex is out of bounds, render a 1px spacer (not zero)
+              if (v.rowIndex < 0 || v.rowIndex >= rowCount) {
+                return <div style={{ height: 1 }} />;
+              }
+
               return renderRow(v.rowIndex);
             }}
             endReached={() => {
@@ -590,6 +633,19 @@ export default function NewHomeComponent() {
           />
         )}
       </div>
+      <button
+        onClick={() => resetToTop(true)}
+        aria-label="Go to top"
+        className="fixed z-50 rounded-full p-3 bg-uwu-red text-white shadow-lg hover:shadow-xl transition
+             hover:-translate-y-0.5 focus:outline-none right-6 bottom-8"
+        style={{
+          // iOS safe-area friendly
+          insetInlineEnd: 'max(1rem, env(safe-area-inset-right))',
+          insetBlockEnd: 'max(2rem, env(safe-area-inset-bottom))',
+        }}
+      >
+        <ArrowUp className="w-5 h-5" />
+      </button>
       {isCategoryModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
