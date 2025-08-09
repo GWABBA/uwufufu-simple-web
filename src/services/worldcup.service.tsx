@@ -66,6 +66,9 @@ export const fetchWorldcupBySlug = async (
     return data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        return null; // Return null if the worldcup is not found
+      }
       throw new Error(
         error.response?.data?.message || 'Failed to fetch worldcup'
       );

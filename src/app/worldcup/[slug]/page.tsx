@@ -4,7 +4,9 @@ import WorldcupClient from './WorldcupClient';
 import { Metadata } from 'next';
 
 type ParamsPromise = Promise<{ slug: string }>;
-type SearchParamsPromise = Promise<{ [key: string]: string | string[] | undefined }>;
+type SearchParamsPromise = Promise<{
+  [key: string]: string | string[] | undefined;
+}>;
 
 export async function generateMetadata({
   params,
@@ -54,11 +56,11 @@ export default async function WorldcupPage({
 }) {
   // Await the params object before destructuring
   const { slug } = await params;
-  
+
   // Await the searchParams object before accessing its properties
   const resolvedSearchParams = await searchParams;
-  const startedGameId = resolvedSearchParams.startedGameId 
-    ? Number(resolvedSearchParams.startedGameId) 
+  const startedGameId = resolvedSearchParams.startedGameId
+    ? Number(resolvedSearchParams.startedGameId)
     : undefined;
 
   const worldcup = await fetchWorldcupBySlug(slug);
