@@ -2,16 +2,16 @@ import { Worldcup } from '@/dtos/worldcup.dtos';
 import { ListSortType, Locales } from '@/enums/enums.enum';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export interface HomeCache {
-  key: string; // unique key from filters
+export type HomeCache = {
+  key: string;
   games: Worldcup[];
   total: number;
   page: number;
   lastPageLoaded: number;
-  topIndex?: number;
-  scrollY: number;
-  ts: number; // timestamp for optional expiry
-}
+  /** top-most visible row index for Virtuoso restore */
+  firstVisibleIndex?: number; // <— add this
+  ts: number;
+};
 
 interface WorldcupsState {
   page: number;

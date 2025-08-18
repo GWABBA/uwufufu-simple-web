@@ -3,7 +3,7 @@
 import { ListSortType, Locales } from '@/enums/enums.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { LocaleNames } from '@/constants/locale';
 import { Search, X, GalleryHorizontalEnd, ArrowUp } from 'lucide-react';
 import { fetchWorldcups } from '@/services/worldcup.service';
@@ -84,6 +84,8 @@ export default function NewHomeComponent() {
     (state: RootState) => state.worldcups.homeCache
   );
 
+  const extraPickMapRef = useRef<Record<number, number>>({});
+
   // Use a ref to track if the initial load has been handled.
   // Refs don't cause re-renders, preventing the infinite loop.
   const initialLoadRef = useRef(false);
@@ -97,6 +99,10 @@ export default function NewHomeComponent() {
   const columnCount = getColumnCount(windowWidth);
   const isFetchingRef = useRef(false);
   const lastPageLoaded = useRef(1);
+
+  useEffect(() => {
+    extraPickMapRef.current = {};
+  }, [columnCount]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -179,6 +185,7 @@ export default function NewHomeComponent() {
     return () => {
       initialLoadRef.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     // These are the only things that should trigger a fresh fetch
     perPage,
@@ -372,18 +379,38 @@ export default function NewHomeComponent() {
     return count.toString();
   }
 
-  const interval = windowWidth >= 1024 ? 3 : 4;
-  const rowCount = Math.ceil(games.length / columnCount);
-  const bannerCount = Math.floor(rowCount / interval);
-  const virtualTotalCount = rowCount + bannerCount;
+  type ExtraItem = { kind: 'extra'; key: string; uwuIndex: number };
+  type DisplayItem = Worldcup | ExtraItem;
 
-  const getVirtualItem = (virtualIndex: number) => {
-    const groupSize = interval + 1;
-    const isBanner = (virtualIndex + 1) % groupSize === 0;
-    if (isBanner) return { type: 'banner' as const };
-    const bannersBefore = Math.floor((virtualIndex + 1) / groupSize);
-    const rowIndex = virtualIndex - bannersBefore;
-    return { type: 'row' as const, rowIndex };
+  const isExtraItem = (item: DisplayItem): item is ExtraItem =>
+    (item as ExtraItem).kind === 'extra';
+
+  const buildItemsWithExtras = (
+    src: Worldcup[],
+    colCount: number,
+    uwuLen: number
+  ): DisplayItem[] => {
+    const isDesktop = colCount === 3;
+    if (uwuLen <= 0) return src;
+
+    let nextInsertAt = isDesktop ? 7 : 4;
+    const step = isDesktop ? 8 : 4;
+
+    const out: DisplayItem[] = [];
+    const pickMap = extraPickMapRef.current; // <-- sticky picks
+
+    for (let i = 0; i < src.length; i++) {
+      if (i === nextInsertAt) {
+        if (pickMap[i] === undefined) {
+          pickMap[i] = Math.floor(Math.random() * uwuLen);
+        }
+        const uwuIndex = pickMap[i];
+        out.push({ kind: 'extra', key: `extra-${i}`, uwuIndex });
+        nextInsertAt += step;
+      }
+      out.push(src[i]);
+    }
+    return out;
   };
 
   const resetToTop = (smooth = false) => {
@@ -396,110 +423,187 @@ export default function NewHomeComponent() {
     });
   };
 
-  const renderRow = (index: number) => {
-    const startIdx = index * columnCount;
-    const rowItems = games.slice(startIdx, startIdx + columnCount);
+  const uwuverseData = [
+    {
+      title: 'The Winner Stays',
+      description:
+        'The ultimate bracket battle game where only the fan-favorite choice survives — you decide who wins, round after round.',
+      coverImage: '/assets/uwuverse/winner_stays.png',
+      link: 'https://thewinnerstays.com/',
+    },
+    {
+      title: 'UwU Memes',
+      description:
+        'Generate memes with your own image, a template, or with AI.',
+      coverImage: '/assets/uwuverse/uwu_memes.png',
+      link: 'https://uwumemes.com/',
+    },
+    {
+      title: '1sto50',
+      description: 'Your reflexes vs the world. Tap 1 to 50, fast.',
+      coverImage: '/assets/uwuverse/1sto50.png',
+      link: 'https://1sto50.com/',
+    },
+    {
+      title: 'Gay Or Not',
+      description: 'Vote if something is gay or not.',
+      coverImage: '/assets/uwuverse/gay_or_not.png',
+      link: 'https://gayornot.fun/',
+    },
+  ];
 
-    if (rowItems.length === 0) {
-      return <div style={{ height: 1 }} />; // spacer, avoids 0-size warnings
-    }
-
+  const renderExtraCard = (item: ExtraItem) => {
+    const uwu = uwuverseData[item.uwuIndex];
     return (
-      <div className="flex w-full mb-8 min-h-px">
-        {/* prevents zero height */}
-        <div className="flex w-full">
-          {rowItems.map((game) => (
-            <div
-              key={game.id}
-              className="p-2"
-              style={{ width: `${100 / columnCount}%` }}
-            >
-              <Link
-                href={`/worldcup/${game.slug}`}
-                className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
-              >
-                <div className="w-full h-60 relative">
-                  <div className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 top-2 left-2 flex items-center">
-                    <GalleryHorizontalEnd className="mr-2"></GalleryHorizontalEnd>
-                    {game.selectionCount}
-                  </div>
-                  {game.isNsfw && (
-                    <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md z-20 top-2 right-2">
-                      NSFW
-                    </span>
-                  )}
-                  <div
-                    className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 bottom-2 left-2 flex items-center"
-                    title={`${game.plays?.toLocaleString() || 0} Plays`}
-                  >
-                    {formatPlayCount(game.plays || 0)} Plays
-                  </div>
-                  {game.isNsfw &&
-                    (!user || (user && user.tier === 'basic')) && (
-                      <div className="absolute w-full h-full backdrop-blur-lg z-10"></div>
-                    )}
-                  <Image
-                    src={
-                      game.coverImage || '/assets/common/default-thumbnail.webp'
-                    }
-                    alt={game.title}
-                    fill
-                    className="rounded-t-2xl object-cover z-0"
-                    unoptimized
-                  />
-                </div>
-                <div className="p-4 flex flex-col justify-between h-[calc(100%-240px)]">
-                  <div>
-                    <div className="flex items-center text-sm text-gray-300 mb-2 justify-between">
-                      <span className="text-uwuRed font-semibold">
-                        {game.category?.name || 'Unknown'}
-                      </span>
-                      {game.user && (
-                        <div className="flex items-center">
-                          {game.user.profileImage ? (
-                            <Image
-                              src={game.user.profileImage!}
-                              alt="profile"
-                              width={24}
-                              height={24}
-                              className="rounded-full mr-1"
-                            ></Image>
-                          ) : (
-                            <Image
-                              src="/assets/icons/account-circle.svg"
-                              alt="profile"
-                              width={24}
-                              height={24}
-                              className="rounded-full mr-1"
-                            ></Image>
-                          )}
-                          <span className="text-gray-400">
-                            {game.user.name}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <h2 className="text-lg md:text-xl font-semibold text-white line-clamp-1">
-                      {game.title}
-                    </h2>
-                    <p className="text-sm text-gray-400 mt-2 line-clamp-1">
-                      {game.description}
-                    </p>
-                  </div>
-                </div>
-              </Link>
+      <div
+        key={item.key}
+        className="p-2"
+        style={{ width: `${100 / columnCount}%` }}
+      >
+        <Link
+          href={uwu.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
+        >
+          <div className="w-full h-60 relative">
+            <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-uwu-red rounded-md z-20 top-2 left-2">
+              UwUverse
+            </span>
+            <Image
+              src={uwu.coverImage}
+              alt={uwu.title}
+              fill
+              className="rounded-t-2xl object-cover z-0"
+              unoptimized
+            />
+          </div>
+          <div className="p-4 flex flex-col justify-between h-[calc(100%-240px)]">
+            <div>
+              <h3 className="text-lg md:text-xl font-semibold text-white line-clamp-1">
+                {uwu.title}
+              </h3>
+              <p className="text-sm text-gray-400 mt-2 line-clamp-2">
+                {uwu.description}
+              </p>
             </div>
-          ))}
-        </div>
+          </div>
+        </Link>
       </div>
     );
   };
 
-  const BannerRow = () => (
-    <div className="w-full mb-8">
-      <div className="w-full bg-white" style={{ height: 180 }} />
-    </div>
-  );
+  const displayItems = useMemo(() => {
+    return buildItemsWithExtras(games, columnCount, uwuverseData.length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [games, columnCount, uwuverseData.length]);
+
+  const rowCount = Math.ceil(displayItems.length / columnCount);
+
+  const renderRow = (index: number) => {
+    const startIdx = index * columnCount;
+    const rowItems: DisplayItem[] = displayItems.slice(
+      startIdx,
+      startIdx + columnCount
+    );
+
+    if (rowItems.length === 0) return <div style={{ height: 1 }} />;
+
+    return (
+      <div className="flex w-full mb-8 min-h-px">
+        <div className="flex w-full">
+          {rowItems.map((item) => {
+            if (isExtraItem(item)) return renderExtraCard(item);
+
+            const game = item as Worldcup;
+            return (
+              <div
+                key={game.id}
+                className="p-2"
+                style={{ width: `${100 / columnCount}%` }}
+              >
+                <Link
+                  href={`/worldcup/${game.slug}`}
+                  className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
+                >
+                  <div className="w-full h-60 relative">
+                    <div className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 top-2 left-2 flex items-center">
+                      <GalleryHorizontalEnd className="mr-2" />
+                      {game.selectionCount}
+                    </div>
+                    {game.isNsfw && (
+                      <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md z-20 top-2 right-2">
+                        NSFW
+                      </span>
+                    )}
+                    <div
+                      className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 bottom-2 left-2 flex items-center"
+                      title={`${game.plays?.toLocaleString() || 0} Plays`}
+                    >
+                      {formatPlayCount(game.plays || 0)} Plays
+                    </div>
+                    {game.isNsfw &&
+                      (!user || (user && user.tier === 'basic')) && (
+                        <div className="absolute w-full h-full backdrop-blur-lg z-10" />
+                      )}
+                    <Image
+                      src={
+                        game.coverImage ||
+                        '/assets/common/default-thumbnail.webp'
+                      }
+                      alt={game.title}
+                      fill
+                      className="rounded-t-2xl object-cover z-0"
+                      unoptimized
+                    />
+                  </div>
+                  <div className="p-4 flex flex-col justify-between h-[calc(100%-240px)]">
+                    <div>
+                      <div className="flex items-center text-sm text-gray-300 mb-2 justify-between">
+                        <span className="text-uwuRed font-semibold">
+                          {game.category?.name || 'Unknown'}
+                        </span>
+                        {game.user && (
+                          <div className="flex items-center">
+                            {game.user.profileImage ? (
+                              <Image
+                                src={game.user.profileImage!}
+                                alt="profile"
+                                width={24}
+                                height={24}
+                                className="rounded-full mr-1"
+                              />
+                            ) : (
+                              <Image
+                                src="/assets/icons/account-circle.svg"
+                                alt="profile"
+                                width={24}
+                                height={24}
+                                className="rounded-full mr-1"
+                              />
+                            )}
+                            <span className="text-gray-400">
+                              {game.user.name}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <h2 className="text-lg md:text-xl font-semibold text-white line-clamp-1">
+                        {game.title}
+                      </h2>
+                      <p className="text-sm text-gray-400 mt-2 line-clamp-1">
+                        {game.description}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   const Footer = () => {
     return (
@@ -604,29 +708,14 @@ export default function NewHomeComponent() {
           <Virtuoso
             ref={virtuosoRef}
             useWindowScroll
-            totalCount={virtualTotalCount}
+            totalCount={rowCount}
             overscan={5}
             components={{ Footer }}
-            initialTopMostItemIndex={initialIndex ?? 0} // <-- NEW
+            initialTopMostItemIndex={initialIndex ?? 0}
             rangeChanged={({ startIndex }) => {
-              // <-- NEW
               topIndexRef.current = startIndex;
             }}
-            itemContent={(virtualIndex) => {
-              // Safety: ignore indices that momentarily exceed total
-              if (virtualIndex >= virtualTotalCount)
-                return <div style={{ height: 1 }} />;
-
-              const v = getVirtualItem(virtualIndex);
-              if (v.type === 'banner') return <BannerRow />;
-
-              // Safety: if rowIndex is out of bounds, render a 1px spacer (not zero)
-              if (v.rowIndex < 0 || v.rowIndex >= rowCount) {
-                return <div style={{ height: 1 }} />;
-              }
-
-              return renderRow(v.rowIndex);
-            }}
+            itemContent={(rowIndex) => renderRow(rowIndex)}
             endReached={() => {
               if (hasMore && !isFetchingRef.current) loadMoreGames();
             }}
