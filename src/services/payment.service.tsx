@@ -50,3 +50,33 @@ export const cancelSubscription = async (): Promise<void> => {
     throw new Error('An unexpected error occurred');
   }
 };
+
+// stripe checkout session creation
+export const createStripeCheckoutSession = async (
+  priceId?: string,
+  successUrl?: string,
+  cancelUrl?: string
+): Promise<{ url: string }> => {
+  try {
+    const response = await api.post('/stripe/checkout-session', {
+      priceId,
+      successUrl,
+      cancelUrl,
+    });
+
+    if (response.status !== 200) {
+      throw new Error('Failed to create Stripe checkout session');
+    }
+
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message ||
+          'Failed to create Stripe checkout session'
+      );
+    }
+
+    throw new Error('An unexpected error occurred');
+  }
+};

@@ -63,11 +63,15 @@ export default function CustomPayPalButtons({
           }}
           onApprove={async (data) => {
             console.log('Subscription Approved:', data);
-            toast.success('Thank you for subscribing! 🎉 Please wait while we process your payment.');
+            toast.success(
+              'Thank you for subscribing! 🎉 Please wait while we process your payment.'
+            );
           }}
           onError={(err) => {
             console.error('PayPal Subscription Error:', err);
-            toast.error('Something went wrong with the subscription. Please try again.');
+            toast.error(
+              'Something went wrong with the subscription. Please try again.'
+            );
           }}
           fundingSource="paypal"
           style={{
@@ -93,11 +97,15 @@ export default function CustomPayPalButtons({
           }}
           onApprove={async (data) => {
             console.log('Subscription Approved:', data);
-            toast.success('Thank you for subscribing! 🎉 Please wait while we process your payment.');
+            toast.success(
+              'Thank you for subscribing! 🎉 Please wait while we process your payment.'
+            );
           }}
           onError={(err) => {
             console.error('PayPal Subscription Error:', err);
-            toast.error('Something went wrong with the subscription. Please try again.');
+            toast.error(
+              'Something went wrong with the subscription. Please try again.'
+            );
           }}
           fundingSource="card"
           style={{

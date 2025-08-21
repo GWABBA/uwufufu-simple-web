@@ -1,6 +1,7 @@
 'use client';
 
-import PayPalSubscriptionButton from '@/components/paypal/PaypalButton';
+import PayPalSubscriptionButton from '@/components/payment/PaypalButton';
+import StripeButtons from '@/components/payment/StripeButton'; // 👈 add this
 import { useAppSelector } from '@/store/hooks';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { Check } from 'lucide-react';
@@ -27,12 +28,9 @@ export default function PlansPage() {
       try {
         await fetchLatestPaymentService();
         setLatestPaymentExists(true);
-        // selectedPlan = process.env.NEXT_PUBLIC_PLUS_PLAN!;
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (error) {
+      } catch {
         setLatestPaymentExists(false);
       } finally {
-        // setAvailablePlan(selectedPlan); // Ensures it gets set in all cases
         setIsLoading(false);
       }
     };
@@ -80,7 +78,7 @@ export default function PlansPage() {
                       size={18}
                       strokeWidth={4}
                       className="text-uwu-red mr-2"
-                    ></Check>
+                    />
                     {t('plans.1-week-free-trial')}
                   </p>
                 )}
@@ -89,7 +87,7 @@ export default function PlansPage() {
                     size={18}
                     strokeWidth={4}
                     className="text-uwu-red mr-2"
-                  ></Check>
+                  />
                   {t('plans.remove-ads')}
                 </p>
                 <p className="text-white pl-4 flex items-center mb-2">
@@ -97,21 +95,29 @@ export default function PlansPage() {
                     size={18}
                     strokeWidth={4}
                     className="text-uwu-red mr-2"
-                  ></Check>
+                  />
                   {t('plans.access-to-nsfw')}
                 </p>
               </div>
-              <div className="flex justify-center">
+
+              <div className="flex flex-col items-center space-y-3">
                 {user && user.tier == 'plus' ? (
                   <div className="text-uwu-red text-lg">
                     {t('plans.your-current-plan')}
                   </div>
                 ) : (
-                  availablePlan && (
-                    <PayPalSubscriptionButton
-                      planId={availablePlan}
-                    ></PayPalSubscriptionButton>
-                  )
+                  <>
+                    {/* PayPal subscription button */}
+                    {availablePlan && (
+                      <PayPalSubscriptionButton planId={availablePlan} />
+                    )}
+
+                    {/* Stripe subscription button (redirects to Checkout) */}
+                    <StripeButtons />
+                    {/* You can pass props if you want to override server defaults:
+                        <StripeButtons priceId="price_..." successUrl="..." cancelUrl="..." />
+                    */}
+                  </>
                 )}
               </div>
             </div>
