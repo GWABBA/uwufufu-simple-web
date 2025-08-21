@@ -10,12 +10,10 @@ import {
 import axios from 'axios';
 import api from './api.service';
 
-export const fetchMyStartedGames = async (
-  query: {
-    page: number;
-    perPage: number;
-  }
-): Promise<StartedGameWithGameResponseDto[]> => {
+export const fetchMyStartedGames = async (query: {
+  page: number;
+  perPage: number;
+}): Promise<StartedGameWithGameResponseDto[]> => {
   const page = query.page || 1;
   const perPage = query.perPage || 10;
 
@@ -133,6 +131,20 @@ export const fetchStartedGameById = async (
     if (axios.isAxiosError(error)) {
       throw new Error(
         error.response?.data?.message || 'Failed to fetch started game'
+      );
+    }
+
+    throw new Error('An unexpected error occurred');
+  }
+};
+
+export const deleteStartedGame = async (id: number): Promise<void> => {
+  try {
+    await api.delete(`${config.apiUrl}/started-games/${id}`);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || 'Failed to delete started game'
       );
     }
 

@@ -1,17 +1,23 @@
 'use client';
 
 import { StartedGameWithGameResponseDto } from '@/dtos/startedGames.dtos';
-import { fetchMyStartedGames } from '@/services/startedGames.service';
+import {
+  deleteStartedGame,
+  fetchMyStartedGames,
+} from '@/services/startedGames.service';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import { Virtuoso } from 'react-virtuoso';
 import LoadingAnimation from '@/components/animation/Loading';
+import { Trash2 } from 'lucide-react';
 
 export default function MyPlays() {
   const { t } = useTranslation();
-  const [startedGames, setStartedGames] = useState<StartedGameWithGameResponseDto[]>([]);
+  const [startedGames, setStartedGames] = useState<
+    StartedGameWithGameResponseDto[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -70,15 +76,15 @@ export default function MyPlays() {
   };
 
   const loadMoreGames = useCallback(async () => {
-		if (!hasMore || isFetchingRef.current) return;
-	
-		try {
-			await fetchStartedGames(page + 1);
-		} finally {
-			isFetchingRef.current = false;
-			setIsLoading(false);
-		}
-	}, [hasMore, page]);
+    if (!hasMore || isFetchingRef.current) return;
+
+    try {
+      await fetchStartedGames(page + 1);
+    } finally {
+      isFetchingRef.current = false;
+      setIsLoading(false);
+    }
+  }, [hasMore, page]);
 
   const getGameLink = (startedGame: StartedGameWithGameResponseDto) => {
     if (startedGame.status === 'IS_COMPLETED') {
@@ -88,9 +94,23 @@ export default function MyPlays() {
     }
   };
 
+  const onDeleteClicked = async (
+    startedGame: StartedGameWithGameResponseDto
+  ) => {
+    if (!confirm(t('play-history.confirm-delete'))) return;
+    try {
+      await deleteStartedGame(startedGame.id);
+      setStartedGames((prev) =>
+        prev.filter((game) => game.id !== startedGame.id)
+      );
+    } catch (error) {
+      console.error('Error deleting started game:', error);
+    }
+  };
+
   const renderRow = (index: number) => {
     const startIdx = index * columnCount;
-    const rowItems = startedGames.slice(startIdx, startIdx + columnCount);
+    const rowItems = visible.slice(startIdx, startIdx + columnCount);
 
     return (
       <div className="flex w-full mb-8">
@@ -115,12 +135,16 @@ export default function MyPlays() {
                   />
                 )}
                 <div className="absolute top-2 right-2 z-10">
-                  <span className={`px-3 py-1 rounded-md text-xs font-semibold ${
-                    startedGame.status === 'IS_COMPLETED' 
-                      ? 'bg-red-600 text-white' 
-                      : 'bg-uwu-blue text-white'
-                  }`}>
-                    {startedGame.status === 'IS_COMPLETED' ? t('play-history.completed') : t('in-progress')}
+                  <span
+                    className={`px-3 py-1 rounded-md text-xs font-semibold ${
+                      startedGame.status === 'IS_COMPLETED'
+                        ? 'bg-red-600 text-white'
+                        : 'bg-uwu-blue text-white'
+                    }`}
+                  >
+                    {startedGame.status === 'IS_COMPLETED'
+                      ? t('play-history.completed')
+                      : t('in-progress')}
                   </span>
                 </div>
               </div>
@@ -132,32 +156,27 @@ export default function MyPlays() {
                     </span>
                     {startedGame.game.user && (
                       <div className="flex items-center">
-                        {startedGame.game.user.profileImage ? (
-                          <Image
-                            src={startedGame.game.user.profileImage!}
-                            alt="profile"
-                            width={24}
-                            height={24}
-                            className="rounded-full mr-1"
-                          />
-                        ) : (
-                          <Image
-                            src="/assets/icons/account-circle.svg"
-                            alt="profile"
-                            width={24}
-                            height={24}
-                            className="rounded-full mr-1"
-                          />
-                        )}
-                        <span className="text-gray-400">{startedGame.game.user.name}</span>
+                        <span className="text-gray-400">
+                          {startedGame.game.user.name}
+                        </span>
                       </div>
                     )}
+                    <button>
+                      <Trash2
+                        onClick={(e) => {
+                          e.preventDefault(); // prevent link navigation
+                          onDeleteClicked(startedGame);
+                        }}
+                        className="text-gray-600 hover:scale-125"
+                      />
+                    </button>
                   </div>
                   <h2 className="text-lg md:text-xl font-semibold text-white line-clamp-1">
                     {startedGame.game.title}
                   </h2>
                   <p className="text-sm text-gray-400 mt-2 line-clamp-1">
-                    {startedGame.game.description || t('worldcup.no-description')}
+                    {startedGame.game.description ||
+                      t('worldcup.no-description')}
                   </p>
                 </div>
               </div>
@@ -168,7 +187,8 @@ export default function MyPlays() {
     );
   };
 
-  const rowCount = Math.ceil(startedGames.length / columnCount);
+  const visible = startedGames.filter((sg) => sg.game);
+  const rowCount = Math.ceil(visible.length / columnCount);
 
   const Footer = () => (
     <div className="py-4 flex justify-center">
@@ -178,13 +198,17 @@ export default function MyPlays() {
 
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 flex flex-col">
-      <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-8">{t('play-history.play-history')}</h1>
+      <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-8">
+        {t('play-history.play-history')}
+      </h1>
       {initialLoading ? (
         <div className="flex justify-center py-8">
           <LoadingAnimation />
         </div>
       ) : startedGames.length === 0 ? (
-        <div className="text-center text-white py-8">{t('play-history.no-plays')}</div>
+        <div className="text-center text-white py-8">
+          {t('play-history.no-plays')}
+        </div>
       ) : (
         <Virtuoso
           ref={virtuosoRef}
