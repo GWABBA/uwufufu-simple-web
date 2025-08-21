@@ -175,6 +175,7 @@
     "play-history": "Spelhistorik",
     "completed": "Slutfört",
     "in-progress": "Pågående",
-    "no-plays": "Inga spel"
+    "no-plays": "Inga spel",
+    "confirm-delete": "Är du säker på att du vill radera det här spelet?"
   }
 }

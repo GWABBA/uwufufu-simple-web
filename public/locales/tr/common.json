@@ -175,6 +175,7 @@
     "play-history": "Oyun Geçmişi",
     "completed": "Tamamlandı",
     "in-progress": "Devam Ediyor",
-    "no-plays": "Oyun geçmişi yok"
+    "no-plays": "Oyun geçmişi yok",
+    "confirm-delete": "Bu oyunu silmek istediğinizden emin misiniz?"
   }
 }

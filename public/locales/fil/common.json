@@ -175,6 +175,7 @@
     "play-history": "Kasaysayan ng Laro",
     "completed": "Natapos",
     "in-progress": "Nasa pagtatapos",
-    "no-plays": "Walang laro"
+    "no-plays": "Walang laro",
+    "confirm-delete": "Sigurado ka bang gusto mong burahin ang larong ito?"
   }
 }

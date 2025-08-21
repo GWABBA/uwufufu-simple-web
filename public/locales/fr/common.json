@@ -175,6 +175,7 @@
     "play-history": "Historique des parties",
     "completed": "Terminé",
     "in-progress": "En cours",
-    "no-plays": "Aucune partie trouvée"
+    "no-plays": "Aucune partie trouvée",
+    "confirm-delete": "Êtes-vous sûr de vouloir supprimer cette partie ?"
   }
 }

@@ -175,6 +175,7 @@
     "play-history": "Lịch sử trò chơi",
     "completed": "Hoàn thành",
     "in-progress": "Đang tiếp tục",
-    "no-plays": "Không có trò chơi"
+    "no-plays": "Không có trò chơi",
+    "confirm-delete": "Bạn có chắc chắn muốn xóa lượt chơi này không?"
   }
 }

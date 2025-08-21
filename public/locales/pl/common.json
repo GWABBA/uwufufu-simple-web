@@ -175,6 +175,7 @@
     "play-history": "Historia gier",
     "completed": "Zakończone",
     "in-progress": "W toku",
-    "no-plays": "Brak gier"
+    "no-plays": "Brak gier",
+    "confirm-delete": "Czy na pewno chcesz usunąć tę grę?"
   }
 }

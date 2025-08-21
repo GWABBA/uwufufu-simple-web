@@ -175,6 +175,7 @@
     "play-history": "游戏历史",
     "completed": "已完成",
     "in-progress": "进行中",
-    "no-plays": "没有游戏"
+    "no-plays": "没有游戏",
+    "confirm-delete": "您确定要删除此游戏吗？"
   }
 }

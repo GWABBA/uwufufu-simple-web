@@ -175,6 +175,7 @@
     "play-history": "Spelgeschiedenis",
     "completed": "Voltooid",
     "in-progress": "In behandeling",
-    "no-plays": "Geen spelgeschiedenis gevonden"
+    "no-plays": "Geen spelgeschiedenis gevonden",
+    "confirm-delete": "Weet je zeker dat je dit spel wilt verwijderen?"
   }
 }

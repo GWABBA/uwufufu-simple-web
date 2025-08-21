@@ -175,6 +175,7 @@
     "play-history": "Spilhistorik",
     "completed": "Fuldført",
     "in-progress": "Igangværende",
-    "no-plays": "Ingen spil fundet"
+    "no-plays": "Ingen spil fundet",
+    "confirm-delete": "Er du sikker på, at du vil slette dette spil?"
   }
 }

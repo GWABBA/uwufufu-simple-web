@@ -175,6 +175,7 @@
     "play-history": "Riwayat Permainan",
     "completed": "Selesai",
     "in-progress": "Sedang Berlangsung",
-    "no-plays": "Tidak ada permainan"
+    "no-plays": "Tidak ada permainan",
+    "confirm-delete": "Apakah kamu yakin ingin menghapus permainan ini?"
   }
 }

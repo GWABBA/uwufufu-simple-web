@@ -175,6 +175,7 @@
     "play-history": "Spielverlauf",
     "completed": "Abgeschlossen",
     "in-progress": "In Arbeit",
-    "no-plays": "Keine Spiele gefunden"
+    "no-plays": "Keine Spiele gefunden",
+    "confirm-delete": "Bist du sicher, dass du dieses Spiel löschen möchtest?"
   }
 }

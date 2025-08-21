@@ -113,10 +113,7 @@ export default function PlansPage() {
                     )}
 
                     {/* Stripe subscription button (redirects to Checkout) */}
-                    <StripeButtons />
-                    {/* You can pass props if you want to override server defaults:
-                        <StripeButtons priceId="price_..." successUrl="..." cancelUrl="..." />
-                    */}
+                    {user && user.isAdmin && <StripeButtons />}
                   </>
                 )}
               </div>

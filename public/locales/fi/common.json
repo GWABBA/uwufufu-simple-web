@@ -175,6 +175,7 @@
     "play-history": "Pelitiedot",
     "completed": "Valmis",
     "in-progress": "Käynnissä",
-    "no-plays": "Ei peliä"
+    "no-plays": "Ei peliä",
+    "confirm-delete": "Oletko varma, että haluat poistaa tämän pelin?"
   }
 }

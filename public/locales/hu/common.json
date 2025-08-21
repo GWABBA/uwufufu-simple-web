@@ -175,6 +175,7 @@
     "play-history": "Játéktörténet",
     "completed": "Befejezve",
     "in-progress": "Folyamatban",
-    "no-plays": "Nincs játék"
+    "no-plays": "Nincs játék",
+    "confirm-delete": "Biztosan törölni szeretnéd ezt a játékot?"
   }
 }

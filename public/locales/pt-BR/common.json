@@ -175,6 +175,7 @@
     "play-history": "Histórico de Jogos",
     "completed": "Completo",
     "in-progress": "Em andamento",
-    "no-plays": "Nenhum jogo"
+    "no-plays": "Nenhum jogo",
+    "confirm-delete": "Você tem certeza de que deseja excluir este jogo?"
   }
 }

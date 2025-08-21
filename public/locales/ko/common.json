@@ -175,6 +175,7 @@
     "play-history": "게임 기록",
     "completed": "완료",
     "in-progress": "진행중",
-    "no-plays": "게임 기록이 없습니다"
+    "no-plays": "게임 기록이 없습니다",
+    "confirm-delete": "이 플레이를 삭제하시겠습니까?"
   }
 }

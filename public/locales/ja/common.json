@@ -175,6 +175,7 @@
     "play-history": "プレイ履歴",
     "completed": "完了",
     "in-progress": "進行中",
-    "no-plays": "プレイ履歴がありません"
+    "no-plays": "プレイ履歴がありません",
+    "confirm-delete": "このプレイを削除してもよろしいですか？"
   }
 }

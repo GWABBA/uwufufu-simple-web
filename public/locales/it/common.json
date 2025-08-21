@@ -175,6 +175,7 @@
     "play-history": "Cronologia di gioco",
     "completed": "Completato",
     "in-progress": "In corso",
-    "no-plays": "Nessun gioco"
+    "no-plays": "Nessun gioco",
+    "confirm-delete": "Sei sicuro di voler eliminare questa partita?"
   }
 }
