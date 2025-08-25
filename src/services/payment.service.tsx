@@ -39,7 +39,7 @@ export const fetchLatestPayment = async (): Promise<PaymentResponseDto> => {
 
 export const cancelSubscription = async (): Promise<void> => {
   try {
-    await api.post('/payments/cancel-subscription');
+    await api.post('/auth/cancel-subscription');
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       throw new Error(
