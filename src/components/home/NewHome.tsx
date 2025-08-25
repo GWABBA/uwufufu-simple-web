@@ -464,7 +464,7 @@ export default function NewHomeComponent() {
           href={uwu.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
+          className="block bg-uwu-dark-gray border border-yellow-400 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
         >
           <div className="w-full h-60 relative">
             <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-uwu-red rounded-md z-20 top-2 left-2">

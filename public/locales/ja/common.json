@@ -125,6 +125,10 @@
     "unlock-premium": "プレミアム特典を解除。",
     "try-free-7-days": "プラスを7日間無料でお試し！"
   },
+  "banner": {
+    "good-stuff": "いいものを見逃さないで。",
+    "go-premium": "プレミアムにアップグレード！"
+  },
   "auth": {
     "welcome-back": "おかえりなさい！",
     "login": "ログイン",

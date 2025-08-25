@@ -125,6 +125,10 @@
     "unlock-premium": "Unlock Premium Perks.",
     "try-free-7-days": "Try Plus Free for 7 Days!"
   },
+  "banner": {
+    "good-stuff": "Don't miss out on the good stuff.",
+    "go-premium": "Go Premium!"
+  },
   "auth": {
     "welcome-back": "Welcome back!",
     "login": "Log In",

@@ -125,6 +125,10 @@
     "unlock-premium": "Avaa Premium-ominaisuudet.",
     "try-free-7-days": "Kokeile Plussaa ilmaiseksi 7 päivää!"
   },
+  "banner": {
+    "good-stuff": "Älä jää paitsi hyvistä jutuista.",
+    "go-premium": "Siirry Premiumiin!"
+  },
   "auth": {
     "welcome-back": "Tervetuloa takaisin!",
     "login": "Kirjaudu sisään",

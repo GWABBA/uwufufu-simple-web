@@ -125,6 +125,10 @@
     "unlock-premium": "Desbloqueie benefícios Premium.",
     "try-free-7-days": "Experimente o Plus grátis por 7 dias!"
   },
+  "banner": {
+    "good-stuff": "Não perca o melhor.",
+    "go-premium": "Faça upgrade para o Premium!"
+  },
   "auth": {
     "welcome-back": "Bem-vindo de volta!",
     "login": "Entrar",

@@ -125,6 +125,10 @@
     "unlock-premium": "Premium avantajların kilidini açın.",
     "try-free-7-days": "Plus'ı 7 gün ücretsiz deneyin!"
   },
+  "banner": {
+    "good-stuff": "İyi şeyleri kaçırma.",
+    "go-premium": "Premium'a geç!"
+  },
   "auth": {
     "welcome-back": "Tekrar hoş geldiniz!",
     "login": "Giriş Yap",

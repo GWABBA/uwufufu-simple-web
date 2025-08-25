@@ -125,6 +125,10 @@
     "unlock-premium": "解鎖高級功能。",
     "try-free-7-days": "免費試用 Plus 7 天！"
   },
+  "banner": {
+    "good-stuff": "別錯過精彩內容。",
+    "go-premium": "升級到高級版！"
+  },
   "auth": {
     "welcome-back": "歡迎回來！",
     "login": "登入",

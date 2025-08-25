@@ -5,9 +5,7 @@ import axios from 'axios';
 export const fetchActiveSubscription =
   async (): Promise<PaymentResponseDto> => {
     try {
-      const { data } = await api.get<PaymentResponseDto>(
-        '/payments/active-subscription'
-      );
+      const { data } = await api.get<PaymentResponseDto>('/auth/subscription');
       return data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

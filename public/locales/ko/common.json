@@ -125,6 +125,10 @@
     "unlock-premium": "프리미엄 혜택을 잠금 해제하세요.",
     "try-free-7-days": "플러스를 7일간 무료로 체험하세요!"
   },
+  "banner": {
+    "good-stuff": "좋은 건 놓치지 마세요.",
+    "go-premium": "프리미엄으로 업그레이드!"
+  },
   "auth": {
     "welcome-back": "돌아오신 것을 환영합니다!",
     "login": "로그인",

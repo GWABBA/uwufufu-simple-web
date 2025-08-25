@@ -125,6 +125,10 @@
     "unlock-premium": "Prémium előnyök feloldása.",
     "try-free-7-days": "Próbáld ki a Pluszt ingyen 7 napig!"
   },
+  "banner": {
+    "good-stuff": "Ne maradj le a jó dolgokról!",
+    "go-premium": "Válts Prémiumra!"
+  },
   "auth": {
     "welcome-back": "Üdv újra itt!",
     "login": "Bejelentkezés",

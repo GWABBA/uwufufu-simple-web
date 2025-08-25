@@ -125,6 +125,10 @@
     "unlock-premium": "Ontgrendel Premium voordelen.",
     "try-free-7-days": "Probeer Plus 7 dagen gratis!"
   },
+  "banner": {
+    "good-stuff": "Mis het beste niet.",
+    "go-premium": "Upgrade naar Premium!"
+  },
   "auth": {
     "welcome-back": "Welkom terug!",
     "login": "Inloggen",

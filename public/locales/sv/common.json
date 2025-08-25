@@ -125,6 +125,10 @@
     "unlock-premium": "Lås upp Premium-förmåner.",
     "try-free-7-days": "Prova Plus gratis i 7 dagar!"
   },
+  "banner": {
+    "good-stuff": "Missa inte det bästa.",
+    "go-premium": "Bli Premium!"
+  },
   "auth": {
     "welcome-back": "Välkommen tillbaka!",
     "login": "Logga in",

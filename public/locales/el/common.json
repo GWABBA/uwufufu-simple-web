@@ -125,6 +125,10 @@
     "unlock-premium": "Ξεκλειδώστε προνόμια Premium.",
     "try-free-7-days": "Δοκιμάστε το Plus δωρεάν για 7 ημέρες!"
   },
+  "banner": {
+    "good-stuff": "Μην χάσεις τα καλά πράγματα.",
+    "go-premium": "Απόκτησε Premium!"
+  },
   "auth": {
     "welcome-back": "Καλώς ήρθατε ξανά!",
     "login": "Σύνδεση",

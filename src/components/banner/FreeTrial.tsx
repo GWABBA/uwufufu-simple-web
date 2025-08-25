@@ -45,16 +45,14 @@ export default function FreeTrialBanner({ user }: { user: User | null }) {
         <div className="max-w-6xl w-full py-2 flex items-center text-uwu-red justify-center text-center">
           {/* Single line text for `md` and above */}
           <span className="hidden md:inline">
-            {t('free-trial.unlock-premium')}
-            <span className="font-bold ml-1">
-              {t('free-trial.try-free-7-days')}
-            </span>
+            {t('banner.good-stuff')}
+            <span className="font-bold ml-1">{t('banner.go-premium')}</span>
           </span>
 
           {/* Two-line text for smaller screens */}
           <span className="md:hidden block">
-            {t('free-trial.unlock-premium')} <br />
-            <span className="font-bold">{t('free-trial.try-free-7-days')}</span>
+            {t('banner.good-stuff')} <br />
+            <span className="font-bold">{t('banner.go-premium')}</span>
           </span>
         </div>
       </div>

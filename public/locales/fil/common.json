@@ -125,6 +125,10 @@
     "unlock-premium": "I-unlock ang Premium Benefits.",
     "try-free-7-days": "Subukan nang libre ang Plus sa loob ng 7 araw!"
   },
+  "banner": {
+    "good-stuff": "Huwag palampasin ang mga magagandang bagay.",
+    "go-premium": "Mag-upgrade sa Premium!"
+  },
   "auth": {
     "welcome-back": "Maligayang pagbabalik!",
     "login": "Mag-log in",
