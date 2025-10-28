@@ -4,7 +4,6 @@ import { useAppSelector } from '@/store/hooks';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { fetchActiveSubscription } from '@/services/payment.service';
 
 interface CustomPayPalButtonsProps {
   planId: string;
@@ -21,23 +20,23 @@ export default function CustomPayPalButtons({
     router.push('/auth/login?redirect=/plans');
   };
 
-  const validateSubscription = async () => {
-    try {
-      const activeSubscription = await fetchActiveSubscription();
-      if (activeSubscription) {
-        toast.error('You already have an active subscription.');
-        return false;
-      }
-      return false;
-    } catch (error) {
-      // If error is 404, it means no active subscription
-      if (error instanceof Error && error.message.includes('404')) {
-        return true;
-      }
-      // toast.error('Failed to validate subscription status.');
-      return true;
-    }
-  };
+  // const validateSubscription = async () => {
+  //   try {
+  //     const activeSubscription = await fetchActiveSubscription();
+  //     if (activeSubscription) {
+  //       toast.error('You already have an active subscription.');
+  //       return false;
+  //     }
+  //     return false;
+  //   } catch (error) {
+  //     // If error is 404, it means no active subscription
+  //     if (error instanceof Error && error.message.includes('404')) {
+  //       return true;
+  //     }
+  //     // toast.error('Failed to validate subscription status.');
+  //     return true;
+  //   }
+  // };
 
   return (
     <div className="flex flex-col gap-3 w-full relative">
@@ -52,10 +51,10 @@ export default function CustomPayPalButtons({
         {/* ✅ Custom PayPal Subscription Button */}
         <PayPalButtons
           createSubscription={async (data, actions) => {
-            const isValid = await validateSubscription();
-            if (!isValid) {
-              throw new Error('Subscription validation failed');
-            }
+            // const isValid = await validateSubscription();
+            // if (!isValid) {
+            //   throw new Error('Subscription validation failed');
+            // }
             return actions.subscription.create({
               plan_id: planId,
               custom_id: user!.id?.toString(),
@@ -86,10 +85,10 @@ export default function CustomPayPalButtons({
         {/* ✅ Custom Debit/Credit Card Subscription Button */}
         <PayPalButtons
           createSubscription={async (data, actions) => {
-            const isValid = await validateSubscription();
-            if (!isValid) {
-              throw new Error('Subscription validation failed');
-            }
+            // const isValid = await validateSubscription();
+            // if (!isValid) {
+            //   throw new Error('Subscription validation failed');
+            // }
             return actions.subscription.create({
               plan_id: planId,
               custom_id: user!.id?.toString(),
