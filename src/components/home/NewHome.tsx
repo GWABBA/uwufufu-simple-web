@@ -25,6 +25,7 @@ import {
 import LoadingAnimation from '../animation/Loading';
 import { useTranslation } from 'react-i18next';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
+import GoogleAd from '../common/GoogleAd';
 
 export default function NewHomeComponent() {
   const { t } = useTranslation();
@@ -615,6 +616,12 @@ export default function NewHomeComponent() {
 
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 flex flex-col">
+      {/* google adsense uwufufu-landing-top */}
+      {(!user || user.tier === 'basic') && (
+        <GoogleAd adSlot="6970744829" className="mb-4" />
+      )}
+
+      {/* search bar */}
       <div>
         <div className="grid grid-cols-2 md:flex md:space-x-2 gap-2 px-2 md:p-0 mb-4">
           <select

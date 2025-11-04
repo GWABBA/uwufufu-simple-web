@@ -7,6 +7,8 @@ import { Worldcup } from '@/dtos/worldcup.dtos';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import FinalWinnerModal from './FinalWinnerModal';
+// import { useAppSelector } from '@/store/hooks';
+// import GoogleAd from '../common/GoogleAd';
 
 declare global {
   interface Window {
@@ -104,7 +106,11 @@ const MatchModal: React.FC<MatchModalProps> = ({
     setFullSizeMedia(null); // Close full-size modal
   };
 
-  const getYouTubeEmbedUrl = (url: string, startTime: number = 0, endTime: number = 0) => {
+  const getYouTubeEmbedUrl = (
+    url: string,
+    startTime: number = 0,
+    endTime: number = 0
+  ) => {
     const embedUrl = url.includes('youtu.be')
       ? url.replace('youtu.be/', 'www.youtube.com/embed/')
       : url.replace('watch?v=', 'embed/');
@@ -114,7 +120,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
       start: startTime.toString(),
       end: endTime.toString(),
       rel: '0',
-      autoplay: '0'
+      autoplay: '0',
     });
 
     return `${embedUrl}?${params.toString()}`;
@@ -214,6 +220,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
                 height: `${viewportHeight - 64}px`, // 4rem accounts for the header
               }}
             >
+              {/* header */}
               <div className="absolute inset-0 flex justify-center text-white">
                 <div className="text-center">
                   <h1 className="text-base md:text-3xl font-bold">
@@ -444,6 +451,15 @@ const MatchModal: React.FC<MatchModalProps> = ({
                   </motion.div>
                 </div>
               </div>
+
+              {/* google adsense uwufufu-quiz-play-bottom */}
+              {/* {(!user || user.tier === 'basic') && (
+                <div className="mt-6 w-full flex justify-center">
+                  <div className="max-w-5xl w-full px-2">
+                    <GoogleAd adSlot="9732284311" />
+                  </div>
+                </div>
+              )} */}
             </div>
           </div>
         </div>

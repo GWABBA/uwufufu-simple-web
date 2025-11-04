@@ -128,12 +128,12 @@ export default async function RootLayout({
                 `,
           }}
         />
-        <Script
-          id="adsbygoogle-init"
+        {/* adsense */}
+        <script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1736056775158537"
           crossOrigin="anonymous"
-        />
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1736056775158537"
+        ></script>
       </head>
       <body className="h-full flex flex-col bg-uwu-black">
         {/* Google Tag Manager (noscript) */}

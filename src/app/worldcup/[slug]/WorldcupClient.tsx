@@ -26,6 +26,7 @@ import {
   toggleWorldcupNSFW,
 } from '@/services/worldcup.service';
 import toast from 'react-hot-toast';
+import GoogleAd from '@/components/common/GoogleAd';
 
 interface WorldcupClientProps {
   worldcup: Worldcup;
@@ -588,6 +589,11 @@ export default function WorldcupClient({
             </div>
           </div>
         </div>
+      )}
+
+      {/* google adsense uwufufu-quiz-main-top */}
+      {(!user || user.tier === 'basic') && (
+        <GoogleAd adSlot="3964952310" className="mb-4" />
       )}
 
       {/* main content */}
