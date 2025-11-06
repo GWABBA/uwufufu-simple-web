@@ -592,7 +592,7 @@ export default function WorldcupClient({
       )}
 
       {/* google adsense uwufufu-quiz-main-top */}
-      {(!user || user.tier === 'basic') && (
+      {(!user || user.tier === 'basic') && worldcup?.isNsfw === false && (
         <GoogleAd adSlot="3964952310" className="mb-4" />
       )}
 
