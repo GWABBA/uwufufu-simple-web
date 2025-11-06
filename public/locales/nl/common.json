@@ -87,7 +87,8 @@
     "upgrade-subscription": "Abonnement upgraden",
     "save-username": "Gebruikersnaam opslaan",
     "name-updated-successfully": "Naam succesvol bijgewerkt",
-    "failed-to-update-user": "Gebruiker kon niet worden bijgewerkt"
+    "failed-to-update-user": "Gebruiker kon niet worden bijgewerkt",
+    "email-verification-sent": "Verificatie-e-mail verzonden. Controleer je inbox!"
   },
   "common": {
     "unknown-error-occurred": "Er is een onbekende fout opgetreden",

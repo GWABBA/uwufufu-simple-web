@@ -87,7 +87,8 @@
     "upgrade-subscription": "Améliorer l'abonnement",
     "save-username": "Enregistrer le nom d’utilisateur",
     "name-updated-successfully": "Nom mis à jour avec succès",
-    "failed-to-update-user": "Échec de la mise à jour de l’utilisateur"
+    "failed-to-update-user": "Échec de la mise à jour de l’utilisateur",
+    "email-verification-sent": "E-mail de vérification envoyé. Vérifiez votre boîte de réception !"
   },
   "common": {
     "unknown-error-occurred": "Une erreur inconnue s'est produite",

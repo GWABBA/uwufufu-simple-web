@@ -87,7 +87,8 @@
     "upgrade-subscription": "구독 업그레이드",
     "save-username": "사용자 이름 저장",
     "name-updated-successfully": "이름이 성공적으로 업데이트되었습니다",
-    "failed-to-update-user": "사용자 업데이트에 실패했습니다"
+    "failed-to-update-user": "사용자 업데이트에 실패했습니다",
+    "email-verification-sent": "인증 이메일이 전송되었습니다. 받은편지함을 확인하세요!"
   },
   "common": {
     "unknown-error-occurred": "알 수 없는 오류가 발생했습니다",

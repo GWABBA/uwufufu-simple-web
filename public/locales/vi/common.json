@@ -87,7 +87,8 @@
     "upgrade-subscription": "Nâng cấp gói đăng ký",
     "save-username": "Lưu tên người dùng",
     "name-updated-successfully": "Cập nhật tên thành công",
-    "failed-to-update-user": "Không thể cập nhật người dùng"
+    "failed-to-update-user": "Không thể cập nhật người dùng",
+    "email-verification-sent": "Email xác minh đã được gửi. Vui lòng kiểm tra hộp thư của bạn!"
   },
   "common": {
     "unknown-error-occurred": "Có lỗi không xác định xảy ra",

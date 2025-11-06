@@ -87,7 +87,8 @@
     "upgrade-subscription": "Upgrade Subscription",
     "save-username": "Save Username",
     "name-updated-successfully": "Name updated successfully",
-    "failed-to-update-user": "Failed to update user"
+    "failed-to-update-user": "Failed to update user",
+    "email-verification-sent": "Verification email sent. Check your inbox!"
   },
   "common": {
     "unknown-error-occurred": "An unknown error occurred",

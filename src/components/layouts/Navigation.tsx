@@ -4,13 +4,15 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { usePathname, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import NavDropdownMenu from './NavDropDownMenu';
 import Cookies from 'js-cookie';
 import { TOKEN_COOKIE_NAME } from '@/services/auth.service';
 import { logout } from '@/store/slices/auth.reducer';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../language/LanguageSwitcher';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 const Navigation = () => {
   const { t } = useTranslation();
@@ -21,6 +23,7 @@ const Navigation = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString(); // Convert query params to string
+  const router = useRouter();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -70,6 +73,24 @@ const Navigation = () => {
       )}
     </div>
   );
+
+  const handleProtectedNav = (
+    e: MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => {
+    if (user && user.isVerified === false) {
+      e.preventDefault();
+      // i18n key if you have one; fallback text included
+      toast.error(
+        t(
+          'auth.verify-email-required',
+          'Email verification required. Please verify your email first.'
+        )
+      );
+      router.push('/profile');
+      return;
+    }
+    // allow normal navigation if verified or not logged in
+  };
 
   // Preserve existing params
   const redirectUrl = queryString ? `${pathname}?${queryString}` : pathname;
@@ -126,7 +147,10 @@ const Navigation = () => {
 
           {/* create game */}
           <Link href="/create-game" className="flex items-center">
-            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg text-sm">
+            <button
+              className="bg-uwu-red py-2 px-2 text-white rounded-lg text-sm"
+              onClick={(e) => handleProtectedNav(e)}
+            >
               {t('navigation.create-game')}
             </button>
           </Link>

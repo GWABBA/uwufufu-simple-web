@@ -87,7 +87,8 @@
     "upgrade-subscription": "升級訂閱",
     "save-username": "儲存使用者名稱",
     "name-updated-successfully": "名稱已成功更新",
-    "failed-to-update-user": "無法更新使用者"
+    "failed-to-update-user": "無法更新使用者",
+    "email-verification-sent": "驗證郵件已發送。請檢查您的收件箱！"
   },
   "common": {
     "unknown-error-occurred": "發生未知錯誤",

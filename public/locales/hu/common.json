@@ -87,7 +87,8 @@
     "upgrade-subscription": "Előfizetés frissítése",
     "save-username": "Felhasználónév mentése",
     "name-updated-successfully": "A név sikeresen frissítve",
-    "failed-to-update-user": "A felhasználó frissítése nem sikerült"
+    "failed-to-update-user": "A felhasználó frissítése nem sikerült",
+    "email-verification-sent": "Megerősítő e-mail elküldve. Ellenőrizd a postaládádat!"
   },
   "common": {
     "unknown-error-occurred": "Ismeretlen hiba történt",

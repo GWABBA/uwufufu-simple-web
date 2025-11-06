@@ -87,7 +87,8 @@
     "upgrade-subscription": "Αναβάθμιση συνδρομής",
     "save-username": "Αποθήκευση ονόματος χρήστη",
     "name-updated-successfully": "Το όνομα ενημερώθηκε με επιτυχία",
-    "failed-to-update-user": "Αποτυχία ενημέρωσης χρήστη"
+    "failed-to-update-user": "Αποτυχία ενημέρωσης χρήστη",
+    "email-verification-sent": "Το email επιβεβαίωσης στάλθηκε. Έλεγξε τα εισερχόμενά σου!"
   },
   "common": {
     "unknown-error-occurred": "Παρουσιάστηκε άγνωστο σφάλμα",

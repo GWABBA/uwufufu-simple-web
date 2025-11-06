@@ -87,7 +87,8 @@
     "upgrade-subscription": "Melhorar assinatura",
     "save-username": "Salvar nome de usuário",
     "name-updated-successfully": "Nome atualizado com sucesso",
-    "failed-to-update-user": "Falha ao atualizar o usuário"
+    "failed-to-update-user": "Falha ao atualizar o usuário",
+    "email-verification-sent": "E-mail de verificação enviado. Verifique sua caixa de entrada!"
   },
   "common": {
     "unknown-error-occurred": "Ocorreu um erro desconhecido",

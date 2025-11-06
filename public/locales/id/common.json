@@ -87,7 +87,8 @@
     "upgrade-subscription": "Upgrade Langganan",
     "save-username": "Simpan nama pengguna",
     "name-updated-successfully": "Nama berhasil diperbarui",
-    "failed-to-update-user": "Gagal memperbarui pengguna"
+    "failed-to-update-user": "Gagal memperbarui pengguna",
+    "email-verification-sent": "Email verifikasi telah dikirim. Periksa kotak masuk Anda!"
   },
   "common": {
     "unknown-error-occurred": "Terjadi kesalahan yang tidak diketahui",

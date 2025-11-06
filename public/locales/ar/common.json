@@ -87,7 +87,8 @@
     "upgrade-subscription": "ترقية الاشتراك",
     "save-username": "حفظ اسم المستخدم",
     "name-updated-successfully": "تم تحديث الاسم بنجاح",
-    "failed-to-update-user": "فشل في تحديث المستخدم"
+    "failed-to-update-user": "فشل في تحديث المستخدم",
+    "email-verification-sent": "تم إرسال رسالة التحقق. تحقق من بريدك الوارد!"
   },
   "common": {
     "unknown-error-occurred": "حدث خطأ غير معروف",

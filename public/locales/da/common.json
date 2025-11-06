@@ -87,7 +87,8 @@
     "upgrade-subscription": "Opgrader abonnement",
     "save-username": "Gem brugernavn",
     "name-updated-successfully": "Navnet blev opdateret",
-    "failed-to-update-user": "Det lykkedes ikke at opdatere brugeren"
+    "failed-to-update-user": "Det lykkedes ikke at opdatere brugeren",
+    "email-verification-sent": "Bekræftelsesmail sendt. Tjek din indbakke!"
   },
   "common": {
     "unknown-error-occurred": "Der opstod en ukendt fejl",

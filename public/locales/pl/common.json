@@ -87,7 +87,8 @@
     "upgrade-subscription": "Zmień subskrypcję",
     "save-username": "Zapisz nazwę użytkownika",
     "name-updated-successfully": "Nazwa została pomyślnie zaktualizowana",
-    "failed-to-update-user": "Nie udało się zaktualizować użytkownika"
+    "failed-to-update-user": "Nie udało się zaktualizować użytkownika",
+    "email-verification-sent": "E-mail weryfikacyjny został wysłany. Sprawdź swoją skrzynkę odbiorczą!"
   },
   "common": {
     "unknown-error-occurred": "Wystąpił nieznany błąd",

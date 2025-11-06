@@ -87,7 +87,8 @@
     "upgrade-subscription": "Uppgradera prenumeration",
     "save-username": "Spara användarnamn",
     "name-updated-successfully": "Namn uppdaterades framgångsrikt",
-    "failed-to-update-user": "Det gick inte att uppdatera användaren"
+    "failed-to-update-user": "Det gick inte att uppdatera användaren",
+    "email-verification-sent": "Verifieringsmejl skickat. Kontrollera din inkorg!"
   },
   "common": {
     "unknown-error-occurred": "Ett okänt fel inträffade",

@@ -87,7 +87,8 @@
     "upgrade-subscription": "I-upgrade ang Subscription",
     "save-username": "I-save ang username",
     "name-updated-successfully": "Matagumpay na na-update ang pangalan",
-    "failed-to-update-user": "Nabigong i-update ang user"
+    "failed-to-update-user": "Nabigong i-update ang user",
+    "email-verification-sent": "Naipadala na ang email ng beripikasyon. Suriin ang iyong inbox!"
   },
   "common": {
     "unknown-error-occurred": "May naganap na di-inaasahang error",

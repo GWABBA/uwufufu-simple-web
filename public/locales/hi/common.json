@@ -87,7 +87,8 @@
     "upgrade-subscription": "सदस्यता अपग्रेड करें",
     "save-username": "यूज़रनेम सहेजें",
     "name-updated-successfully": "नाम सफलतापूर्वक अपडेट किया गया",
-    "failed-to-update-user": "यूज़र को अपडेट करने में विफल"
+    "failed-to-update-user": "यूज़र को अपडेट करने में विफल",
+    "email-verification-sent": "सत्यापन ईमेल भेजा गया है। अपना इनबॉक्स जांचें!"
   },
   "common": {
     "unknown-error-occurred": "एक अज्ञात त्रुटि हुई",

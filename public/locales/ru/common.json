@@ -87,7 +87,8 @@
     "upgrade-subscription": "Обновить подписку",
     "save-username": "Сохранить имя пользователя",
     "name-updated-successfully": "Имя успешно обновлено",
-    "failed-to-update-user": "Не удалось обновить пользователя"
+    "failed-to-update-user": "Не удалось обновить пользователя",
+    "email-verification-sent": "Письмо с подтверждением отправлено. Проверьте свой почтовый ящик!"
   },
   "common": {
     "unknown-error-occurred": "Произошла неизвестная ошибка",

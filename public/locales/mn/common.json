@@ -87,7 +87,8 @@
     "upgrade-subscription": "Захиалга сайжруулах",
     "save-username": "Хэрэглэгчийн нэр хадгалах",
     "name-updated-successfully": "Нэр амжилттай шинэчлэгдлээ",
-    "failed-to-update-user": "Хэрэглэгчийг шинэчлэхэд амжилтгүй боллоо"
+    "failed-to-update-user": "Хэрэглэгчийг шинэчлэхэд амжилтгүй боллоо",
+    "email-verification-sent": "Баталгаажуулах имэйл илгээгдлээ. И-мэйлээ шалгана уу!"
   },
   "common": {
     "unknown-error-occurred": "Үл мэдэгдэх алдаа гарлаа",

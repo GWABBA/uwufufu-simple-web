@@ -87,7 +87,8 @@
     "upgrade-subscription": "サブスクリプションをアップグレード",
     "save-username": "ユーザー名を保存",
     "name-updated-successfully": "名前が正常に更新されました",
-    "failed-to-update-user": "ユーザーの更新に失敗しました"
+    "failed-to-update-user": "ユーザーの更新に失敗しました",
+    "email-verification-sent": "確認メールを送信しました。受信箱を確認してください！"
   },
   "common": {
     "unknown-error-occurred": "不明なエラーが発生しました",

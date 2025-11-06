@@ -87,7 +87,8 @@
     "upgrade-subscription": "Aboneliği Yükselt",
     "save-username": "Kullanıcı adını kaydet",
     "name-updated-successfully": "İsim başarıyla güncellendi",
-    "failed-to-update-user": "Kullanıcı güncellenemedi"
+    "failed-to-update-user": "Kullanıcı güncellenemedi",
+    "email-verification-sent": "Doğrulama e-postası gönderildi. Gelen kutunuzu kontrol edin!"
   },
   "common": {
     "unknown-error-occurred": "Bilinmeyen bir hata oluştu",

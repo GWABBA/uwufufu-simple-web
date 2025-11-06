@@ -87,7 +87,8 @@
     "upgrade-subscription": "อัปเกรดการสมัครสมาชิก",
     "save-username": "บันทึกชื่อผู้ใช้",
     "name-updated-successfully": "อัปเดตชื่อสำเร็จแล้ว",
-    "failed-to-update-user": "ไม่สามารถอัปเดตผู้ใช้ได้"
+    "failed-to-update-user": "ไม่สามารถอัปเดตผู้ใช้ได้",
+    "email-verification-sent": "ส่งอีเมลยืนยันแล้ว โปรดตรวจสอบกล่องจดหมายของคุณ!"
   },
   "common": {
     "unknown-error-occurred": "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ",

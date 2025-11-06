@@ -93,6 +93,7 @@ export default function ProfilePage() {
   const handleOnSendVerificationEmail = async () => {
     try {
       await sendEmailConfirmationEmail();
+      toast.success(t('user-profile.email-verification-sent'));
     } catch (error) {
       toast.error(
         error instanceof Error

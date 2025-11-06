@@ -87,7 +87,8 @@
     "upgrade-subscription": "Päivitä tilaus",
     "save-username": "Tallenna käyttäjänimi",
     "name-updated-successfully": "Nimi päivitettiin onnistuneesti",
-    "failed-to-update-user": "Käyttäjän päivittäminen epäonnistui"
+    "failed-to-update-user": "Käyttäjän päivittäminen epäonnistui",
+    "email-verification-sent": "Vahvistussähköposti lähetetty. Tarkista postilaatikkosi!"
   },
   "common": {
     "unknown-error-occurred": "Tapahtui tuntematon virhe",
