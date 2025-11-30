@@ -7,6 +7,8 @@ import { Worldcup } from '@/dtos/worldcup.dtos';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import FinalWinnerModal from './FinalWinnerModal';
+import { useAppSelector } from '@/store/hooks';
+import GoogleAd from '../common/GoogleAd';
 // import { useAppSelector } from '@/store/hooks';
 // import GoogleAd from '../common/GoogleAd';
 
@@ -42,6 +44,8 @@ const MatchModal: React.FC<MatchModalProps> = ({
   const [finalStartedGame, setFinalStartedGame] =
     useState<StartedGameResponseDto | null>(null);
   const [finalWinnerId, setFinalWinnerId] = useState<number | null>(null);
+
+  const user = useAppSelector((state) => state.auth.user);
 
   useEffect(() => {
     if (!startedGame || !startedGame.match) return;
@@ -201,7 +205,19 @@ const MatchModal: React.FC<MatchModalProps> = ({
     <>
       {startedGame && startedGame.startedGame.status !== 'IS_COMPLETED' ? (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center">
-          <div className="relative w-full h-full max-h-screen">
+          <div className="relative w-full max-h-screen overflow-scroll">
+            {/* google adsense uwufufu-quiz-play-bottom-desktop */}
+            <div className="hidden md:block bg-uwu-black">
+              {(!user || user.tier === 'basic') &&
+                worldcup?.isNsfw === false && (
+                  <div className="w-full flex justify-center">
+                    <div className="max-w-5xl w-full px-2">
+                      <GoogleAd adSlot="9330666892" />
+                    </div>
+                  </div>
+                )}
+            </div>
+
             {/* Header */}
             <div className="p-4 bg-uwu-black text-white flex justify-between items-center md:h-16">
               <h2
@@ -236,11 +252,12 @@ const MatchModal: React.FC<MatchModalProps> = ({
                 </div>
               </div>
               {/* match  */}
-              <div className="max-w-7xl mx-auto h-full">
+              <div className="max-w-7xl mx-auto md:h-[100%]">
                 <div
                   key={startedGame.match.id}
                   className="flex flex-col md:flex-row justify-between items-center p-4 md:gap-4 h-full pt-28 md:pt-4 relative"
                 >
+                  {/* vs text for desktop */}
                   {!winnerId && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.8 }}
@@ -345,6 +362,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
                     </div>
                   </motion.div>
 
+                  {/* vs text for mobile */}
                   {!winnerId && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.8 }}
@@ -452,14 +470,17 @@ const MatchModal: React.FC<MatchModalProps> = ({
                 </div>
               </div>
 
-              {/* google adsense uwufufu-quiz-play-bottom */}
-              {/* {(!user || user.tier === 'basic') && (
-                <div className="mt-6 w-full flex justify-center">
-                  <div className="max-w-5xl w-full px-2">
-                    <GoogleAd adSlot="9732284311" />
-                  </div>
-                </div>
-              )} */}
+              {/* google adsense uwufufu-quiz-play-bottom-mobile */}
+              <div className="md:hidden">
+                {(!user || user.tier === 'basic') &&
+                  worldcup?.isNsfw === false && (
+                    <div className="mt-6 w-full flex justify-center">
+                      <div className="max-w-5xl w-full px-2">
+                        <GoogleAd adSlot="9732284311" />
+                      </div>
+                    </div>
+                  )}
+              </div>
             </div>
           </div>
         </div>
