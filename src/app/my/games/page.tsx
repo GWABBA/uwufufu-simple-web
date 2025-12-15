@@ -4,13 +4,17 @@ import { Worldcup } from '@/dtos/worldcup.dtos';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Pagination from '@/components/common/Pagination';
-import { useEffect, useState } from 'react';
-import { deleteWorldcup, fetchMyWorldcups } from '@/services/worldcup.service';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  deleteWorldcup,
+  fetchMyWorldcups,
+  copyWorldcup,
+} from '@/services/worldcup.service';
 import toast from 'react-hot-toast';
 import { Visibility } from '@/enums/enums.enum';
 import { useTranslation } from 'react-i18next';
 import LoadingAnimation from '@/components/animation/Loading';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Copy } from 'lucide-react';
 
 export default function MyGames() {
   const { t } = useTranslation();
@@ -36,29 +40,30 @@ export default function MyGames() {
     }
   };
 
-  useEffect(() => {
+  const fetchMyGames = useCallback(async () => {
     setIsLoadingList(true);
-    const fetchMyGames = async () => {
-      try {
-        const response = await fetchMyWorldcups({
-          page: currentPage,
-          perPage: itemsPerPage,
-        });
-        setGames(response.worldcups);
-        setTotalItemsCount(response.total);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          toast.error(error.message);
-        } else {
-          toast.error(t('common.unknown-error-occurred'));
-        }
-      } finally {
-        setIsLoadingList(false);
+    try {
+      const response = await fetchMyWorldcups({
+        page: currentPage,
+        perPage: itemsPerPage,
+      });
+      setGames(response.worldcups);
+      setTotalItemsCount(response.total);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(t('common.unknown-error-occurred'));
       }
-    };
+    } finally {
+      setIsLoadingList(false);
+    }
+  }, [currentPage, itemsPerPage, t]); // 의존성 배열에 사용하는 변수들 추가
+
+  // ✅ 2. useEffect에서는 함수 호출만 담당
+  useEffect(() => {
     fetchMyGames();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage]);
+  }, [fetchMyGames]);
 
   if (isLoadingList) {
     return <LoadingAnimation />;
@@ -85,6 +90,34 @@ export default function MyGames() {
       }
 
       toast.success(t('create-worldcup.worldcup-deleted-successfully'));
+    }
+  };
+
+  // ✅ 복사 핸들러 추가
+  const onCopyClicked = async (game: Worldcup) => {
+    // 확인 창 띄우기
+    const confirmCopy = confirm(
+      t('create-worldcup.are-you-sure-you-want-to-copy-this-worldcup') ||
+        'Do you really want to copy this Worldcup?'
+    );
+
+    if (confirmCopy) {
+      try {
+        await copyWorldcup(game.id);
+        toast.success(
+          t('create-worldcup.worldcup-copied-successfully') ||
+            'Copied successfully!'
+        );
+
+        // 리스트 새로고침 (새로 생긴 게임을 목록에 반영)
+        fetchMyGames();
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error(t('common.unknown-error-occurred'));
+        }
+      }
     }
   };
 
@@ -160,6 +193,19 @@ export default function MyGames() {
                         className="text-uwu-red hover:scale-125"
                       ></Pencil>
                     </button>
+
+                    <button className="mr-2">
+                      <Copy
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          onCopyClicked(game);
+                        }}
+                        className="text-blue-500 hover:scale-125 transition-transform"
+                        size={20}
+                      />
+                    </button>
+
                     <button>
                       <Trash2
                         onClick={(event) => {

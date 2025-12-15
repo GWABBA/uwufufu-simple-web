@@ -64,7 +64,10 @@
     "nsfw-warning": "Valitse, jos sisältö ei sovellu työhön",
     "are-your-sure-you-want-to-delete-this-worldcup": "Oletko varma, että haluat poistaa tämän maailmanmestaruuden?",
     "worldcup-deleted-successfully": "Maailmanmestaruus poistettu onnistuneesti",
-    "cannot-play-closed": "Suljettua maailmanmestaruutta ei voi pelata"
+    "cannot-play-closed": "Suljettua maailmanmestaruutta ei voi pelata",
+    "worldcup-created-successfully": "Worldcup luotiin onnistuneesti",
+    "are-you-sure-you-want-to-copy-this-worldcup": "Haluatko varmasti kopioida tämän Worldcupin?",
+    "worldcup-copied-successfully": "Worldcup kopioitiin onnistuneesti"
   },
   "user-profile": {
     "user-profile": "Käyttäjäprofiili",

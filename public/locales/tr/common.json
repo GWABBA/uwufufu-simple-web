@@ -64,7 +64,10 @@
     "nsfw-warning": "İş için uygun değilse işaretleyin",
     "are-your-sure-you-want-to-delete-this-worldcup": "Bu dünya kupasını silmek istediğinizden emin misiniz?",
     "worldcup-deleted-successfully": "Dünya kupası başarıyla silindi",
-    "cannot-play-closed": "Kapalı bir dünya kupası oynanamaz"
+    "cannot-play-closed": "Kapalı bir dünya kupası oynanamaz",
+    "worldcup-created-successfully": "Worldcup başarıyla oluşturuldu",
+    "are-you-sure-you-want-to-copy-this-worldcup": "Bu Worldcup'i kopyalamak istediğinizden emin misiniz?",
+    "worldcup-copied-successfully": "Worldcup başarıyla kopyalandı"
   },
   "user-profile": {
     "user-profile": "Kullanıcı Profili",

@@ -64,7 +64,10 @@
     "nsfw-warning": "Отметьте, если контент не для работы",
     "are-your-sure-you-want-to-delete-this-worldcup": "Вы уверены, что хотите удалить этот чемпионат мира?",
     "worldcup-deleted-successfully": "Чемпионат мира успешно удален",
-    "cannot-play-closed": "Нельзя играть в закрытый чемпионат мира"
+    "cannot-play-closed": "Нельзя играть в закрытый чемпионат мира",
+    "worldcup-created-successfully": "Worldcup успешно создан",
+    "are-you-sure-you-want-to-copy-this-worldcup": "Вы уверены, что хотите скопировать этот Worldcup?",
+    "worldcup-copied-successfully": "Worldcup успешно скопирован"
   },
   "user-profile": {
     "user-profile": "Профиль пользователя",

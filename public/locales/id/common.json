@@ -64,7 +64,10 @@
     "nsfw-warning": "Centang jika tidak cocok untuk tempat kerja",
     "are-your-sure-you-want-to-delete-this-worldcup": "Apakah Anda yakin ingin menghapus worldcup ini?",
     "worldcup-deleted-successfully": "Worldcup berhasil dihapus",
-    "cannot-play-closed": "Tidak dapat bermain di worldcup yang ditutup"
+    "cannot-play-closed": "Tidak dapat bermain di worldcup yang ditutup",
+    "worldcup-created-successfully": "Worldcup berhasil dibuat",
+    "are-you-sure-you-want-to-copy-this-worldcup": "Apakah Anda yakin ingin menyalin Worldcup ini?",
+    "worldcup-copied-successfully": "Worldcup berhasil disalin"
   },
   "user-profile": {
     "user-profile": "Profil Pengguna",

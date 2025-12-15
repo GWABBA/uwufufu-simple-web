@@ -64,7 +64,10 @@
     "nsfw-warning": "เลือกหากเนื้อหาไม่เหมาะกับที่ทำงาน",
     "are-your-sure-you-want-to-delete-this-worldcup": "คุณแน่ใจหรือไม่ว่าต้องการลบเวิลด์คัพนี้?",
     "worldcup-deleted-successfully": "ลบเวิลด์คัพเรียบร้อยแล้ว",
-    "cannot-play-closed": "ไม่สามารถเล่นเวิลด์คัพที่ปิดอยู่ได้"
+    "cannot-play-closed": "ไม่สามารถเล่นเวิลด์คัพที่ปิดอยู่ได้",
+    "worldcup-created-successfully": "สร้าง Worldcup สำเร็จแล้ว",
+    "are-you-sure-you-want-to-copy-this-worldcup": "คุณแน่ใจหรือไม่ว่าต้องการคัดลอก Worldcup นี้?",
+    "worldcup-copied-successfully": "คัดลอก Worldcup สำเร็จแล้ว"
   },
   "user-profile": {
     "user-profile": "โปรไฟล์ผู้ใช้",

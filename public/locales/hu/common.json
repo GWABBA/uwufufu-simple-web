@@ -64,7 +64,10 @@
     "nsfw-warning": "Jelöld be, ha nem munkahelyre való",
     "are-your-sure-you-want-to-delete-this-worldcup": "Biztos vagy benne, hogy törölni szeretnéd ezt a világbajnokságot?",
     "worldcup-deleted-successfully": "A világbajnokság sikeresen törölve",
-    "cannot-play-closed": "Nem lehet zárt világbajnokságot játszani"
+    "cannot-play-closed": "Nem lehet zárt világbajnokságot játszani",
+    "worldcup-created-successfully": "A Worldcup sikeresen létrehozva",
+    "are-you-sure-you-want-to-copy-this-worldcup": "Biztosan másolni szeretnéd ezt a Worldcupot?",
+    "worldcup-copied-successfully": "A Worldcup sikeresen másolva lett"
   },
   "user-profile": {
     "user-profile": "Felhasználói profil",

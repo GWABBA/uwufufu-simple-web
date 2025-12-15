@@ -64,7 +64,10 @@
     "nsfw-warning": "Seleziona se non adatto al lavoro",
     "are-your-sure-you-want-to-delete-this-worldcup": "Sei sicuro di voler eliminare questo mondiale?",
     "worldcup-deleted-successfully": "Mondiale eliminato con successo",
-    "cannot-play-closed": "Impossibile giocare un mondiale chiuso"
+    "cannot-play-closed": "Impossibile giocare un mondiale chiuso",
+    "worldcup-created-successfully": "Worldcup creato con successo",
+    "are-you-sure-you-want-to-copy-this-worldcup": "Sei sicuro di voler copiare questo Worldcup?",
+    "worldcup-copied-successfully": "Worldcup copiato con successo"
   },
   "user-profile": {
     "user-profile": "Profilo utente",

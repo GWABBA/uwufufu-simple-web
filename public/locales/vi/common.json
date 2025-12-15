@@ -64,7 +64,10 @@
     "nsfw-warning": "Chọn nếu nội dung không phù hợp nơi làm việc",
     "are-your-sure-you-want-to-delete-this-worldcup": "Bạn có chắc chắn muốn xóa giải đấu này không?",
     "worldcup-deleted-successfully": "Giải đấu đã được xóa thành công",
-    "cannot-play-closed": "Không thể chơi giải đấu đã đóng"
+    "cannot-play-closed": "Không thể chơi giải đấu đã đóng",
+    "worldcup-created-successfully": "Worldcup đã được tạo thành công",
+    "are-you-sure-you-want-to-copy-this-worldcup": "Bạn có chắc chắn muốn sao chép Worldcup này không?",
+    "worldcup-copied-successfully": "Worldcup đã được sao chép thành công"
   },
   "user-profile": {
     "user-profile": "Hồ sơ người dùng",

@@ -64,7 +64,10 @@
     "nsfw-warning": "Ажлын байранд тохиромжгүй бол сонгоно уу",
     "are-your-sure-you-want-to-delete-this-worldcup": "Та энэ дэлхийн аваргыг устгахдаа итгэлтэй байна уу?",
     "worldcup-deleted-successfully": "Дэлхийн аварга амжилттай устгагдлаа",
-    "cannot-play-closed": "Хаалттай дэлхийн аваргыг тоглож болохгүй"
+    "cannot-play-closed": "Хаалттай дэлхийн аваргыг тоглож болохгүй",
+    "worldcup-created-successfully": "Worldcup амжилттай үүсгэгдлээ",
+    "are-you-sure-you-want-to-copy-this-worldcup": "Та энэ Worldcup-ийг хуулбарлахдаа итгэлтэй байна уу?",
+    "worldcup-copied-successfully": "Worldcup амжилттай хуулагдлаа"
   },
   "user-profile": {
     "user-profile": "Хэрэглэгчийн профайл",

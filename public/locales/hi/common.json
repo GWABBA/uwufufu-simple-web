@@ -64,7 +64,10 @@
     "nsfw-warning": "यदि कार्यस्थल के लिए उपयुक्त नहीं तो चेक करें",
     "are-your-sure-you-want-to-delete-this-worldcup": "क्या आप वाकई इस वर्ल्डकप को हटाना चाहते हैं?",
     "worldcup-deleted-successfully": "वर्ल्डकप सफलतापूर्वक हटा दिया गया",
-    "cannot-play-closed": "बंद वर्ल्डकप नहीं खेल सकते"
+    "cannot-play-closed": "बंद वर्ल्डकप नहीं खेल सकते",
+    "worldcup-created-successfully": "Worldcup सफलतापूर्वक बनाया गया",
+    "are-you-sure-you-want-to-copy-this-worldcup": "क्या आप वाकई इस Worldcup को कॉपी करना चाहते हैं?",
+    "worldcup-copied-successfully": "Worldcup सफलतापूर्वक कॉपी किया गया"
   },
   "user-profile": {
     "user-profile": "उपयोगकर्ता प्रोफ़ाइल",

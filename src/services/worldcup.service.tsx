@@ -163,3 +163,19 @@ export const toggleWorldcupNSFW = async (
     throw new Error('An unexpected error occurred');
   }
 };
+
+export const copyWorldcup = async (id: number): Promise<Worldcup> => {
+  try {
+    // POST /games/:id/copy 호출
+    const { data } = await api.post<Worldcup>(`/games/${id}/copy`);
+    return data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || 'Copy worldcup request failed'
+      );
+    }
+
+    throw new Error('An unexpected error occurred');
+  }
+};

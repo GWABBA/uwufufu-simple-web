@@ -64,7 +64,10 @@
     "nsfw-warning": "如不适合工作场合请勾选",
     "are-your-sure-you-want-to-delete-this-worldcup": "您确定要删除此世界杯吗？",
     "worldcup-deleted-successfully": "世界杯已成功删除",
-    "cannot-play-closed": "无法玩已关闭的世界杯"
+    "cannot-play-closed": "无法玩已关闭的世界杯",
+    "worldcup-created-successfully": "Worldcup 创建成功",
+    "are-you-sure-you-want-to-copy-this-worldcup": "您确定要复制这个 Worldcup 吗？",
+    "worldcup-copied-successfully": "Worldcup 复制成功"
   },
   "user-profile": {
     "user-profile": "用户资料",

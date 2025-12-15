@@ -64,7 +64,10 @@
     "nsfw-warning": "職場閲覧注意の場合はチェック",
     "are-your-sure-you-want-to-delete-this-worldcup": "このワールドカップを削除してもよろしいですか？",
     "worldcup-deleted-successfully": "ワールドカップが正常に削除されました",
-    "cannot-play-closed": "閉じたワールドカップはプレイできません"
+    "cannot-play-closed": "閉じたワールドカップはプレイできません",
+    "worldcup-created-successfully": "Worldcupが正常に作成されました",
+    "are-you-sure-you-want-to-copy-this-worldcup": "このWorldcupをコピーしてもよろしいですか？",
+    "worldcup-copied-successfully": "Worldcupが正常にコピーされました"
   },
   "user-profile": {
     "user-profile": "ユーザープロフィール",
