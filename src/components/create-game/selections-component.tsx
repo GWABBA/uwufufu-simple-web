@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import Pagination from '../common/Pagination';
 import { useTranslation } from 'react-i18next';
-import ImageUpload from '@/../public/assets/icons/image-upload.svg';
+import ImageUpload from '@/assets/icons/image-upload.svg';
 import { uploadImage } from '@/services/images.service';
 
 interface SelectionsComponentProps {

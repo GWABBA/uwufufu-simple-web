@@ -13,6 +13,7 @@ import Script from 'next/script';
 import ClientTranslationsProvider from '@/components/language/ClientTranslationsProvider';
 import { languages, fallbackLng } from '@/config/i18n';
 import FreeTrial from '@/components/banner/FreeTrial';
+import BannerSlot from '@/components/common/BannerSlot';
 
 export const metadata: Metadata = {
   title: 'UwUFUFU',
@@ -88,6 +89,8 @@ export default async function RootLayout({
     }
   }
 
+  const showFreeTrial = !user || user.tier === 'basic';
+
   // fix this later
   const response = await fetch(`${config.apiUrl}/categories`);
   const categories = await response.json();
@@ -100,7 +103,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={locale} dir={dir(locale!)} className="h-full">
+    <html lang={locale} dir={dir(locale!)}>
       <head>
         {/* Google Tag Manager Script */}
         <Script
@@ -135,7 +138,8 @@ export default async function RootLayout({
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1736056775158537"
         ></script>
       </head>
-      <body className="h-full flex flex-col bg-uwu-black">
+
+      <body className="bg-uwu-black antialiased min-h-screen flex flex-col">
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
@@ -161,13 +165,27 @@ export default async function RootLayout({
             }}
           />
 
-          {/* ✅ Ensure the wrapper expands */}
+          {/* ClientTranslationsProvider 내부에서 div가 생기더라도 
+             아래 우리가 만든 div가 min-h-screen을 강제하므로 레이아웃이 지켜집니다.
+          */}
           <ClientTranslationsProvider initialLocale={locale!}>
-            <div className="flex flex-col min-h-screen">
+            {/* ✅ 여기가 핵심: 모든 UI를 감싸는 Flex 컨테이너 */}
+            <div className="flex flex-col min-h-screen w-full">
               <Navigation />
-              <FreeTrial user={user} />
-              {/* <ImageUpload></ImageUpload> */}
-              <main className="flex-grow">{children}</main>
+
+              {/* <BannerSlot
+                show={showFreeTrial}
+                className="w-full"
+                reserve="clamp(72px, 10vh, 96px)"
+              >
+                <FreeTrial user={user} />
+              </BannerSlot> */}
+
+              {/* flex-1: 남는 공간을 모두 차지해서 푸터를 바닥으로 밀어냄 */}
+              <main className="flex-1 w-full max-w-6xl mx-auto px-2 md:px-0">
+                {children}
+              </main>
+
               <Footer />
             </div>
           </ClientTranslationsProvider>

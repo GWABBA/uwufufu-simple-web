@@ -26,6 +26,8 @@ import LoadingAnimation from '../animation/Loading';
 import { useTranslation } from 'react-i18next';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 import GoogleAd from '../common/GoogleAd';
+import AccountCircle from '@/assets/icons/account-circle.svg';
+import AdSlot from '../common/AddSlot';
 
 export default function NewHomeComponent() {
   const { t } = useTranslation();
@@ -424,6 +426,8 @@ export default function NewHomeComponent() {
     });
   };
 
+  const canShowAd = !user || user.tier === 'basic';
+
   const uwuverseData = [
     {
       title: 'The Winner Stays',
@@ -565,25 +569,24 @@ export default function NewHomeComponent() {
                           {game.category?.name || 'Unknown'}
                         </span>
                         {game.user && (
-                          <div className="flex items-center">
+                          <div className="flex items-center min-w-0">
                             {game.user.profileImage ? (
-                              <Image
-                                src={game.user.profileImage!}
-                                alt="profile"
-                                width={24}
-                                height={24}
-                                className="rounded-full mr-1"
-                              />
+                              <div className="relative w-6 h-6 mr-1 shrink-0 overflow-hidden rounded-full">
+                                <Image
+                                  src={game.user.profileImage}
+                                  alt="profile"
+                                  fill
+                                  sizes="24px"
+                                  className="object-cover"
+                                />
+                              </div>
                             ) : (
-                              <Image
-                                src="/assets/icons/account-circle.svg"
-                                alt="profile"
-                                width={24}
-                                height={24}
-                                className="rounded-full mr-1"
-                              />
+                              <div className="w-6 h-6 mr-1 shrink-0 rounded-full overflow-hidden flex items-center justify-center">
+                                <AccountCircle className="w-full h-full block text-gray-400" />
+                              </div>
                             )}
-                            <span className="text-gray-400">
+
+                            <span className="text-gray-400 truncate">
                               {game.user.name}
                             </span>
                           </div>
@@ -617,9 +620,9 @@ export default function NewHomeComponent() {
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 flex flex-col">
       {/* google adsense uwufufu-landing-top */}
-      {(!user || user.tier === 'basic') && (
-        <GoogleAd adSlot="6970744829" className="mb-4" />
-      )}
+      <AdSlot show={canShowAd} className="mb-4" reserve="480px" ready={true}>
+        <GoogleAd adSlot="6970744829" />
+      </AdSlot>
 
       {/* search bar */}
       <div>

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Image from 'next/image';
-import ImageUpload from '@/../public/assets/icons/image-upload.svg';
+import ImageUpload from '@/assets/icons/image-upload.svg';
 import { Locales, Visibility } from '@/enums/enums.enum';
 import { createWorldcup } from '@/services/worldcup.service';
 import { Worldcup } from '@/dtos/worldcup.dtos';

@@ -9,7 +9,7 @@ import {
   updateUserName,
 } from '@/services/auth.service';
 import { useEffect, useState } from 'react';
-import ImageUpload from '@/../public/assets/icons/image-upload.svg';
+import ImageUpload from '@/assets/icons/image-upload.svg';
 import Image from 'next/image';
 import { uploadImage } from '@/services/images.service';
 import toast from 'react-hot-toast';

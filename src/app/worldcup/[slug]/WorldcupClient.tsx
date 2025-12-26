@@ -27,6 +27,8 @@ import {
 } from '@/services/worldcup.service';
 import toast from 'react-hot-toast';
 import GoogleAd from '@/components/common/GoogleAd';
+import AccountCircle from '@/assets/icons/account-circle.svg';
+import AdSlot from '@/components/common/AddSlot';
 
 interface WorldcupClientProps {
   worldcup: Worldcup;
@@ -226,6 +228,23 @@ export default function WorldcupClient({
       alert('Failed to submit report');
     }
   };
+
+  const onAdminNSFWToggleClicked = async (worldcup: Worldcup) => {
+    if (!user || !user.isAdmin) return;
+    const { message } = await toggleWorldcupNSFW(worldcup.id);
+    toast.success(message);
+    try {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error(t('common.unknown-error-occurred'));
+      }
+    }
+  };
+
+  const canShowAd =
+    (!user || user.tier === 'basic') && worldcup?.isNsfw === false;
 
   const selectionsListDiv = () => {
     if (isFetching) return <LoadingAnimation />;
@@ -535,20 +554,6 @@ export default function WorldcupClient({
     }
   };
 
-  const onAdminNSFWToggleClicked = async (worldcup: Worldcup) => {
-    if (!user || !user.isAdmin) return;
-    const { message } = await toggleWorldcupNSFW(worldcup.id);
-    toast.success(message);
-    try {
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error(t('common.unknown-error-occurred'));
-      }
-    }
-  };
-
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 px-2 md:px-0">
       {/* admin only */}
@@ -592,9 +597,9 @@ export default function WorldcupClient({
       )}
 
       {/* google adsense uwufufu-quiz-main-top */}
-      {(!user || user.tier === 'basic') && worldcup?.isNsfw === false && (
-        <GoogleAd adSlot="3964952310" className="mb-4" />
-      )}
+      <AdSlot show={canShowAd} className="mb-4" reserve="480px" ready={true}>
+        <GoogleAd adSlot="3964952310" />
+      </AdSlot>
 
       {/* main content */}
       <div className="md:flex justify-between mb-8">
@@ -618,13 +623,14 @@ export default function WorldcupClient({
                     className="rounded-full mr-1"
                   ></Image>
                 ) : (
-                  <Image
-                    src="/assets/icons/account-circle.svg"
-                    alt="profile"
-                    width={24}
-                    height={24}
-                    className="rounded-full mr-1"
-                  ></Image>
+                  // <Image
+                  //   src="/assets/icons/account-circle.svg"
+                  //   alt="profile"
+                  //   width={24}
+                  //   height={24}
+                  //   className="rounded-full mr-1"
+                  // ></Image>
+                  <AccountCircle className="w-3 h-3 md:w-6 md:h-6 mr-1" />
                 )}
                 <span className="text-base md:text-lg text-gray-400">
                   {worldcup.user.name}

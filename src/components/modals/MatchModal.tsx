@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Selection, StartedGameResponseDto } from '@/dtos/startedGames.dtos';
 import Image from 'next/image';
-import ChevronLeft from '@/../public/assets/icons/chevron-left.svg';
-import MagnifyingPlus from '@/../public/assets/icons/magnifying-plus.svg';
+import ChevronLeft from '@/assets/icons/chevron-left.svg';
+import MagnifyingPlus from '@/assets/icons/magnifying-plus.svg';
 import { Worldcup } from '@/dtos/worldcup.dtos';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
