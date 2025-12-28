@@ -620,62 +620,77 @@ export default function NewHomeComponent() {
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 flex flex-col">
       {/* google adsense uwufufu-landing-top */}
-      <AdSlot show={canShowAd} className="mb-4" reserve="480px" ready={true}>
+      {/* <AdSlot show={canShowAd} className="mb-4" reserve="480px">
         <GoogleAd adSlot="6970744829" />
-      </AdSlot>
-
+      </AdSlot> */}
       {/* search bar */}
       <div>
         <div className="grid grid-cols-2 md:flex md:space-x-2 gap-2 px-2 md:p-0 mb-4">
-          <select
-            id="sort"
-            className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-32"
-            value={sortBy}
-            onChange={handleSortChange}
-          >
-            <option value="latest">{t('home.latest')}</option>
-            <option value="popularity">{t('home.popularity')}</option>
-          </select>
-          <select
-            id="category"
-            className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-52"
-            value={formatSelectedCategories(
-              selectedCategories,
-              `${t('home.select-categories')}`
-            )}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              openCategoryModal();
-            }}
-            onChange={() => {}}
-          >
-            <option>
-              {formatSelectedCategories(
+          <div>
+            <label htmlFor="sort" className="sr-only">
+              Sort By
+            </label>
+            <select
+              id="sort"
+              className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-32"
+              value={sortBy}
+              onChange={handleSortChange}
+            >
+              <option value="latest">{t('home.latest')}</option>
+              <option value="popularity">{t('home.popularity')}</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="category" className="sr-only">
+              Category
+            </label>
+            <select
+              id="category"
+              className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-52"
+              value={formatSelectedCategories(
                 selectedCategories,
                 `${t('home.select-categories')}`
               )}
-            </option>
-          </select>
-          <select
-            id="language"
-            className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-40"
-            value={formatSelected(
-              selectedLanguages,
-              `${t('home.select-languages')}`
-            )}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              openLanguageModal();
-            }}
-            onChange={() => {}}
-          >
-            <option>
-              {formatSelected(
+              onMouseDown={(e) => {
+                e.preventDefault();
+                openCategoryModal();
+              }}
+              onChange={() => {}}
+            >
+              <option>
+                {formatSelectedCategories(
+                  selectedCategories,
+                  `${t('home.select-categories')}`
+                )}
+              </option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="language" className="sr-only">
+              Language
+            </label>
+            <select
+              id="language"
+              className="p-2 rounded-md bg-uwu-dark-gray text-white md:min-w-40"
+              value={formatSelected(
                 selectedLanguages,
                 `${t('home.select-languages')}`
               )}
-            </option>
-          </select>
+              onMouseDown={(e) => {
+                e.preventDefault();
+                openLanguageModal();
+              }}
+              onChange={() => {}}
+            >
+              <option>
+                {formatSelected(
+                  selectedLanguages,
+                  `${t('home.select-languages')}`
+                )}
+              </option>
+            </select>
+          </div>
+
           <div className="relative flex-1 md:min-w-40">
             <input
               type="text"
@@ -702,7 +717,7 @@ export default function NewHomeComponent() {
             onChange={(e) => handleIncludeNsfwChange(e)}
             checked={includeNsfw}
           />
-          <label htmlFor="includeNsfw" className="text-uwu-red ml-2">
+          <label htmlFor="includeNsfw" className="text-[#c92418] ml-2">
             {t('home.include-nsfw')}
           </label>
         </div>

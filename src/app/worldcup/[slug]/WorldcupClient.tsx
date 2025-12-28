@@ -513,6 +513,15 @@ export default function WorldcupClient({
             );
           })}
         </div>
+
+        {/* Pagination */}
+        <Pagination
+          currentPage={selectionsPage}
+          totalItems={selectionsTotalPages}
+          itemsPerPage={selectionsPerPage}
+          pagesToShow={7}
+          onPageChange={changePage}
+        ></Pagination>
       </>
     );
   };
@@ -597,9 +606,9 @@ export default function WorldcupClient({
       )}
 
       {/* google adsense uwufufu-quiz-main-top */}
-      <AdSlot show={canShowAd} className="mb-4" reserve="480px" ready={true}>
+      {/* <AdSlot show={canShowAd} className="mb-4" reserve="480px" ready={true}>
         <GoogleAd adSlot="3964952310" />
-      </AdSlot>
+      </AdSlot> */}
 
       {/* main content */}
       <div className="md:flex justify-between mb-8">
@@ -694,20 +703,9 @@ export default function WorldcupClient({
         />
       )}
       {/* selections */}
-      {!isFetching ? (
-        <div className="w-full">
-          {selectionsListDiv()}
-
-          {/* Pagination */}
-          <Pagination
-            currentPage={selectionsPage}
-            totalItems={selectionsTotalPages}
-            itemsPerPage={selectionsPerPage}
-            pagesToShow={7}
-            onPageChange={changePage}
-          ></Pagination>
-        </div>
-      ) : null}
+      <div className="w-full min-h-150">
+        <div className="w-full">{selectionsListDiv()}</div>
+      </div>
     </div>
   );
 }

@@ -207,7 +207,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
         <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center">
           <div className="relative w-full max-h-screen overflow-scroll">
             {/* google adsense uwufufu-quiz-play-bottom-desktop */}
-            <div className="hidden md:block bg-uwu-black">
+            {/* <div className="hidden md:block bg-uwu-black">
               {(!user || user.tier === 'basic') &&
                 worldcup?.isNsfw === false && (
                   <div className="w-full flex justify-center">
@@ -216,7 +216,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
                     </div>
                   </div>
                 )}
-            </div>
+            </div> */}
 
             {/* Header */}
             <div className="p-4 bg-uwu-black text-white flex justify-between items-center md:h-16">
@@ -471,7 +471,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
               </div>
 
               {/* google adsense uwufufu-quiz-play-bottom-mobile */}
-              <div className="md:hidden">
+              {/* <div className="md:hidden">
                 {(!user || user.tier === 'basic') &&
                   worldcup?.isNsfw === false && (
                     <div className="mt-6 w-full flex justify-center">
@@ -480,7 +480,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
                       </div>
                     </div>
                   )}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

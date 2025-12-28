@@ -95,6 +95,20 @@ const Navigation = () => {
   // Preserve existing params
   const redirectUrl = queryString ? `${pathname}?${queryString}` : pathname;
 
+  const AuthPlaceholder = ({ isMobile }: { isMobile?: boolean }) => (
+    <div
+      className={`${
+        isMobile ? 'w-10.5' : 'w-25'
+      } h-10 flex justify-end items-center`}
+    >
+      <div
+        className={`${
+          isMobile ? 'w-10 h-10' : 'w-20 h-8'
+        } bg-gray-100 animate-pulse rounded-lg`}
+      />
+    </div>
+  );
+
   return (
     <nav className="w-full flex justify-center border-b border-uwu-gray">
       {/* desktop */}
@@ -103,9 +117,10 @@ const Navigation = () => {
           <Image
             src="/assets/logos/uwufufu-logo-rgb.svg"
             alt="Uwufufu logo"
-            width={100}
-            height={50}
-            className="w-60"
+            width={240}
+            height={48}
+            priority // LCP 개선: 로고를 최우선 로드
+            className="w-60 h-auto"
           />
         </Link>
         <div className="flex h-full">
@@ -115,14 +130,14 @@ const Navigation = () => {
             className="flex items-center"
             target="_blank"
           >
-            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg mr-4 text-sm">
+            <button className="bg-uwu-red py-2 px-4 text-white rounded-lg mr-6 text-sm font-bold">
               UwU
             </button>
           </Link>
 
           {/* plans */}
           <Link href="/plans" className="flex items-center">
-            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg mr-4 text-sm">
+            <button className="bg-uwu-red py-2 px-2 text-white rounded-lg mr-6 text-sm font-bold">
               {t('navigation.subscription')}
             </button>
           </Link>
@@ -133,7 +148,7 @@ const Navigation = () => {
             target="_blank"
             className="flex items-center"
           >
-            <button className="bg-[#5865F2] py-2 px-2 text-white rounded-lg mr-4 flex items-center text-sm">
+            <button className="bg-[#5865F2] py-2 px-2 text-white rounded-lg mr-6 flex items-center text-sm font-bold">
               <Image
                 className="mr-1"
                 src="/assets/social-medias/share_discord.svg"
@@ -148,7 +163,7 @@ const Navigation = () => {
           {/* create game */}
           <Link href="/create-game" className="flex items-center">
             <button
-              className="bg-uwu-red py-2 px-2 text-white rounded-lg text-sm"
+              className="bg-uwu-red py-2 px-2 text-white rounded-lg text-sm font-bold"
               onClick={(e) => handleProtectedNav(e)}
             >
               {t('navigation.create-game')}
@@ -156,11 +171,15 @@ const Navigation = () => {
           </Link>
           {/* language dropdown */}
           <div className="flex items-center ml-4">
+            <label htmlFor="language-switcher" className="sr-only">
+              Language
+            </label>
             <LanguageSwitcher />
           </div>
-          <div className="flex justify-end items-center cursor-pointer ml-4">
+          {/* <div className="flex justify-end items-center cursor-pointer ml-4">
             {!isInitialized ? (
-              <div className="w-12 h-8 rounded-md"></div> // Show loading state
+              // 로그인 버튼과 최대한 유사한 크기의 Skeleton 구성
+              <div className="w-20 h-8 bg-gray-100 animate-pulse rounded-lg"></div>
             ) : user ? (
               <ProfileDropdown />
             ) : (
@@ -168,7 +187,23 @@ const Navigation = () => {
                 href={`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`}
                 passHref
               >
-                <button className="bg-uwu-red px-4 rounded-lg cursor-pointer text-white h-8">
+                <button className="bg-uwu-red px-4 rounded-lg cursor-pointer text-white h-8 whitespace-nowrap">
+                  {t('navigation.log-in')}
+                </button>
+              </Link>
+            )}
+          </div> */}
+          <div className="flex justify-end items-center ml-4 min-w-30">
+            {!isInitialized ? (
+              <AuthPlaceholder />
+            ) : user ? (
+              <ProfileDropdown />
+            ) : (
+              <Link
+                href={`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`}
+                passHref
+              >
+                <button className="bg-uwu-red px-4 rounded-lg cursor-pointer text-white h-9 whitespace-nowrap font-bold">
                   {t('navigation.log-in')}
                 </button>
               </Link>

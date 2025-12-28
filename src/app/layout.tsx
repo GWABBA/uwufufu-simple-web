@@ -89,7 +89,7 @@ export default async function RootLayout({
     }
   }
 
-  const showFreeTrial = !user || user.tier === 'basic';
+  const showAds = !user || user.tier === 'basic';
 
   // fix this later
   const response = await fetch(`${config.apiUrl}/categories`);
@@ -132,11 +132,18 @@ export default async function RootLayout({
           }}
         />
         {/* adsense */}
-        <script
+        {/* <script
           async
           crossOrigin="anonymous"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1736056775158537"
-        ></script>
+        ></script> */}
+        {showAds ? (
+          <script
+            async
+            crossOrigin="anonymous"
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1736056775158537"
+          />
+        ) : null}
       </head>
 
       <body className="bg-uwu-black antialiased min-h-screen flex flex-col">
@@ -170,7 +177,7 @@ export default async function RootLayout({
           */}
           <ClientTranslationsProvider initialLocale={locale!}>
             {/* ✅ 여기가 핵심: 모든 UI를 감싸는 Flex 컨테이너 */}
-            <div className="flex flex-col min-h-screen w-full">
+            <div className="flex flex-col min-h-screen w-full bg-uwu-black">
               <Navigation />
 
               {/* <BannerSlot
@@ -182,7 +189,7 @@ export default async function RootLayout({
               </BannerSlot> */}
 
               {/* flex-1: 남는 공간을 모두 차지해서 푸터를 바닥으로 밀어냄 */}
-              <main className="flex-1 w-full max-w-6xl mx-auto px-2 md:px-0">
+              <main className="flex-1 w-full max-w-6xl mx-auto px-2 md:px-0 ">
                 {children}
               </main>
 

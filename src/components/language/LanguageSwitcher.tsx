@@ -38,6 +38,7 @@ export default function LanguageSwitcher() {
 
   return (
     <select
+      id="language-switcher"
       value={i18n.language}
       onChange={(e) => i18n.changeLanguage(e.target.value)}
       className="rounded-md px-2 py-1 bg-gray-700 text-white"

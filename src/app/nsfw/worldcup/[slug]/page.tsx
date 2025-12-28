@@ -1,8 +1,7 @@
 import { fetchWorldcupBySlug } from '@/services/worldcup.service';
 import { notFound, redirect } from 'next/navigation';
-import WorldcupClient from './WorldcupClient';
+import WorldcupClient from '../../../worldcup/[slug]/WorldcupClient'; // 기존 클라이언트 컴포넌트 재사용
 import { Metadata } from 'next';
-import HardRedirect from '@/components/common/HardRedirect';
 
 type ParamsPromise = Promise<{ slug: string }>;
 type SearchParamsPromise = Promise<{
@@ -48,12 +47,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function WorldcupPage({
+export default async function NsfwWorldcupPage({
   params,
   searchParams,
 }: {
-  params: ParamsPromise;
-  searchParams: SearchParamsPromise;
+  params: any;
+  searchParams: any;
 }) {
   const { slug } = await params;
   const resolvedSearchParams = await searchParams;
@@ -61,16 +60,12 @@ export default async function WorldcupPage({
 
   if (!worldcup) notFound();
 
-  // NSFW 게임이면 NSFW 전용 경로로 리다이렉트
-  if (worldcup.isNsfw) {
+  // ✅ 핵심 로직: NSFW가 아니면 일반 경로로 리다이렉트
+  if (!worldcup.isNsfw) {
     const queryString = resolvedSearchParams.startedGameId
       ? `?startedGameId=${resolvedSearchParams.startedGameId}`
       : '';
-
-    const targetUrl = `/nsfw/worldcup/${slug}${queryString}`;
-
-    // 이 컴포넌트가 브라우저에 전달되는 순간 useEffect 내의 window.location.href가 실행됩니다.
-    return <HardRedirect url={targetUrl} />;
+    redirect(`/worldcup/${slug}${queryString}`);
   }
 
   const startedGameId = resolvedSearchParams.startedGameId
