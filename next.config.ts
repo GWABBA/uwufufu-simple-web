@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
 
   images: {
-    // unoptimized: true,
+    unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: 'cdn.uwufufu.com' },
       { protocol: 'https', hostname: 'picsum.photos' },

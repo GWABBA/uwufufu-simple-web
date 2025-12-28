@@ -119,8 +119,9 @@ const Navigation = () => {
             alt="Uwufufu logo"
             width={240}
             height={48}
-            priority // LCP 개선: 로고를 최우선 로드
-            className="w-60 h-auto"
+            priority
+            // aspect-ratio를 명시하여 렌더링 전 공간 확보
+            className="w-60 h-auto aspect-[5/1]"
           />
         </Link>
         <div className="flex h-full">
@@ -218,9 +219,10 @@ const Navigation = () => {
           <Image
             src="/assets/logos/uwufufu-logo-rgb.svg"
             alt="Uwufufu logo"
-            width={100}
-            height={50}
-            className="w-40"
+            width={160} // w-40(160px)에 맞춤
+            height={32} // 5:1 비율 유지
+            priority // 모바일에서도 로고는 최우선 로드
+            className="w-40 h-auto aspect-[5/1]"
           />
         </Link>
         <div>

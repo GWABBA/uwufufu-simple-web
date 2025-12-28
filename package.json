@@ -37,7 +37,8 @@
     "react-intersection-observer": "^9.16.0",
     "react-redux": "^9.2.0",
     "react-virtualized-auto-sizer": "^1.0.25",
-    "react-virtuoso": "^4.12.5"
+    "react-virtuoso": "^4.12.5",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
