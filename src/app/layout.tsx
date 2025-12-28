@@ -146,7 +146,7 @@ export default async function RootLayout({
         ) : null}
       </head>
 
-      <body className="bg-uwu-black antialiased min-h-screen flex flex-col">
+      <body className="bg-uwu-black antialiased flex flex-col">
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
@@ -177,7 +177,7 @@ export default async function RootLayout({
           */}
           <ClientTranslationsProvider initialLocale={locale!}>
             {/* ✅ 여기가 핵심: 모든 UI를 감싸는 Flex 컨테이너 */}
-            <div className="flex flex-col min-h-screen w-full bg-uwu-black">
+            <div className="flex flex-col w-full bg-uwu-black">
               <Navigation />
 
               {/* <BannerSlot
@@ -189,7 +189,7 @@ export default async function RootLayout({
               </BannerSlot> */}
 
               {/* flex-1: 남는 공간을 모두 차지해서 푸터를 바닥으로 밀어냄 */}
-              <main className="flex-1 w-full max-w-6xl mx-auto px-2 md:px-0 ">
+              <main className="flex-1 w-full max-w-6xl mx-auto px-2 md:px-0 bg-uwu-black">
                 {children}
               </main>
 

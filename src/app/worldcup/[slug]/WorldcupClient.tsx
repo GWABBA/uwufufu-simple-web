@@ -365,7 +365,7 @@ export default function WorldcupClient({
                     <td className="p-3">
                       <div className="relative w-40 h-5 bg-gray-700 rounded-md overflow-hidden">
                         <div
-                          className="h-full bg-green-500 transition-all"
+                          className="h-full bg-green-700 transition-all"
                           style={{
                             width: `${
                               selection.winLossRatio
@@ -478,7 +478,7 @@ export default function WorldcupClient({
                   <p className="text-xs text-gray-400">Win Ratio</p>
                   <div className="relative w-full h-5 bg-gray-700 rounded-md overflow-hidden">
                     <div
-                      className="h-full bg-green-500 transition-all"
+                      className="h-full bg-green-700 transition-all"
                       style={{
                         width: `${
                           selection.winLossRatio
@@ -564,7 +564,7 @@ export default function WorldcupClient({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 px-2 md:px-0">
+    <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 px-2 md:px-0 mb-12 md:mb-24">
       {/* admin only */}
       {user?.isAdmin && (
         <div className="flex md:justify-end">
