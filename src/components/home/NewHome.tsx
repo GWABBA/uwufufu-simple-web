@@ -722,7 +722,7 @@ export default function NewHomeComponent() {
           </label>
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-full min-h-screen">
         {initialLoading ? (
           <div className="flex justify-center py-8">
             <LoadingAnimation />

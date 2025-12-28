@@ -103,7 +103,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={locale} dir={dir(locale!)}>
+    <html lang={locale} dir={dir(locale!)} className="bg-uwu-black">
       <head>
         {/* Google Tag Manager Script */}
         <Script
@@ -146,7 +146,7 @@ export default async function RootLayout({
         ) : null}
       </head>
 
-      <body className="bg-uwu-black antialiased flex flex-col">
+      <body className="bg-uwu-black antialiased flex flex-col min-h-viewport">
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
@@ -189,7 +189,7 @@ export default async function RootLayout({
               </BannerSlot> */}
 
               {/* flex-1: 남는 공간을 모두 차지해서 푸터를 바닥으로 밀어냄 */}
-              <main className="flex-1 w-full max-w-6xl mx-auto px-2 md:px-0 bg-uwu-black">
+              <main className="flex-1 w-full max-w-6xl mx-auto px-2 md:px-0 bg-uwu-black min-h-[80vh]">
                 {children}
               </main>
 
