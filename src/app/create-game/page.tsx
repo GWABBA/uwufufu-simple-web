@@ -122,6 +122,9 @@ const CreateGame = () => {
     }
   };
 
+  const isWebmUrl = (url?: string | null) =>
+    !!url && url.split('?')[0].toLowerCase().endsWith('.webm');
+
   if (isLoading) {
     return <div />;
   }
@@ -192,13 +195,26 @@ const CreateGame = () => {
 
               {/* ✅ Show Uploaded Image (Fully Covered) or Default Icon */}
               {coverImagePreview ? (
-                <Image
-                  src={coverImagePreview}
-                  alt="Cover Image"
-                  className="rounded-md max-w-80"
-                  width={568}
-                  height={230}
-                />
+                isWebmUrl(coverImagePreview) ? (
+                  <video
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source src={coverImagePreview} type="video/webm" />
+                  </video>
+                ) : (
+                  <Image
+                    src={coverImagePreview}
+                    alt="Cover Image"
+                    className="w-full h-full object-cover"
+                    width={568}
+                    height={230}
+                  />
+                )
               ) : (
                 <div className="text-white flex flex-col items-center">
                   <ImageUpload className="w-12 h-12" />

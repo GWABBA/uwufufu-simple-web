@@ -73,6 +73,20 @@ export default function WorldcupClient({
 
   const [loadingExistingGame, setLoadingExistingGame] = useState(false);
 
+  const isWebm = (url?: string) => !!url && url.toLowerCase().endsWith('.webm');
+
+  // 데스크탑: hover 중인 모션 1개만
+  const [activeMotionId, setActiveMotionId] = useState<number | null>(null);
+
+  // 모바일: 자동으로 움직일 모션 1개만 (페이지마다 첫 webm 1개)
+  const [mobileMotionId, setMobileMotionId] = useState<number | null>(null);
+
+  useEffect(() => {
+    // 페이지 바뀔 때마다 "첫 webm" 하나만 자동 재생 대상으로 지정
+    const first = selections.find((s) => isWebm(s.resourceUrl));
+    setMobileMotionId(first?.id ?? null);
+  }, [selections]);
+
   const handleOnPlayNow = () => {
     const isOwner = user && worldcup?.user?.id === user.id;
     const isRestricted =
@@ -246,25 +260,56 @@ export default function WorldcupClient({
   const canShowAd =
     (!user || user.tier === 'basic') && worldcup?.isNsfw === false;
 
+  //   const isWebm = (url?: string) => !!url && url.toLowerCase().endsWith('.webm');
+
+  // // 데스크탑: hover된 것만 “움직임” (동시에 1개)
+  // const [activeMotionId, setActiveMotionId] = useState<number | null>(null);
+
+  // // 모바일: 한 화면에서 1개만 “움직임” (현재 페이지 첫 webm 1개)
+  // const [mobileMotionId, setMobileMotionId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const first = selections.find((s) => !s.isVideo && isWebm(s.resourceUrl));
+    setMobileMotionId(first?.id ?? null);
+  }, [selections]);
+
   const selectionsListDiv = () => {
     if (isFetching) return <LoadingAnimation />;
     if (selections.length === 0) return <div>No games found</div>;
+
+    const canHover =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(hover: hover)').matches;
+
     return (
       <>
         {/* ✅ Modal */}
         {modalContent && (
           <div
             className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4"
-            onClick={closeModal} // ✅ Close on click
+            onClick={closeModal}
           >
             {modalContent.type === 'image' ? (
-              <Image
-                src={modalContent.src}
-                alt="Full Image"
-                className="max-w-full max-h-full object-contain rounded-lg"
-                width={800}
-                height={600}
-              />
+              isWebm(modalContent.src) ? (
+                <video
+                  className="max-w-[90vw] max-h-[80vh] rounded-lg"
+                  src={modalContent.src}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls
+                />
+              ) : (
+                <Image
+                  src={modalContent.src}
+                  alt="Full Image"
+                  className="max-w-full max-h-full object-contain rounded-lg"
+                  width={800}
+                  height={600}
+                />
+              )
             ) : (
               <iframe
                 className="w-[80vw] h-[45vw] max-w-3xl max-h-[60vh] rounded-md"
@@ -290,6 +335,7 @@ export default function WorldcupClient({
                 </th>
               </tr>
             </thead>
+
             <tbody>
               {selections.map((selection) => {
                 let finalWinRatio = 0;
@@ -298,16 +344,22 @@ export default function WorldcupClient({
                     (selection.finalWins / worldcup.finishedPlays!) * 100;
                 }
 
+                const motion =
+                  !selection.isVideo && isWebm(selection.resourceUrl);
+                const isActiveMotion =
+                  motion && activeMotionId === selection.id;
+
                 return (
                   <tr key={selection.id} className="border-b border-gray-700">
                     <td className="p-3 text-white font-bold">
                       {selection.ranking}
                     </td>
 
-                    {/* ✅ Media (Clickable) */}
-                    <td className="p-3 cursor-pointer">
+                    {/* ✅ Media */}
+                    <td className="p-3">
+                      {/* 유튜브는 그대로 */}
                       {selection.isVideo ? (
-                        <div className="relative">
+                        <div className="relative cursor-pointer">
                           <div className="bg-uwu-red absolute top-1 left-1 text-white px-2 rounded-md">
                             Video
                           </div>
@@ -329,39 +381,69 @@ export default function WorldcupClient({
                           />
                         </div>
                       ) : (
-                        <div className="relative">
+                        <div
+                          className="relative w-36 h-24 rounded-md overflow-hidden cursor-pointer"
+                          onMouseEnter={() => {
+                            if (canHover && motion)
+                              setActiveMotionId(selection.id);
+                          }}
+                          onMouseLeave={() => {
+                            if (canHover && motion) setActiveMotionId(null);
+                          }}
+                          onClick={() =>
+                            openModal({
+                              type: 'image',
+                              src: selection.resourceUrl,
+                            })
+                          }
+                        >
+                          {/* Motion 뱃지 */}
+                          {motion && (
+                            <div className="bg-uwu-red absolute top-1 left-1 text-white px-2 rounded-md z-10">
+                              Motion
+                            </div>
+                          )}
+
+                          {/* NSFW blur 유지 */}
                           {worldcup.isNsfw &&
                             (!user ||
                               (user.tier === 'basic' &&
                                 worldcup.user?.id !== user.id)) && (
                               <div className="absolute inset-0 backdrop-blur-md z-10 rounded-md" />
                             )}
-                          <Image
-                            src={
-                              selection.resourceUrl ||
-                              '/assets/default-image.jpg'
-                            }
-                            alt={selection.name}
-                            className="w-36 h-24 object-cover rounded-md"
-                            width={128}
-                            height={96}
-                            onClick={() =>
-                              openModal({
-                                type: 'image',
-                                src: selection.resourceUrl,
-                              })
-                            }
-                          />
+
+                          {/* motion(webm)이면 video로 표시 */}
+                          {motion ? (
+                            <video
+                              className="w-36 h-24 object-cover"
+                              src={selection.resourceUrl}
+                              muted
+                              playsInline
+                              preload="metadata"
+                              // 데스크탑 hover 시에만 움직이게
+                              autoPlay={isActiveMotion}
+                              loop={isActiveMotion}
+                            />
+                          ) : (
+                            <Image
+                              src={
+                                selection.resourceUrl ||
+                                '/assets/default-image.jpg'
+                              }
+                              alt={selection.name}
+                              className="w-36 h-24 object-cover rounded-md"
+                              width={128}
+                              height={96}
+                            />
+                          )}
                         </div>
                       )}
                     </td>
 
-                    {/* Name */}
                     <td className="p-3 text-white font-medium">
                       {selection.name}
                     </td>
 
-                    {/* Win Ratio */}
                     <td className="p-3">
                       <div className="relative w-40 h-5 bg-gray-700 rounded-md overflow-hidden">
                         <div
@@ -383,7 +465,6 @@ export default function WorldcupClient({
                       </div>
                     </td>
 
-                    {/* Final Win Ratio */}
                     <td className="p-3">
                       <div className="relative w-40 h-5 bg-gray-700 rounded-md overflow-hidden">
                         <div
@@ -402,7 +483,7 @@ export default function WorldcupClient({
           </table>
         </div>
 
-        {/* Selections (Mobile) */}
+        {/* Mobile */}
         <div className="md:hidden grid grid-cols-1 gap-4">
           {selections.map((selection) => {
             let finalWinRatio = 0;
@@ -410,6 +491,9 @@ export default function WorldcupClient({
               finalWinRatio =
                 (selection.finalWins / worldcup.finishedPlays!) * 100;
             }
+
+            const motion = !selection.isVideo && isWebm(selection.resourceUrl);
+            const shouldPlay = motion && selection.id === mobileMotionId; // ✅ 모바일 1개만
 
             return (
               <div
@@ -420,8 +504,16 @@ export default function WorldcupClient({
                   #{selection.ranking}
                 </p>
 
-                {/* ✅ Media (Clickable) */}
-                <div className="w-36 h-36 relative cursor-pointer">
+                <div
+                  className="w-36 h-36 relative cursor-pointer"
+                  onClick={() => {
+                    if (selection.isVideo) {
+                      openModal({ type: 'video', src: selection.videoUrl });
+                    } else {
+                      openModal({ type: 'image', src: selection.resourceUrl });
+                    }
+                  }}
+                >
                   {selection.isVideo ? (
                     <div className="relative">
                       <div className="bg-uwu-red absolute top-1 left-1 text-white px-2 rounded-md z-10">
@@ -435,45 +527,50 @@ export default function WorldcupClient({
                         className="object-cover rounded-md w-full h-40"
                         width={128}
                         height={120}
-                        onClick={() =>
-                          openModal({
-                            type: 'video',
-                            src: selection.videoUrl,
-                          })
-                        }
                       />
                     </div>
                   ) : (
                     <div className="relative">
+                      {motion && (
+                        <div className="bg-uwu-red absolute top-1 left-1 text-white px-2 rounded-md z-10">
+                          Motion
+                        </div>
+                      )}
+
                       {worldcup.isNsfw &&
                         (!user || (user && user.tier === 'basic')) && (
                           <div className="absolute w-full h-40 backdrop-blur-lg z-10 rounded-md" />
                         )}
-                      <Image
-                        src={
-                          selection.resourceUrl || '/assets/default-image.jpg'
-                        }
-                        alt={selection.name}
-                        className="object-cover rounded-md w-full h-40"
-                        width={128}
-                        height={120}
-                        onClick={() =>
-                          openModal({
-                            type: 'image',
-                            src: selection.resourceUrl,
-                          })
-                        }
-                      />
+
+                      {motion ? (
+                        <video
+                          className="object-cover rounded-md w-full h-40"
+                          src={selection.resourceUrl}
+                          muted
+                          playsInline
+                          preload="metadata"
+                          autoPlay={shouldPlay}
+                          loop={shouldPlay}
+                        />
+                      ) : (
+                        <Image
+                          src={
+                            selection.resourceUrl || '/assets/default-image.jpg'
+                          }
+                          alt={selection.name}
+                          className="object-cover rounded-md w-full h-40"
+                          width={128}
+                          height={120}
+                        />
+                      )}
                     </div>
                   )}
                 </div>
 
-                {/* Name */}
                 <p className="text-white text-lg font-semibold mt-2">
                   {selection.name}
                 </p>
 
-                {/* Win Ratio */}
                 <div className="w-full">
                   <p className="text-xs text-gray-400">Win Ratio</p>
                   <div className="relative w-full h-5 bg-gray-700 rounded-md overflow-hidden">
@@ -496,14 +593,13 @@ export default function WorldcupClient({
                   </div>
                 </div>
 
-                {/* Final Win Ratio */}
                 <div className="w-full">
                   <p className="text-xs text-gray-400">Final Win Ratio</p>
                   <div className="relative w-full h-5 bg-gray-700 rounded-md overflow-hidden">
                     <div
                       className="h-full bg-blue-500 transition-all"
                       style={{ width: `${finalWinRatio}%` }}
-                    ></div>
+                    />
                     <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">
                       {finalWinRatio.toFixed(1)}%
                     </span>
@@ -514,14 +610,13 @@ export default function WorldcupClient({
           })}
         </div>
 
-        {/* Pagination */}
         <Pagination
           currentPage={selectionsPage}
           totalItems={selectionsTotalPages}
           itemsPerPage={selectionsPerPage}
           pagesToShow={7}
           onPageChange={changePage}
-        ></Pagination>
+        />
       </>
     );
   };

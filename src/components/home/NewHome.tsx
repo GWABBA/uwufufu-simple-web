@@ -13,7 +13,6 @@ import Image from 'next/image';
 import {
   buildHomeKey,
   clearHomeCache,
-  HomeCache,
   setHomeCache,
   setIncludeNsfw,
   setPage,
@@ -25,9 +24,8 @@ import {
 import LoadingAnimation from '../animation/Loading';
 import { useTranslation } from 'react-i18next';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
-import GoogleAd from '../common/GoogleAd';
 import AccountCircle from '@/assets/icons/account-circle.svg';
-import AdSlot from '../common/AddSlot';
+import MediaThumb from '@/components/common/MediaThumb';
 
 export default function NewHomeComponent() {
   const { t } = useTranslation();
@@ -55,6 +53,7 @@ export default function NewHomeComponent() {
   const includeNsfw = useAppSelector(
     (state: RootState) => state.worldcups.includeNsfw
   );
+
   const [tempSearchQuery, setTempSearchQuery] = useState('');
   const [isFetching, setIsFetching] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -63,9 +62,19 @@ export default function NewHomeComponent() {
   const [totalCount, setTotalCount] = useState(0);
   const hasMore = games.length < totalCount;
 
+  // --- autoplay control (Virtuoso range 기반) ---
+  const videoElsRef = useRef<Map<number, HTMLVideoElement>>(new Map());
+  const [playSet, setPlaySet] = useState<Set<number>>(new Set());
+
+  const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200
   );
+
+  const maxAutoPlay = windowWidth < 1024 ? 1 : 2;
 
   const [tempSelectedCategories, setTempSelectedCategories] = useState<
     string[]
@@ -77,10 +86,7 @@ export default function NewHomeComponent() {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
 
-  // near other refs
-  const topIndexRef = useRef(0); // track currently visible top index
-
-  // for initial restore
+  const topIndexRef = useRef(0);
   const [initialIndex, setInitialIndex] = useState<number | null>(null);
 
   const homeCache = useAppSelector(
@@ -88,10 +94,6 @@ export default function NewHomeComponent() {
   );
 
   const extraPickMapRef = useRef<Record<number, number>>({});
-
-  // Use a ref to track if the initial load has been handled.
-  // Refs don't cause re-renders, preventing the infinite loop.
-  const initialLoadRef = useRef(false);
 
   const getColumnCount = (width: number) => {
     if (width < 640) return 1;
@@ -104,13 +106,19 @@ export default function NewHomeComponent() {
   const lastPageLoaded = useRef(1);
 
   useEffect(() => {
+    setTempSelectedCategories([...selectedCategories]);
+  }, [selectedCategories]);
+
+  useEffect(() => {
+    setTempSelectedLanguages([...selectedLanguages]);
+  }, [selectedLanguages]);
+
+  useEffect(() => {
     extraPickMapRef.current = {};
   }, [columnCount]);
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -119,17 +127,9 @@ export default function NewHomeComponent() {
     setTempSearchQuery(searchQuery);
   }, [searchQuery]);
 
-  // Combined and corrected useEffect for initial loading
+  // --- fetch & restore ---
   useEffect(() => {
-    // Only run this effect on mount and when filters change, but not for cache-related re-renders.
-    // The `initialLoadRef` and the return function logic handle this.
-
-    // Check the ref to prevent running this effect on subsequent re-renders
-    // that are not caused by filter changes.
-    if (initialLoadRef.current) return;
-
-    // Set the ref to true so this logic doesn't run again until a filter changes.
-    initialLoadRef.current = true;
+    let cancelled = false;
 
     const fetchAndRestore = async () => {
       const currentKey = buildHomeKey({
@@ -142,38 +142,44 @@ export default function NewHomeComponent() {
       });
 
       if (homeCache && homeCache.key === currentKey) {
-        console.log('Restoring from cache...');
+        if (cancelled) return;
+
         setGames(homeCache.games);
         setTotalCount(homeCache.total);
         lastPageLoaded.current = homeCache.lastPageLoaded;
-
-        // NEW: set initial index for Virtuoso instead of scrollY
         setInitialIndex(homeCache.firstVisibleIndex ?? 0);
 
         setInitialLoading(false);
         dispatch(clearHomeCache());
-      } else {
-        console.log('Fetching new data...');
-        setIsFetching(true);
-        isFetchingRef.current = true;
-        setInitialLoading(true);
+        return;
+      }
 
-        try {
-          const { worldcups, total } = await fetchWorldcups({
-            page: 1,
-            perPage,
-            sortBy,
-            categories: selectedCategories,
-            locale: selectedLanguages as Locales[],
-            search: searchQuery,
-            includeNsfw,
-          });
+      setIsFetching(true);
+      isFetchingRef.current = true;
+      setInitialLoading(true);
 
-          setGames(worldcups);
-          setTotalCount(total);
-          dispatch(setPage(1));
-          lastPageLoaded.current = 1;
-        } finally {
+      try {
+        const { worldcups, total } = await fetchWorldcups({
+          page: 1,
+          perPage,
+          sortBy,
+          categories: selectedCategories,
+          locale: selectedLanguages as Locales[],
+          search: searchQuery,
+          includeNsfw,
+        });
+
+        if (cancelled) return;
+
+        setGames(worldcups);
+        setTotalCount(total);
+        dispatch(setPage(1));
+        lastPageLoaded.current = 1;
+
+        setInitialIndex(0);
+        topIndexRef.current = 0;
+      } finally {
+        if (!cancelled) {
           setIsFetching(false);
           isFetchingRef.current = false;
           setInitialLoading(false);
@@ -182,30 +188,27 @@ export default function NewHomeComponent() {
     };
 
     fetchAndRestore();
-
-    // The return function resets the ref when the component unmounts or
-    // when dependencies change, allowing the effect to run again for a fresh state.
     return () => {
-      initialLoadRef.current = false;
+      cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    // These are the only things that should trigger a fresh fetch
     perPage,
     sortBy,
     selectedCategories,
     selectedLanguages,
     searchQuery,
     includeNsfw,
+    homeCache,
     dispatch,
-    // Note: homeCache is removed from dependencies to prevent the infinite loop
   ]);
 
-  // This useEffect is solely for saving the cache on unmount, which is correct
+  // --- save cache on unmount ---
   useEffect(() => {
     return () => {
-      if (games.length > 0) {
-        const homeCache: HomeCache = {
+      if (games.length === 0) return;
+
+      dispatch(
+        setHomeCache({
           key: buildHomeKey({
             perPage,
             sortBy,
@@ -218,29 +221,175 @@ export default function NewHomeComponent() {
           total: totalCount,
           page: lastPageLoaded.current,
           lastPageLoaded: lastPageLoaded.current,
-          firstVisibleIndex: topIndexRef.current, // <-- store index
+          firstVisibleIndex: topIndexRef.current,
           ts: Date.now(),
-        };
-        dispatch(setHomeCache(homeCache));
-      }
+        })
+      );
     };
-  }, [
-    games,
-    totalCount,
-    lastPageLoaded,
-    perPage,
-    sortBy,
-    selectedCategories,
-    selectedLanguages,
-    searchQuery,
-    includeNsfw,
-    dispatch,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // --- helpers ---
+  type ExtraItem = { kind: 'extra'; key: string; uwuIndex: number };
+  type DisplayItem = Worldcup | ExtraItem;
+
+  const isExtraItem = (item: DisplayItem): item is ExtraItem =>
+    (item as ExtraItem).kind === 'extra';
+
+  const isWebmUrl = (url?: string | null) =>
+    !!url && url.split('?')[0].toLowerCase().endsWith('.webm');
+
+  const canAutoPlay = useCallback(
+    (game: Worldcup) => {
+      if (prefersReducedMotion) return false;
+      if (game.isNsfw && (!user || user.tier === 'basic')) return false;
+      return true;
+    },
+    [prefersReducedMotion, user]
+  );
+
+  // uwuverse data
+  const uwuverseData = [
+    {
+      title: 'The Winner Stays',
+      description:
+        'The ultimate bracket battle game where only the fan-favorite choice survives — you decide who wins, round after round.',
+      coverImage: '/assets/uwuverse/winner_stays.png',
+      link: 'https://thewinnerstays.com/',
+    },
+    {
+      title: 'UwU Memes',
+      description:
+        'Generate memes with your own image, a template, or with AI.',
+      coverImage: '/assets/uwuverse/uwu_memes.png',
+      link: 'https://uwumemes.com/',
+    },
+    {
+      title: '1sto50',
+      description: 'Your reflexes vs the world. Tap 1 to 50, fast.',
+      coverImage: '/assets/uwuverse/1sto50.png',
+      link: 'https://1sto50.com/',
+    },
+    {
+      title: 'Gay Or Not',
+      description: 'Vote if something is gay or not.',
+      coverImage: '/assets/uwuverse/gay_or_not.png',
+      link: 'https://gayornot.fun/',
+    },
+  ];
+
+  const buildItemsWithExtras = (
+    src: Worldcup[],
+    colCount: number,
+    uwuLen: number
+  ): DisplayItem[] => {
+    const isDesktop = colCount === 3;
+    if (uwuLen <= 0) return src;
+
+    let nextInsertAt = isDesktop ? 7 : 4;
+    const step = isDesktop ? 8 : 4;
+
+    const out: DisplayItem[] = [];
+    const pickMap = extraPickMapRef.current;
+
+    for (let i = 0; i < src.length; i++) {
+      if (i === nextInsertAt) {
+        if (pickMap[i] === undefined) {
+          pickMap[i] = Math.floor(Math.random() * uwuLen);
+        }
+        const uwuIndex = pickMap[i];
+        out.push({ kind: 'extra', key: `extra-${i}`, uwuIndex });
+        nextInsertAt += step;
+      }
+      out.push(src[i]);
+    }
+    return out;
+  };
+
+  const displayItems = useMemo(() => {
+    return buildItemsWithExtras(games, columnCount, uwuverseData.length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [games, columnCount, uwuverseData.length]);
+
+  const rowCount = Math.ceil(displayItems.length / columnCount);
+
+  // ✅ Virtuoso range 기반으로 playSet 계산
+  const lastRangeRef = useRef<{ start: number; end: number }>({
+    start: 0,
+    end: 0,
+  });
+
+  const recomputePlaySet = useCallback(
+    (startRow: number, endRow: number) => {
+      if (prefersReducedMotion) {
+        setPlaySet(new Set());
+        return;
+      }
+
+      const startIdx = startRow * columnCount;
+      const endExclusive = Math.min(
+        displayItems.length,
+        (endRow + 1) * columnCount
+      );
+
+      const picked: number[] = [];
+      for (let i = startIdx; i < endExclusive; i++) {
+        const item = displayItems[i];
+        if (!item) continue;
+        if (isExtraItem(item)) continue;
+
+        const game = item as Worldcup;
+        if (!canAutoPlay(game)) continue;
+
+        picked.push(game.id);
+        if (picked.length >= maxAutoPlay) break;
+      }
+
+      setPlaySet(new Set(picked));
+    },
+    [prefersReducedMotion, columnCount, displayItems, maxAutoPlay, canAutoPlay]
+  );
+
+  // games/컬럼 바뀌면 현재 range로 다시 계산
+  useEffect(() => {
+    recomputePlaySet(lastRangeRef.current.start, lastRangeRef.current.end);
+  }, [recomputePlaySet]);
+
+  // ✅ playSet이 바뀔 때 webm video만 play/pause
+  useEffect(() => {
+    videoElsRef.current.forEach((v, id) => {
+      const shouldPlay = playSet.has(id);
+
+      if (shouldPlay) {
+        v.muted = true;
+        v.playsInline = true;
+
+        // 이미 로드되어 있으면 load()는 오히려 끊길 수 있어서 보통은 빼는 게 안전함
+        // v.load();
+
+        v.play().catch(() => {});
+      } else {
+        v.pause();
+        v.currentTime = 0; // 싫으면 제거
+      }
+    });
+  }, [playSet]);
+
+  const resetToTop = (smooth = false) => {
+    topIndexRef.current = 0;
+    setInitialIndex(0);
+    virtuosoRef.current?.scrollToIndex({
+      index: 0,
+      align: 'start',
+      behavior: smooth ? 'smooth' : 'auto',
+    });
+  };
 
   const loadMoreGames = useCallback(async () => {
     if (!hasMore || isFetchingRef.current) return;
     isFetchingRef.current = true;
     setIsFetching(true);
+
     const nextPage = lastPageLoaded.current + 1;
     try {
       const { worldcups, total } = await fetchWorldcups({
@@ -295,9 +444,7 @@ export default function NewHomeComponent() {
   const handleIncludeNsfwChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if (nsfwDebounceTimer.current) {
-      clearTimeout(nsfwDebounceTimer.current);
-    }
+    if (nsfwDebounceTimer.current) clearTimeout(nsfwDebounceTimer.current);
     const isChecked = event.target.checked;
     nsfwDebounceTimer.current = setTimeout(() => {
       resetToTop();
@@ -309,14 +456,12 @@ export default function NewHomeComponent() {
   const searchDebounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newSearchQuery = event.target.value;
-    setTempSearchQuery(newSearchQuery);
-    if (searchDebounceTimer.current) {
-      clearTimeout(searchDebounceTimer.current);
-    }
+    const newSearch = event.target.value;
+    setTempSearchQuery(newSearch);
+    if (searchDebounceTimer.current) clearTimeout(searchDebounceTimer.current);
     searchDebounceTimer.current = setTimeout(() => {
       resetToTop();
-      dispatch(setSearchQuery(newSearchQuery));
+      dispatch(setSearchQuery(newSearch));
       dispatch(setPage(1));
     }, 500);
   };
@@ -382,81 +527,6 @@ export default function NewHomeComponent() {
     return count.toString();
   }
 
-  type ExtraItem = { kind: 'extra'; key: string; uwuIndex: number };
-  type DisplayItem = Worldcup | ExtraItem;
-
-  const isExtraItem = (item: DisplayItem): item is ExtraItem =>
-    (item as ExtraItem).kind === 'extra';
-
-  const buildItemsWithExtras = (
-    src: Worldcup[],
-    colCount: number,
-    uwuLen: number
-  ): DisplayItem[] => {
-    const isDesktop = colCount === 3;
-    if (uwuLen <= 0) return src;
-
-    let nextInsertAt = isDesktop ? 7 : 4;
-    const step = isDesktop ? 8 : 4;
-
-    const out: DisplayItem[] = [];
-    const pickMap = extraPickMapRef.current; // <-- sticky picks
-
-    for (let i = 0; i < src.length; i++) {
-      if (i === nextInsertAt) {
-        if (pickMap[i] === undefined) {
-          pickMap[i] = Math.floor(Math.random() * uwuLen);
-        }
-        const uwuIndex = pickMap[i];
-        out.push({ kind: 'extra', key: `extra-${i}`, uwuIndex });
-        nextInsertAt += step;
-      }
-      out.push(src[i]);
-    }
-    return out;
-  };
-
-  const resetToTop = (smooth = false) => {
-    topIndexRef.current = 0;
-    setInitialIndex(0);
-    virtuosoRef.current?.scrollToIndex({
-      index: 0,
-      align: 'start',
-      behavior: smooth ? 'smooth' : 'auto',
-    });
-  };
-
-  const canShowAd = !user || user.tier === 'basic';
-
-  const uwuverseData = [
-    {
-      title: 'The Winner Stays',
-      description:
-        'The ultimate bracket battle game where only the fan-favorite choice survives — you decide who wins, round after round.',
-      coverImage: '/assets/uwuverse/winner_stays.png',
-      link: 'https://thewinnerstays.com/',
-    },
-    {
-      title: 'UwU Memes',
-      description:
-        'Generate memes with your own image, a template, or with AI.',
-      coverImage: '/assets/uwuverse/uwu_memes.png',
-      link: 'https://uwumemes.com/',
-    },
-    {
-      title: '1sto50',
-      description: 'Your reflexes vs the world. Tap 1 to 50, fast.',
-      coverImage: '/assets/uwuverse/1sto50.png',
-      link: 'https://1sto50.com/',
-    },
-    {
-      title: 'Gay Or Not',
-      description: 'Vote if something is gay or not.',
-      coverImage: '/assets/uwuverse/gay_or_not.png',
-      link: 'https://gayornot.fun/',
-    },
-  ];
-
   const renderExtraCard = (item: ExtraItem) => {
     const uwu = uwuverseData[item.uwuIndex];
     return (
@@ -498,15 +568,8 @@ export default function NewHomeComponent() {
     );
   };
 
-  const displayItems = useMemo(() => {
-    return buildItemsWithExtras(games, columnCount, uwuverseData.length);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [games, columnCount, uwuverseData.length]);
-
-  const rowCount = Math.ceil(displayItems.length / columnCount);
-
-  const renderRow = (index: number) => {
-    const startIdx = index * columnCount;
+  const renderRow = (rowIndex: number) => {
+    const startIdx = rowIndex * columnCount;
     const rowItems: DisplayItem[] = displayItems.slice(
       startIdx,
       startIdx + columnCount
@@ -521,6 +584,7 @@ export default function NewHomeComponent() {
             if (isExtraItem(item)) return renderExtraCard(item);
 
             const game = item as Worldcup;
+
             return (
               <div
                 key={game.id}
@@ -536,38 +600,66 @@ export default function NewHomeComponent() {
                       <GalleryHorizontalEnd className="mr-2" />
                       {game.selectionCount}
                     </div>
+
                     {game.isNsfw && (
                       <span className="absolute ml-2 px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded-md z-20 top-2 right-2">
                         NSFW
                       </span>
                     )}
+
                     <div
                       className="absolute ml-2 px-2 py-1 text-base font-semibold text-white bg-uwu-dark-gray rounded-md z-20 bottom-2 left-2 flex items-center"
                       title={`${game.plays?.toLocaleString() || 0} Plays`}
                     >
                       {formatPlayCount(game.plays || 0)} Plays
                     </div>
-                    {game.isNsfw &&
-                      (!user || (user && user.tier === 'basic')) && (
-                        <div className="absolute w-full h-full backdrop-blur-lg z-10" />
-                      )}
-                    <Image
-                      src={
-                        game.coverImage ||
-                        '/assets/common/default-thumbnail.webp'
-                      }
-                      alt={game.title}
-                      fill
-                      className="rounded-t-2xl object-cover z-0"
-                      unoptimized
-                    />
+
+                    {game.isNsfw && (!user || user.tier === 'basic') && (
+                      <div className="absolute w-full h-full backdrop-blur-lg z-10" />
+                    )}
+
+                    {isWebmUrl(game.coverImage) ? (
+                      <video
+                        ref={(v) => {
+                          if (!v) {
+                            videoElsRef.current.delete(game.id);
+                            return;
+                          }
+                          videoElsRef.current.set(game.id, v);
+                        }}
+                        className="rounded-t-2xl object-cover z-0 w-full h-full"
+                        loop
+                        muted
+                        playsInline
+                        preload="metadata"
+                      >
+                        <source src={game.coverImage!} type="video/webm" />
+                      </video>
+                    ) : (
+                      <MediaThumb
+                        id={game.id}
+                        src={
+                          game.coverImage ||
+                          '/assets/common/default-thumbnail.webp'
+                        }
+                        alt={game.title}
+                        shouldPlay={playSet.has(game.id)}
+                        disableAutoPlay={
+                          !!(game.isNsfw && (!user || user.tier === 'basic'))
+                        }
+                        className="absolute inset-0 z-0"
+                        objectClassName="w-full h-full object-cover"
+                      />
+                    )}
                   </div>
+
                   <div className="p-4 flex flex-col justify-between h-[calc(100%-240px)]">
                     <div>
                       <div className="flex items-center text-sm text-gray-300 mb-2 justify-between">
                         <span className="text-uwuRed font-semibold">
                           {game.category?.name || 'Unknown'}
                         </span>
+
                         {game.user && (
                           <div className="flex items-center min-w-0">
                             {game.user.profileImage ? (
@@ -585,13 +677,13 @@ export default function NewHomeComponent() {
                                 <AccountCircle className="w-full h-full block text-gray-400" />
                               </div>
                             )}
-
                             <span className="text-gray-400 truncate">
                               {game.user.name}
                             </span>
                           </div>
                         )}
                       </div>
+
                       <h2 className="text-lg md:text-xl font-semibold text-white line-clamp-1">
                         {game.title}
                       </h2>
@@ -609,21 +701,14 @@ export default function NewHomeComponent() {
     );
   };
 
-  const Footer = () => {
-    return (
-      <div className="py-4 flex justify-center">
-        {isFetching && hasMore ? <LoadingAnimation /> : null}
-      </div>
-    );
-  };
+  const Footer = () => (
+    <div className="py-4 flex justify-center">
+      {isFetching && hasMore ? <LoadingAnimation /> : null}
+    </div>
+  );
 
   return (
     <div className="w-full max-w-6xl mx-auto pt-4 md:pt-8 flex flex-col">
-      {/* google adsense uwufufu-landing-top */}
-      {/* <AdSlot show={canShowAd} className="mb-4" reserve="480px">
-        <GoogleAd adSlot="6970744829" />
-      </AdSlot> */}
-      {/* search bar */}
       <div>
         <div className="grid grid-cols-2 md:flex md:space-x-2 gap-2 px-2 md:p-0 mb-4">
           <div>
@@ -640,6 +725,7 @@ export default function NewHomeComponent() {
               <option value="popularity">{t('home.popularity')}</option>
             </select>
           </div>
+
           <div>
             <label htmlFor="category" className="sr-only">
               Category
@@ -665,6 +751,7 @@ export default function NewHomeComponent() {
               </option>
             </select>
           </div>
+
           <div>
             <label htmlFor="language" className="sr-only">
               Language
@@ -710,11 +797,12 @@ export default function NewHomeComponent() {
             )}
           </div>
         </div>
+
         <div className="pt-0 px-2 md:px-0 mb-4">
           <input
             id="includeNsfw"
             type="checkbox"
-            onChange={(e) => handleIncludeNsfwChange(e)}
+            onChange={handleIncludeNsfwChange}
             checked={includeNsfw}
           />
           <label htmlFor="includeNsfw" className="text-[#c92418] ml-2">
@@ -722,6 +810,7 @@ export default function NewHomeComponent() {
           </label>
         </div>
       </div>
+
       <div className="w-full min-h-screen">
         {initialLoading ? (
           <div className="flex justify-center py-8">
@@ -737,8 +826,10 @@ export default function NewHomeComponent() {
             overscan={5}
             components={{ Footer }}
             initialTopMostItemIndex={initialIndex ?? 0}
-            rangeChanged={({ startIndex }) => {
+            rangeChanged={({ startIndex, endIndex }) => {
               topIndexRef.current = startIndex;
+              lastRangeRef.current = { start: startIndex, end: endIndex };
+              recomputePlaySet(startIndex, endIndex);
             }}
             itemContent={(rowIndex) => renderRow(rowIndex)}
             endReached={() => {
@@ -747,19 +838,20 @@ export default function NewHomeComponent() {
           />
         )}
       </div>
+
       <button
         onClick={() => resetToTop(true)}
         aria-label="Go to top"
         className="fixed z-50 rounded-full p-3 bg-uwu-red text-white shadow-lg hover:shadow-xl transition
              hover:-translate-y-0.5 focus:outline-none right-6 bottom-8"
         style={{
-          // iOS safe-area friendly
           insetInlineEnd: 'max(1rem, env(safe-area-inset-right))',
           insetBlockEnd: 'max(2rem, env(safe-area-inset-bottom))',
         }}
       >
         <ArrowUp className="w-5 h-5" />
       </button>
+
       {isCategoryModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -796,6 +888,7 @@ export default function NewHomeComponent() {
           </div>
         </div>
       )}
+
       {isLanguageModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
