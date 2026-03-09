@@ -9,8 +9,6 @@ import { motion } from 'framer-motion';
 import FinalWinnerModal from './FinalWinnerModal';
 import { useAppSelector } from '@/store/hooks';
 import GoogleAd from '../common/GoogleAd';
-// import { useAppSelector } from '@/store/hooks';
-// import GoogleAd from '../common/GoogleAd';
 
 declare global {
   interface Window {
@@ -23,8 +21,8 @@ interface MatchModalProps {
   isOpen: boolean;
   startedGame: StartedGameResponseDto | null;
   worldcup: Worldcup;
-  onClose: () => void; // Function to close the modal
-  onSelect: (selection: Selection) => void; // Callback for selection
+  onClose: () => void;
+  onSelect: (selection: Selection) => void;
 }
 
 const MatchModal: React.FC<MatchModalProps> = ({
@@ -36,7 +34,6 @@ const MatchModal: React.FC<MatchModalProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // const [isLoaded, setIsLoaded] = useState(false);
   const [winnerId, setWinnerId] = useState<number | null>(null);
   const [selected, setSelected] = useState<boolean>(false);
   const [selectDisabled, setSelectDisabled] = useState<boolean>(false);
@@ -55,18 +52,21 @@ const MatchModal: React.FC<MatchModalProps> = ({
   }, [startedGame]);
 
   const handleOnSelect = (selection: Selection) => {
-    if (startedGame && startedGame.match && startedGame.match.roundsOf) {
+    if (!startedGame?.match || selectDisabled) return;
+
+    if (startedGame.match.roundsOf) {
       setFinalWinnerId(selection.id);
     }
-    if (selectDisabled) return;
+
     setSelectDisabled(true);
     setWinnerId(selection.id);
     setSelected(true);
+
     setTimeout(async () => {
       setSelected(false);
       await onSelect(selection);
       setSelectDisabled(false);
-    }, 1000); // Add delay for visual effect
+    }, 1000);
   };
 
   const [viewportHeight, setViewportHeight] = useState<number>(0);
@@ -76,8 +76,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
       setViewportHeight(window.innerHeight);
     };
 
-    updateHeight(); // Set on mount
-
+    updateHeight();
     window.addEventListener('resize', updateHeight);
 
     return () => {
@@ -92,28 +91,43 @@ const MatchModal: React.FC<MatchModalProps> = ({
       document.body.style.overflow = '';
     }
 
-    // Cleanup when modal unmounts
     return () => {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
 
   const handleOnClickMagnify = (
-    event: React.MouseEvent<HTMLDivElement>,
-    selection: Selection
+    event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>,
+    selection: Selection,
   ) => {
     event.stopPropagation();
-    setFullSizeMedia(selection); // Open full-size modal
+    setFullSizeMedia(selection);
   };
 
   const handleFullSizeClose = () => {
-    setFullSizeMedia(null); // Close full-size modal
+    setFullSizeMedia(null);
   };
+
+  useEffect(() => {
+    if (!fullSizeMedia) return;
+
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setFullSizeMedia(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [fullSizeMedia]);
 
   const getYouTubeEmbedUrl = (
     url: string,
     startTime: number = 0,
-    endTime: number = 0
+    endTime: number = 0,
   ) => {
     const embedUrl = url.includes('youtu.be')
       ? url.replace('youtu.be/', 'www.youtube.com/embed/')
@@ -130,24 +144,41 @@ const MatchModal: React.FC<MatchModalProps> = ({
     return `${embedUrl}?${params.toString()}`;
   };
 
-  // const handleVideoControl = (
-  //   iframeId: string,
-  //   command: 'playVideo' | 'pauseVideo'
-  // ) => {
-  //   const iframe = document.getElementById(iframeId) as HTMLIFrameElement;
-  //   if (!iframe) return;
-
-  //   iframe.contentWindow?.postMessage(
-  //     JSON.stringify({
-  //       event: 'command',
-  //       func: command,
-  //       args: [],
-  //     }),
-  //     '*'
-  //   );
-  // };
-
   const playerRefs = useRef<Record<string, YT.Player>>({});
+  const ytApiLoadingRef = useRef(false);
+
+  const loadYouTubeAPI = () => {
+    return new Promise<void>((resolve) => {
+      if (window.YT && window.YT.Player) {
+        resolve();
+        return;
+      }
+
+      const existingScript = document.querySelector(
+        'script[src="https://www.youtube.com/iframe_api"]',
+      );
+
+      if (!existingScript && !ytApiLoadingRef.current) {
+        ytApiLoadingRef.current = true;
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        if (firstScriptTag?.parentNode) {
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        } else {
+          document.body.appendChild(tag);
+        }
+      }
+
+      const previousCallback = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        if (typeof previousCallback === 'function') {
+          previousCallback();
+        }
+        resolve();
+      };
+    });
+  };
 
   const initPlayer = async (iframeId: string) => {
     await loadYouTubeAPI();
@@ -157,7 +188,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
         events: {
           onReady: () => {
             playerRefs.current[iframeId] = player;
-            player.mute(); // Optional: mute on first load
+            player.mute();
             player.playVideo();
           },
         },
@@ -169,37 +200,110 @@ const MatchModal: React.FC<MatchModalProps> = ({
 
   const pausePlayer = (iframeId: string) => {
     const player = playerRefs.current[iframeId];
-    if (player && player.pauseVideo) {
+    if (player?.pauseVideo) {
       player.pauseVideo();
     }
   };
 
-  const loadYouTubeAPI = () => {
-    return new Promise<void>((resolve) => {
-      if (window.YT && window.YT.Player) {
-        resolve();
-      } else {
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        if (firstScriptTag && firstScriptTag.parentNode) {
-          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-        }
-
-        // Set global callback for API ready
-        window.onYouTubeIframeAPIReady = () => resolve();
-      }
-    });
-  };
-
   useEffect(() => {
-    // Reset selection states when a new match starts
     setWinnerId(null);
     setSelected(false);
     setSelectDisabled(false);
   }, [startedGame]);
 
   if (!isOpen) return null;
+
+  const renderSelection = ({
+    selection,
+    side,
+  }: {
+    selection: Selection;
+    side: 'left' | 'right';
+  }) => {
+    const isWinner = winnerId === selection.id;
+    const hasWinner = winnerId !== null;
+
+    return (
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        animate={
+          hasWinner
+            ? isWinner
+              ? { scale: 1.04 }
+              : {
+                  rotate: side === 'left' ? 20 : -20,
+                  scale: 0,
+                  opacity: 0,
+                  transition: { duration: 0.6 },
+                }
+            : { opacity: 1 }
+        }
+        transition={{ type: 'spring', stiffness: 200, damping: 16 }}
+        onClick={() => handleOnSelect(selection)}
+        className="w-full md:w-1/2 cursor-pointer flex flex-col items-center relative"
+      >
+        {hasWinner && selected && (
+          <div
+            className={`absolute top-3 left-1/2 -translate-x-1/2 z-30 px-4 py-2 rounded text-white font-bold text-base md:text-xl ${
+              isWinner ? 'bg-green-500' : 'bg-red-500'
+            }`}
+          >
+            {isWinner ? t('worldcup.win') : t('worldcup.lose')}
+          </div>
+        )}
+
+        <div className="relative w-full rounded-2xl overflow-hidden bg-black">
+          <button
+            type="button"
+            aria-label="View full image"
+            className="absolute top-3 right-3 z-20 flex h-11 w-11 md:h-12 md:w-12 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-sm transition hover:scale-105"
+            onClick={(event) => handleOnClickMagnify(event, selection)}
+          >
+            <MagnifyingPlus className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
+
+          {selection.isVideo ? (
+            <div className="w-full aspect-video bg-black">
+              <iframe
+                id={`ytplayer-${selection.id}`}
+                src={getYouTubeEmbedUrl(
+                  selection.videoUrl,
+                  selection.startTime,
+                  selection.endTime,
+                )}
+                className="rounded mx-auto w-full h-full object-contain"
+                allowFullScreen
+                style={{ border: 'none' }}
+                onMouseEnter={() => initPlayer(`ytplayer-${selection.id}`)}
+                onMouseLeave={() => pausePlayer(`ytplayer-${selection.id}`)}
+              />
+            </div>
+          ) : (
+            <div className="relative flex items-center justify-center w-full h-[34vh] sm:h-[38vh] md:h-[60vh] bg-black overflow-hidden">
+              <Image
+                src={selection.resourceUrl}
+                alt={selection.name}
+                width={1600}
+                height={1600}
+                className="max-w-full max-h-full w-auto h-auto object-contain"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                priority
+              />
+            </div>
+          )}
+        </div>
+
+        <div
+          className={`flex items-center justify-center p-2 md:p-3 text-white rounded mt-2 w-full text-center text-sm md:text-base min-h-14 font-semibold ${
+            side === 'left' ? 'bg-blue-500' : 'bg-red-500'
+          }`}
+        >
+          {selection.name}
+        </div>
+      </motion.div>
+    );
+  };
 
   return (
     <>
@@ -218,27 +322,24 @@ const MatchModal: React.FC<MatchModalProps> = ({
                 )}
             </div> */}
 
-            {/* Header */}
             <div className="p-4 bg-uwu-black text-white flex justify-between items-center md:h-16">
               <h2
                 onClick={onClose}
-                className="text-base md:text-xl font-bold flex items-center"
+                className="text-base md:text-xl font-bold flex items-center cursor-pointer"
               >
                 <ChevronLeft className="w-3 h-3 md:w-6 md:h-6 mr-1" />
                 Back
               </h2>
             </div>
 
-            {/* Matches */}
             <div
               className="overflow-y-auto p-4 bg-uwu-black relative"
               style={{
-                height: `${viewportHeight - 64}px`, // 4rem accounts for the header
+                height: `${viewportHeight - 64}px`,
               }}
             >
-              {/* header */}
-              <div className="absolute inset-0 flex justify-center text-white">
-                <div className="text-center">
+              <div className="absolute inset-x-0 top-0 flex justify-center text-white px-4 pointer-events-none">
+                <div className="text-center pt-2">
                   <h1 className="text-base md:text-3xl font-bold">
                     {worldcup.title}
                   </h1>
@@ -251,222 +352,43 @@ const MatchModal: React.FC<MatchModalProps> = ({
                   </p>
                 </div>
               </div>
-              {/* match  */}
-              <div className="max-w-7xl mx-auto md:h-[100%]">
+
+              <div className="max-w-7xl mx-auto md:h-full">
                 <div
                   key={startedGame.match.id}
-                  className="flex flex-col md:flex-row justify-between items-center p-4 md:gap-4 h-full pt-28 md:pt-4 relative"
+                  className="flex flex-col md:flex-row justify-between items-center p-4 md:gap-6 h-full pt-28 md:pt-6 relative"
                 >
-                  {/* vs text for desktop */}
                   {!winnerId && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1, x: '-50%' }} // <- this replaces -translate-x-1/2
+                      animate={{ opacity: 1, scale: 1, x: '-50%' }}
                       exit={{ opacity: 0, scale: 0.6 }}
-                      className="hidden md:block absolute left-1/2 top-[40%] 
-                        text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r 
-                        from-blue-500 to-uwu-red drop-shadow-2xl z-30 select-none"
+                      className="hidden md:block absolute left-1/2 top-[42%] text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-uwu-red drop-shadow-2xl z-30 select-none"
                     >
                       VS
                     </motion.div>
                   )}
 
-                  {/* First Selection */}
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    animate={
-                      winnerId
-                        ? winnerId === startedGame.match.selection1.id
-                          ? { scale: 1.1 } // Winner slightly enlarges
-                          : {
-                              rotate: 20,
-                              scale: 0,
-                              opacity: 0,
-                              transition: { duration: 0.6 },
-                            } // Loser gets "destroyed"
-                        : { opacity: 1 }
-                    }
-                    transition={{ type: 'spring', stiffness: 200, damping: 10 }}
-                    onClick={() => handleOnSelect(startedGame.match.selection1)}
-                    className="w-full md:w-1/2 cursor-pointer flex flex-col items-center relative"
-                  >
-                    {winnerId && selected && (
-                      <div
-                        className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-10 px-4 py-2 rounded text-white font-bold text-xl ${
-                          winnerId === startedGame.match.selection1.id
-                            ? 'bg-green-500'
-                            : 'bg-red-500'
-                        }`}
-                      >
-                        {winnerId === startedGame.match.selection1.id
-                          ? t('worldcup.win')
-                          : t('worldcup.lose')}
-                      </div>
-                    )}
-                    <div className="w-full max-h-[50vh] overflow-hidden relative rounded-2xl">
-                      <div
-                        className="w-12 h-12 absolute top-1 left-1 md:top-5 md:left-5 rounded-full bg-gray-900 flex justify-center items-center"
-                        onClick={(event) =>
-                          handleOnClickMagnify(
-                            event,
-                            startedGame.match.selection1
-                          )
-                        }
-                      >
-                        <MagnifyingPlus className="text-white" />
-                      </div>
-                      {startedGame.match.selection1.isVideo ? (
-                        <div className="w-full aspect-video">
-                          <iframe
-                            id={`ytplayer-${startedGame.match.selection1.id}`}
-                            src={getYouTubeEmbedUrl(
-                              startedGame.match.selection1.videoUrl,
-                              startedGame.match.selection1.startTime,
-                              startedGame.match.selection1.endTime
-                            )}
-                            className="rounded mx-auto w-full h-full object-contain"
-                            allowFullScreen
-                            style={{
-                              border: 'none',
-                            }}
-                            onMouseEnter={() =>
-                              initPlayer(
-                                `ytplayer-${startedGame.match.selection1.id}`
-                              )
-                            }
-                            onMouseLeave={() =>
-                              pausePlayer(
-                                `ytplayer-${startedGame.match.selection1.id}`
-                              )
-                            }
-                          ></iframe>
-                        </div>
-                      ) : (
-                        <Image
-                          className="rounded mx-auto"
-                          src={startedGame.match.selection1.resourceUrl}
-                          alt={startedGame.match.selection1.name}
-                          width={800}
-                          height={800}
-                          style={{
-                            objectFit: 'contain',
-                            maxWidth: '100%',
-                            maxHeight: '70vh',
-                          }}
-                        />
-                      )}
-                    </div>
-                    <div className="flex items-center justify-center p-0.5 md:p-2 bg-blue-500 text-white rounded mt-2 w-full text-center text-sm md:text-base min-h-14">
-                      {startedGame.match.selection1.name}
-                    </div>
-                  </motion.div>
+                  {renderSelection({
+                    selection: startedGame.match.selection1,
+                    side: 'left',
+                  })}
 
-                  {/* vs text for mobile */}
                   {!winnerId && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.6 }}
-                      className="md:hidden flex justify-center items-center w-full text-5xl font-black 
-                      text-transparent bg-clip-text bg-gradient-to-b from-blue-500 to-uwu-red
-                      drop-shadow-xl z-30 select-none py-2"
+                      className="md:hidden flex justify-center items-center w-full text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-500 to-uwu-red drop-shadow-xl z-30 select-none py-3"
                     >
                       VS
                     </motion.div>
                   )}
 
-                  {/* Second Selection */}
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    animate={
-                      winnerId
-                        ? winnerId === startedGame.match.selection2.id
-                          ? { scale: 1.1 } // Winner slightly enlarges
-                          : {
-                              rotate: -20,
-                              scale: 0,
-                              opacity: 0,
-                              transition: { duration: 0.6 },
-                            } // Loser gets "destroyed"
-                        : { opacity: 1 }
-                    }
-                    transition={{ type: 'spring', stiffness: 200, damping: 10 }}
-                    onClick={() => handleOnSelect(startedGame.match.selection2)}
-                    className="w-full md:w-1/2 cursor-pointer flex flex-col items-center relative"
-                  >
-                    <div
-                      className="w-12 h-12 absolute top-1 right-1 md:top-5 md:right-5 rounded-full bg-gray-900 flex justify-center items-center"
-                      onClick={(event) =>
-                        handleOnClickMagnify(
-                          event,
-                          startedGame.match.selection2
-                        )
-                      }
-                    >
-                      <MagnifyingPlus className="text-white" />
-                    </div>
-                    {/* Win/Lose Label */}
-                    {winnerId && selected && (
-                      <div
-                        className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-10 px-4 py-2 rounded text-white font-bold text-xl ${
-                          winnerId === startedGame.match.selection2.id
-                            ? 'bg-green-500'
-                            : 'bg-red-500'
-                        }`}
-                      >
-                        {winnerId === startedGame.match.selection2.id
-                          ? t('worldcup.win')
-                          : t('worldcup.lose')}
-                      </div>
-                    )}
-                    <div className="w-full max-h-[50vh] overflow-hidden rounded-2xl">
-                      {startedGame.match.selection2.isVideo ? (
-                        <div className="w-full aspect-video">
-                          <iframe
-                            id={`ytplayer-${startedGame.match.selection2.id}`}
-                            src={getYouTubeEmbedUrl(
-                              startedGame.match.selection2.videoUrl,
-                              startedGame.match.selection2.startTime,
-                              startedGame.match.selection2.endTime
-                            )}
-                            className="rounded mx-auto w-full h-full object-contain"
-                            allowFullScreen
-                            style={{
-                              border: 'none',
-                            }}
-                            onMouseEnter={() =>
-                              initPlayer(
-                                `ytplayer-${startedGame.match.selection2.id}`
-                              )
-                            }
-                            onMouseLeave={() =>
-                              pausePlayer(
-                                `ytplayer-${startedGame.match.selection2.id}`
-                              )
-                            }
-                          ></iframe>
-                        </div>
-                      ) : (
-                        <Image
-                          className="rounded mx-auto"
-                          src={startedGame.match.selection2.resourceUrl}
-                          alt={startedGame.match.selection2.name}
-                          width={800}
-                          height={800}
-                          style={{
-                            objectFit: 'contain',
-                            maxWidth: '100%',
-                            maxHeight: '70vh',
-                          }}
-                        />
-                      )}
-                    </div>
-                    <div className="flex items-center justify-center p-0.5 md:p-2 bg-red-500 text-white rounded mt-2 w-full text-sm md:text-base min-h-14">
-                      {startedGame.match.selection2.name}
-                    </div>
-                  </motion.div>
+                  {renderSelection({
+                    selection: startedGame.match.selection2,
+                    side: 'right',
+                  })}
                 </div>
               </div>
 
@@ -492,41 +414,68 @@ const MatchModal: React.FC<MatchModalProps> = ({
           startedGame={startedGame}
           finalStartedGame={finalStartedGame}
           finalWinnerId={finalWinnerId!}
-        ></FinalWinnerModal>
+        />
       )}
 
-      {/* Full-Size Modal */}
       {fullSizeMedia && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 w-screen h-screen"
+          className="fixed inset-0 z-[60] flex h-screen w-screen items-center justify-center bg-black/90 p-4"
           onClick={handleFullSizeClose}
         >
-          {fullSizeMedia.isVideo ? (
-            <div className="w-full flex justify-center items-center">
-              <div className="w-full max-w-[720px] aspect-video">
-                <iframe
-                  className="w-full h-full rounded"
-                  src={
-                    fullSizeMedia.videoUrl.includes('youtu.be')
-                      ? fullSizeMedia.videoUrl.replace(
-                          'youtu.be',
-                          'www.youtube.com/embed'
-                        )
-                      : fullSizeMedia.videoUrl.replace('watch?v=', 'embed/')
-                  }
-                  allowFullScreen
-                ></iframe>
-              </div>
+          <button
+            type="button"
+            aria-label="Close full screen media"
+            onClick={handleFullSizeClose}
+            className="absolute right-4 top-4 z-[70] flex h-16 w-16 items-center justify-center rounded-full bg-black/75 text-white text-5xl leading-none backdrop-blur-sm transition hover:scale-105 md:right-6 md:top-6 md:h-20 md:w-20 md:text-6xl"
+          >
+            ×
+          </button>
+
+          {fullSizeMedia && (
+            <div
+              className="fixed inset-0 z-[60] flex h-screen w-screen items-center justify-center bg-black/90 p-4"
+              onClick={handleFullSizeClose}
+            >
+              <button
+                type="button"
+                aria-label="Close full screen media"
+                onClick={handleFullSizeClose}
+                className="absolute right-4 top-4 z-[70] flex h-16 w-16 items-center justify-center rounded-full bg-black/75 text-white text-5xl leading-none backdrop-blur-sm transition hover:scale-105 md:right-6 md:top-6 md:h-20 md:w-20 md:text-6xl"
+              >
+                ×
+              </button>
+
+              {fullSizeMedia.isVideo ? (
+                <div className="flex w-full items-center justify-center">
+                  <div className="aspect-video w-full max-w-[960px] overflow-hidden rounded-xl bg-black">
+                    <iframe
+                      className="h-full w-full"
+                      src={
+                        fullSizeMedia.videoUrl.includes('youtu.be')
+                          ? fullSizeMedia.videoUrl.replace(
+                              'youtu.be/',
+                              'www.youtube.com/embed/',
+                            )
+                          : fullSizeMedia.videoUrl.replace('watch?v=', 'embed/')
+                      }
+                      allowFullScreen
+                      style={{ border: 'none' }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="relative flex h-full w-full items-center justify-center">
+                  <Image
+                    src={fullSizeMedia.resourceUrl}
+                    alt={fullSizeMedia.name}
+                    width={2200}
+                    height={2200}
+                    className="max-h-full max-w-full h-auto w-auto object-contain"
+                    sizes="100vw"
+                  />
+                </div>
+              )}
             </div>
-          ) : (
-            <Image
-              src={fullSizeMedia.resourceUrl}
-              alt={fullSizeMedia.name}
-              width={1920}
-              height={1080}
-              className="max-w-full max-h-full object-contain"
-              // style={{ objectFit: 'contain' }}
-            />
           )}
         </div>
       )}
