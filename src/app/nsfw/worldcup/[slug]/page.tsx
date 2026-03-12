@@ -2,6 +2,7 @@ import { fetchWorldcupBySlug } from '@/services/worldcup.service';
 import { notFound, redirect } from 'next/navigation';
 import WorldcupClient from '../../../worldcup/[slug]/WorldcupClient'; // 기존 클라이언트 컴포넌트 재사용
 import { Metadata } from 'next';
+import { isVideoUrl } from '@/utils/media';
 
 type ParamsPromise = Promise<{ slug: string }>;
 type SearchParamsPromise = Promise<{
@@ -28,7 +29,10 @@ export async function generateMetadata({
   const title = `${worldcup.title} | UwUFUFU`;
   const description =
     worldcup.description ?? 'Play and share your favorite worldcup brackets!';
-  const image = worldcup.coverImage || '/assets/common/default-thumbnail.webp';
+  const image =
+    worldcup.coverImage && !isVideoUrl(worldcup.coverImage)
+      ? worldcup.coverImage
+      : '/assets/common/default-thumbnail.webp';
 
   return {
     title,

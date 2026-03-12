@@ -16,6 +16,8 @@ export type Animation1CanvasHandle = {
   getCanvas: () => HTMLCanvasElement | null;
 };
 
+type CanvasMediaSource = HTMLImageElement | HTMLVideoElement;
+
 const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
   (
     {
@@ -35,33 +37,109 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
       getCanvas: () => canvasRef.current,
     }));
 
+    function getMediaDimensions(source: CanvasMediaSource) {
+      if (source instanceof HTMLVideoElement) {
+        return {
+          width: source.videoWidth,
+          height: source.videoHeight,
+        };
+      }
+
+      return {
+        width: source.width,
+        height: source.height,
+      };
+    }
+
     function drawImageCover(
       ctx: CanvasRenderingContext2D,
-      img: HTMLImageElement,
+      source: CanvasMediaSource,
       dx: number,
       dy: number,
       dWidth: number,
       dHeight: number
     ) {
-      const imgAspect = img.width / img.height;
+      const { width, height } = getMediaDimensions(source);
+      const imgAspect = width / height;
       const boxAspect = dWidth / dHeight;
 
       let sx = 0,
         sy = 0,
-        sWidth = img.width,
-        sHeight = img.height;
+        sWidth = width,
+        sHeight = height;
 
       if (imgAspect > boxAspect) {
         // Image is wider, crop sides
-        sWidth = img.height * boxAspect;
-        sx = (img.width - sWidth) / 2;
+        sWidth = height * boxAspect;
+        sx = (width - sWidth) / 2;
       } else {
         // Image is taller, crop top/bottom
-        sHeight = img.width / boxAspect;
-        sy = (img.height - sHeight) / 2;
+        sHeight = width / boxAspect;
+        sy = (height - sHeight) / 2;
       }
 
-      ctx.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+      ctx.drawImage(source, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    }
+
+    function isDirectVideoUrl(url: string, isVideo: boolean, videoSource?: string) {
+      return (
+        isVideo &&
+        videoSource !== 'youtube' &&
+        /\.(webm|mp4|mov|m4v|ogg)(\?.*)?$/i.test(url)
+      );
+    }
+
+    async function loadCanvasSource(
+      url: string,
+      options?: {
+        isVideo?: boolean;
+        videoSource?: string;
+      }
+    ): Promise<CanvasMediaSource> {
+      if (
+        isDirectVideoUrl(url, options?.isVideo ?? false, options?.videoSource)
+      ) {
+        const video = document.createElement('video');
+        video.crossOrigin = 'anonymous';
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.preload = 'auto';
+        video.src = `${url}${url.includes('?') ? '&' : '?'}canvas=true`;
+
+        await new Promise<void>((resolve, reject) => {
+          const handleLoadedData = () => {
+            cleanup();
+            resolve();
+          };
+          const handleError = () => {
+            cleanup();
+            reject(new Error(`Failed to load video: ${url}`));
+          };
+          const cleanup = () => {
+            video.removeEventListener('loadeddata', handleLoadedData);
+            video.removeEventListener('error', handleError);
+          };
+
+          video.addEventListener('loadeddata', handleLoadedData);
+          video.addEventListener('error', handleError);
+          video.load();
+        });
+
+        try {
+          video.currentTime = Math.min(0.1, video.duration || 0);
+        } catch {
+          // ignore seek errors and use the first available frame
+        }
+
+        return video;
+      }
+
+      const image = new Image();
+      image.crossOrigin = 'anonymous';
+      image.src = `${url}${url.includes('?') ? '&' : '?'}canvas=true`;
+      await image.decode();
+      return image;
     }
 
     useEffect(() => {
@@ -72,18 +150,8 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
       canvas.width = CANVAS_WIDTH;
       canvas.height = CANVAS_HEIGHT;
 
-      const imgA = new Image();
-      const imgB = new Image();
       const logoImg = new Image();
-      imgA.crossOrigin = 'anonymous';
-      imgB.crossOrigin = 'anonymous';
       logoImg.crossOrigin = 'anonymous';
-      imgA.src = `${
-        finalStartedGame!.match.selection1.resourceUrl
-      }?canvas=true`;
-      imgB.src = `${
-        finalStartedGame!.match.selection2.resourceUrl
-      }?canvas=true`;
       logoImg.src = '/assets/logos/uwufufu-logo-rgb.svg';
 
       let startTime: number | null = null;
@@ -102,6 +170,9 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
       const fadeStartMs = vsStartMs + vsDurationMs;
       const fadeDurationMs = 1000;
       const totalDurationMs = fadeStartMs + fadeDurationMs + 1000;
+
+      let mediaA: CanvasMediaSource | null = null;
+      let mediaB: CanvasMediaSource | null = null;
 
       const draw = (timestamp: number) => {
         if (!startTime) startTime = timestamp;
@@ -141,9 +212,9 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
           ctx.shadowBlur = 60 * auraProgress;
           ctx.globalAlpha = 0.4 + 0.6 * auraProgress;
           if (finalWinnerId === finalStartedGame!.match.selection1.id) {
-            drawImageCover(ctx, imgA, xA, offsetY, drawWidth, drawHeight);
+            drawImageCover(ctx, mediaA!, xA, offsetY, drawWidth, drawHeight);
           } else {
-            drawImageCover(ctx, imgB, xB, offsetY, drawWidth, drawHeight);
+            drawImageCover(ctx, mediaB!, xB, offsetY, drawWidth, drawHeight);
           }
           ctx.restore();
         }
@@ -151,8 +222,8 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
         // 🖼️ Draw both images using cover logic
         if (elapsed >= imageStartMs) {
           ctx.save();
-          drawImageCover(ctx, imgA, xA, offsetY, drawWidth, drawHeight);
-          drawImageCover(ctx, imgB, xB, offsetY, drawWidth, drawHeight);
+          drawImageCover(ctx, mediaA!, xA, offsetY, drawWidth, drawHeight);
+          drawImageCover(ctx, mediaB!, xB, offsetY, drawWidth, drawHeight);
           ctx.restore();
         }
 
@@ -297,16 +368,38 @@ const Animation1Canvas = forwardRef<Animation1CanvasHandle, Props>(
 
       const start = async () => {
         try {
-          await Promise.all([imgA.decode(), imgB.decode(), logoImg.decode()]);
+          [mediaA, mediaB] = await Promise.all([
+            loadCanvasSource(finalStartedGame!.match.selection1.resourceUrl, {
+              isVideo: finalStartedGame!.match.selection1.isVideo,
+              videoSource: finalStartedGame!.match.selection1.videoSource,
+            }),
+            loadCanvasSource(finalStartedGame!.match.selection2.resourceUrl, {
+              isVideo: finalStartedGame!.match.selection2.isVideo,
+              videoSource: finalStartedGame!.match.selection2.videoSource,
+            }),
+          ]);
+
+          await logoImg.decode();
           requestAnimationFrame(draw);
         } catch (err) {
-          console.error('Image decode failed', err);
+          console.error('Canvas media decode failed', err);
+          onAnimationEnd?.();
         }
       };
 
       start();
 
-      return () => cancelAnimationFrame(animFrame);
+      return () => {
+        cancelAnimationFrame(animFrame);
+
+        [mediaA, mediaB].forEach((media) => {
+          if (media instanceof HTMLVideoElement) {
+            media.pause();
+            media.removeAttribute('src');
+            media.load();
+          }
+        });
+      };
     }, [
       onAnimationStart,
       onAnimationEnd,

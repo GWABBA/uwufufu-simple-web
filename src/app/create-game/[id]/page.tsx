@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Worldcup } from '@/dtos/worldcup.dtos';
 import { fetchMyWorldcup, updateWorldcup } from '@/services/worldcup.service';
 import toast from 'react-hot-toast';
@@ -16,7 +16,13 @@ import LoadingAnimation from '@/components/animation/Loading';
 const CreateGameId = () => {
   const { t } = useTranslation();
   const params = useParams();
-  const id = Number(params.id);
+  const id = useMemo(() => {
+    const rawId = Array.isArray(params.id) ? params.id[0] : params.id;
+    const parsedId = Number(rawId);
+
+    return Number.isFinite(parsedId) && parsedId > 0 ? parsedId : null;
+  }, [params.id]);
+  const mainTabStorageKey = `create-game:${id}:main-tab`;
 
   const [mainTab, setMainTab] = useState<MainTabsType>(MainTabsType.COVER);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,6 +44,11 @@ const CreateGameId = () => {
   }, [router]);
 
   useEffect(() => {
+    if (id === null) {
+      setIsLoadingGame(false);
+      return;
+    }
+
     setIsLoadingGame(true);
     const fetchGame = async () => {
       try {
@@ -61,6 +72,23 @@ const CreateGameId = () => {
     fetchGame();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  useEffect(() => {
+    if (id === null || typeof window === 'undefined') return;
+
+    const storedTab = window.localStorage.getItem(mainTabStorageKey);
+    if (
+      storedTab &&
+      Object.values(MainTabsType).includes(storedTab as MainTabsType)
+    ) {
+      setMainTab(storedTab as MainTabsType);
+    }
+  }, [id, mainTabStorageKey]);
+
+  useEffect(() => {
+    if (id === null || typeof window === 'undefined') return;
+    window.localStorage.setItem(mainTabStorageKey, mainTab);
+  }, [id, mainTab, mainTabStorageKey]);
 
   if (isLoadingGame) {
     return (
@@ -123,6 +151,17 @@ const CreateGameId = () => {
 
   if (isLoading) {
     return <div></div>;
+  }
+
+  if (id === null) {
+    return (
+      <div className="w-full max-w-4xl mx-auto pt-4 md:pt-8 px-2 md:px-0">
+        <h1 className="text-xl md:text-4xl font-bold text-white mb-8">
+          {t('create-worldcup.edit-worldcup')}
+        </h1>
+        <p className="text-red-400">Invalid game id.</p>
+      </div>
+    );
   }
 
   return (

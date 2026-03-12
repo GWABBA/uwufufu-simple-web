@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 import Pagination from '../common/Pagination';
 import { useTranslation } from 'react-i18next';
-import ImageUpload from '@/assets/icons/image-upload.svg';
 import { uploadImage } from '@/services/images.service';
 
 interface SelectionsComponentProps {
@@ -35,6 +34,20 @@ enum SelectionTabType {
 }
 
 type SortOption = 'name' | 'createdAt' | 'winLossRatio' | 'finalWinLossRatio';
+
+type UploadErrorItem = {
+  fileName: string;
+  error: string;
+};
+
+const MAX_SELECTION_IMAGE_SIZE_BYTES = 12 * 1024 * 1024;
+const ALLOWED_SELECTION_IMAGE_TYPES = new Set([
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+]);
 
 export default function SelectionsComponent({
   game,
@@ -51,12 +64,23 @@ export default function SelectionsComponent({
 
   const [isUploadingSelectionImages, setIsUploadingSelectionImages] =
     useState(false);
+  const [uploadErrors, setUploadErrors] = useState<UploadErrorItem[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<{
+    current: number;
+    total: number;
+  }>({
+    current: 0,
+    total: 0,
+  });
 
   const [editMode, setEditMode] = useState<{ [key: number]: boolean }>({});
   const [changedSelectionImage, setChangedSelectionImage] = useState<{
     [key: number]: string;
   }>({});
   const [selectionIsUploading, setSelectionIsUploading] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [brokenSelectionImages, setBrokenSelectionImages] = useState<{
     [key: number]: boolean;
   }>({});
 
@@ -90,27 +114,103 @@ export default function SelectionsComponent({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, sortBy]);
 
+  const getFriendlyUploadError = (rawMessage: string) => {
+    const message = rawMessage.toLowerCase();
+
+    if (
+      message.includes('unsupported file type') ||
+      message.includes('invalid file type')
+    ) {
+      return 'Unsupported file type. Use JPG, PNG, GIF, or WEBP.';
+    }
+
+    if (
+      message.includes('file too large') ||
+      message.includes('limit file size')
+    ) {
+      return 'File is too large. Maximum size is 12 MB.';
+    }
+
+    if (
+      message.includes('image dimensions are too large') ||
+      message.includes('pixel limit')
+    ) {
+      return 'Image dimensions are too large. Please upload a smaller image.';
+    }
+
+    if (message.includes('no file uploaded')) {
+      return 'No file was uploaded. Choose an image and try again.';
+    }
+
+    if (
+      message.includes('upload service is temporarily unavailable') ||
+      message.includes('failed to upload file')
+    ) {
+      return 'Upload service is temporarily unavailable. Try again in a moment.';
+    }
+
+    if (message.includes('game not found')) {
+      return 'This worldcup could not be found. Refresh the page and try again.';
+    }
+
+    if (message.includes('network error')) {
+      return 'Network error while uploading. Check your connection and try again.';
+    }
+
+    return 'Upload failed unexpectedly. Try again.';
+  };
+
   const handleSelectionImagesChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    // setUploadErrors([]); // ✅ Clear previous errors
     const inputElement = event.target; // Get the input element
     const files = inputElement.files;
     if (!files || files.length === 0) return;
 
+    onSetMainTab(MainTabsType.SELECTIONS);
+    setUploadErrors([]);
     setIsUploadingSelectionImages(true); // Show spinner
+    setUploadProgress({ current: 0, total: files.length });
 
     try {
       const fileArray = Array.from(files);
+      const validFiles: File[] = [];
+      const clientValidationErrors: UploadErrorItem[] = [];
+
+      for (const file of fileArray) {
+        if (!ALLOWED_SELECTION_IMAGE_TYPES.has(file.type)) {
+          clientValidationErrors.push({
+            fileName: file.name,
+            error: 'Unsupported file type. Use JPG, PNG, GIF, or WEBP.',
+          });
+          continue;
+        }
+
+        if (file.size > MAX_SELECTION_IMAGE_SIZE_BYTES) {
+          clientValidationErrors.push({
+            fileName: file.name,
+            error: 'File is too large. Maximum size is 12 MB.',
+          });
+          continue;
+        }
+
+        validFiles.push(file);
+      }
+
       const chunkSize = 10;
       const chunks = [];
 
-      for (let i = 0; i < fileArray.length; i += chunkSize) {
-        chunks.push(fileArray.slice(i, i + chunkSize));
+      for (let i = 0; i < validFiles.length; i += chunkSize) {
+        chunks.push(validFiles.slice(i, i + chunkSize));
       }
 
       const newSelections: SelectionDto[] = [];
-      const newUploadErrors: { fileName: string; error: string }[] = [];
+      const newUploadErrors: UploadErrorItem[] = [...clientValidationErrors];
+      let completedUploads = clientValidationErrors.length;
+
+      if (completedUploads > 0) {
+        setUploadProgress({ current: completedUploads, total: fileArray.length });
+      }
 
       for (const batch of chunks) {
         const uploadPromises = batch.map(async (file) => {
@@ -125,46 +225,56 @@ export default function SelectionsComponent({
           } catch (error) {
             const errorMessage =
               error instanceof Error
-                ? error.message
-                : t('common.unknown-error-occurred');
+                ? getFriendlyUploadError(error.message)
+                : 'Upload failed unexpectedly. Try again.';
             newUploadErrors.push({ fileName: file.name, error: errorMessage }); // ✅ Push to local array
+          } finally {
+            completedUploads += 1;
+            setUploadProgress({
+              current: completedUploads,
+              total: fileArray.length,
+            });
           }
         });
 
         await Promise.all(uploadPromises); // Wait for batch completion
       }
-
-      // ✅ Log inside a `setTimeout` to see the updated state
-      setTimeout(() => {
-        //
-      }, 100);
+      setUploadErrors(newUploadErrors);
+      onSetMainTab(MainTabsType.SELECTIONS);
 
       if (newUploadErrors.length > 0) {
+        if (newSelections.length > 0) {
+          toast.success(`${newSelections.length} image(s) uploaded successfully`);
+        }
         toast.error(
-          t('common.number-images-failed-to-upload', {
-            count: newUploadErrors.length,
-          })
+          `${newUploadErrors.length} image(s) failed to upload. See details below.`
         );
-      } else {
+      }
+
+      if (newUploadErrors.length === 0 && newSelections.length > 0) {
         toast.success(t('common.images-uploaded-successfully'));
       }
-      setPage(1);
-      const selections = await fetchSelectionsForEdit({
-        worldcupId: game.id,
-        page,
-        perPage,
-        sortBy,
-      });
-      setSelections(selections.data);
-      setSelectionsCount(selections.total);
+
+      if (newSelections.length > 0) {
+        setPage(1);
+        const selections = await fetchSelectionsForEdit({
+          worldcupId: game.id,
+          page: 1,
+          perPage,
+          sortBy,
+        });
+        setSelections(selections.data);
+        setSelectionsCount(selections.total);
+      }
     } catch (error) {
       toast.error(
         error instanceof Error
-          ? error.message
-          : t('common.failed-to-upload-image')
+          ? getFriendlyUploadError(error.message)
+          : 'Upload failed unexpectedly. Try again.'
       );
     } finally {
       setIsUploadingSelectionImages(false); // Hide spinner
+      setUploadProgress({ current: 0, total: 0 });
 
       // ✅ Clear the file input field (important)
       inputElement.value = ''; // Reset the input field
@@ -213,7 +323,7 @@ export default function SelectionsComponent({
       setNewVideo((prev) => ({
         ...prev,
         [selection.id]: {
-          videoUrl: selection.videoUrl,
+          videoUrl: selection.videoUrl || '',
           startTime: selection.startTime ?? 0,
           endTime: selection.endTime ?? 0,
         },
@@ -241,6 +351,11 @@ export default function SelectionsComponent({
       toast.success(t('create-worldcup.youtube-video-uploaded-successfully'));
     } catch (e) {
       console.error(e);
+      toast.error(
+        e instanceof Error
+          ? e.message
+          : t('create-worldcup.failed-to-update-selection-name')
+      );
     }
   };
 
@@ -251,10 +366,12 @@ export default function SelectionsComponent({
         selectionId: selection.id,
         name: newName[selection.id] || selection.name,
         resourceUrl:
-          changedSelectionImage[selection.id] || selection.resourceUrl,
-        videoUrl: newVideo[selection.id]?.videoUrl || selection.resourceUrl,
-        startTime: newVideo[selection.id]?.startTime || selection.startTime,
-        endTime: newVideo[selection.id]?.endTime || selection.endTime,
+          changedSelectionImage[selection.id] ||
+          selection.resourceUrl ||
+          undefined,
+        videoUrl: newVideo[selection.id]?.videoUrl ?? selection.videoUrl ?? undefined,
+        startTime: newVideo[selection.id]?.startTime ?? selection.startTime,
+        endTime: newVideo[selection.id]?.endTime ?? selection.endTime,
       });
       setSelections((prev) =>
         prev.map((s) => (s.id === selection.id ? updatedSelection! : s))
@@ -287,6 +404,7 @@ export default function SelectionsComponent({
 
     try {
       const uploadedImage = await uploadImage(formData);
+      setBrokenSelectionImages((prev) => ({ ...prev, [selectionId]: false }));
       setChangedSelectionImage(
         (prev) => ({ ...prev, [selectionId]: uploadedImage.url }) // ✅ Show uploaded image
       );
@@ -303,6 +421,33 @@ export default function SelectionsComponent({
       ); // ✅ Hide spinner
     }
   };
+
+  const hasValidImageSource = (src?: string | null) => {
+    if (!src) return false;
+
+    const normalizedSrc = src.trim();
+    if (!normalizedSrc) return false;
+
+    return (
+      normalizedSrc.startsWith('http://') ||
+      normalizedSrc.startsWith('https://') ||
+      normalizedSrc.startsWith('/') ||
+      normalizedSrc.startsWith('data:image/')
+    );
+  };
+
+  const renderSelectionImagePlaceholder = () => (
+    <div className="flex h-full w-full flex-col items-center justify-center rounded-lg bg-black/20 text-white">
+      <LucidImage size={40} />
+      <p className="mt-2 text-sm text-gray-300">
+        {t('create-worldcup.upload-image')}
+      </p>
+    </div>
+  );
+
+  const isYouTubeSelection = (selection: SelectionDto) =>
+    selection.videoSource === 'youtube' &&
+    hasValidImageSource(selection.videoUrl);
 
   return (
     <div>
@@ -361,7 +506,12 @@ export default function SelectionsComponent({
               {/* ✅ Show Spinner when Uploading */}
               {isUploadingSelectionImages ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                  <div className="animate-spin w-10 h-10 border-4 border-white border-t-transparent rounded-full"></div>
+                  <div className="flex flex-col items-center gap-3 text-white">
+                    <div className="animate-spin w-10 h-10 border-4 border-white border-t-transparent rounded-full"></div>
+                    <p className="text-sm">
+                      Uploading {uploadProgress.current} of {uploadProgress.total}
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <div className="text-white flex flex-col items-center justify-center">
@@ -383,6 +533,27 @@ export default function SelectionsComponent({
                 onChange={handleSelectionImagesChange}
               />
             </div>
+
+            {uploadErrors.length > 0 && (
+              <div className="mt-4 rounded-md border border-red-500/40 bg-red-950/30 p-4">
+                <div className="text-sm font-semibold text-red-200">
+                  Upload issues
+                </div>
+                <div className="mt-2 space-y-2">
+                  {uploadErrors.map((uploadError, index) => (
+                    <div
+                      key={`${uploadError.fileName}-${index}`}
+                      className="rounded bg-black/20 px-3 py-2 text-sm text-red-100"
+                    >
+                      <div className="font-medium break-all">
+                        {uploadError.fileName}
+                      </div>
+                      <div className="text-red-200/90">{uploadError.error}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </>
       ) : (
@@ -506,6 +677,7 @@ export default function SelectionsComponent({
                       <div className="flex justify-end space-x-2 ">
                         {/* ✅ Save Button */}
                         <button
+                          type="button"
                           onClick={() => handleSave(selection)}
                           className="bg-uwu-red text-white rounded-full w-8 h-8 flex items-center justify-center"
                         >
@@ -516,6 +688,7 @@ export default function SelectionsComponent({
                       <div className="flex justify-end space-x-2 ">
                         {/* ✅ Delete Button */}
                         <button
+                          type="button"
                           onClick={() => handleDeleteSelection(selection.id)}
                           className="bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center"
                         >
@@ -523,6 +696,7 @@ export default function SelectionsComponent({
                         </button>
                         {/* Edit button */}
                         <button
+                          type="button"
                           onClick={() => handleEditClick(selection)}
                           className="bg-uwu-red text-white rounded-full w-8 h-8 flex items-center justify-center"
                         >
@@ -594,18 +768,26 @@ export default function SelectionsComponent({
                             </label>
                           </div>
                         </div>
-                      ) : changedSelectionImage[selection.id] ? (
+                      ) : changedSelectionImage[selection.id] &&
+                        hasValidImageSource(changedSelectionImage[selection.id]) &&
+                        !brokenSelectionImages[selection.id] ? (
                         <Image
                           src={changedSelectionImage[selection.id]}
                           alt="image"
                           layout="fill"
                           objectFit="cover"
                           className="rounded-lg px-12"
+                          onError={() =>
+                            setBrokenSelectionImages((prev) => ({
+                              ...prev,
+                              [selection.id]: true,
+                            }))
+                          }
                         />
                       ) : (
                         <>
                           <div className="text-white flex flex-col items-center">
-                            <ImageUpload className="w-13 h-12 mt-6" />
+                            <LucidImage size={48} className="mt-6" />
                             <p className="text-sm mt-2">
                               {t('create-worldcup.upload-image')}
                             </p>
@@ -621,20 +803,41 @@ export default function SelectionsComponent({
                           />
                         </>
                       )
-                    ) : selection.isVideo ? (
+                    ) : selection.isVideo && isYouTubeSelection(selection) ? (
                       <iframe
                         src={`${selection.videoUrl}?autoplay=0&rel=0`}
                         className="rounded-lg w-full h-full"
                         allowFullScreen
                       ></iframe>
-                    ) : (
+                    ) : selection.isVideo &&
+                      hasValidImageSource(selection.resourceUrl) ? (
+                      <video
+                        src={selection.resourceUrl}
+                        className="rounded-lg h-full w-full object-cover"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        controls
+                        preload="metadata"
+                      />
+                    ) : hasValidImageSource(selection.resourceUrl) &&
+                      !brokenSelectionImages[selection.id] ? (
                       <Image
                         src={selection.resourceUrl}
                         alt="image"
                         layout="fill"
                         objectFit="cover"
                         className="rounded-lg px-12"
+                        onError={() =>
+                          setBrokenSelectionImages((prev) => ({
+                            ...prev,
+                            [selection.id]: true,
+                          }))
+                        }
                       />
+                    ) : (
+                      renderSelectionImagePlaceholder()
                     )}
                   </div>
 
@@ -719,12 +922,14 @@ export default function SelectionsComponent({
       {/* control */}
       <div className="flex justify-between mt-8 mb-16">
         <button
+          type="button"
           className="bg-uwu-red py-2 px-4 rounded-lg cursor-pointer text-white"
           onClick={() => onSetMainTab(MainTabsType.COVER)}
         >
           {'<'} {t('create-worldcup.cover')}
         </button>
         <button
+          type="button"
           className="bg-uwu-red py-2 px-4 rounded-lg cursor-pointer text-white"
           onClick={() => onSetMainTab(MainTabsType.PUBLISH)}
         >

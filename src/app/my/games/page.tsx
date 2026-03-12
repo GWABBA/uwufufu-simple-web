@@ -2,6 +2,7 @@
 
 import { Worldcup } from '@/dtos/worldcup.dtos';
 import Image from 'next/image';
+import { isVideoUrl } from '@/utils/media';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Pagination from '@/components/common/Pagination';
 import { useCallback, useEffect, useState } from 'react';
@@ -146,13 +147,24 @@ export default function MyGames() {
               {/* Cover Image */}
               <div className="w-full h-60 relative">
                 {game.coverImage ? (
-                  <Image
-                    src={game.coverImage || '/assets/default-game-cover.jpg'}
-                    alt={game.title}
-                    fill
-                    className="rounded-t-2xl object-cover"
-                    unoptimized
-                  />
+                  isVideoUrl(game.coverImage) ? (
+                    <video
+                      src={game.coverImage}
+                      className="rounded-t-2xl h-full w-full object-cover"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  ) : (
+                    <Image
+                      src={game.coverImage || '/assets/default-game-cover.jpg'}
+                      alt={game.title}
+                      fill
+                      className="rounded-t-2xl object-cover"
+                      unoptimized
+                    />
+                  )
                 ) : (
                   <div className="flex justify-center">
                     <div className="mt-10 text-white">No Image</div>

@@ -98,13 +98,16 @@ export const updateSelection = async (body: {
   gameId: number;
   selectionId: number;
   name: string;
-  resourceUrl?: string;
-  videoUrl?: string;
+  resourceUrl?: string | null;
+  videoUrl?: string | null;
   startTime?: number;
   endTime?: number;
 }): Promise<SelectionDto> => {
   try {
-    const { data } = await api.patch<SelectionDto>('/selections', body);
+    const payload = Object.fromEntries(
+      Object.entries(body).filter(([, value]) => value !== undefined && value !== null)
+    );
+    const { data } = await api.patch<SelectionDto>('/selections', payload);
 
     return data;
   } catch (error: unknown) {

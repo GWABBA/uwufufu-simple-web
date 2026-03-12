@@ -6,6 +6,8 @@ import { Image as LucideImage } from 'lucide-react';
 import { Worldcup } from '@/dtos/worldcup.dtos';
 import { MainTabsType } from '@/enums/enums.enum';
 import { useTranslation } from 'react-i18next';
+import { getFriendlyCoverUploadError } from './upload-error';
+import { isVideoUrl } from '@/utils/media';
 
 interface CoverComponentProps {
   game: Worldcup;
@@ -61,8 +63,8 @@ export default function CoverComponent({
     } catch (error: unknown) {
       toast.error(
         error instanceof Error
-          ? error.message
-          : t('create-worldcup.failed-to-upload-image')
+          ? getFriendlyCoverUploadError(error.message)
+          : getFriendlyCoverUploadError(t('create-worldcup.failed-to-upload-image'))
       );
     } finally {
       setIsUploading(false); // Hide spinner
@@ -115,16 +117,28 @@ export default function CoverComponent({
 
             {/* ✅ Show Uploaded Image ONLY when available */}
             {coverImagePreview || game?.coverImage ? (
-              <Image
-                src={
-                  coverImagePreview ?? game?.coverImage ?? '/default-cover.jpg'
-                } // ✅ Ensure fallback
-                alt="Cover Image"
-                width={1200}
-                height={800}
-                objectFit="cover"
-                className="rounded-md max-w-80"
-              />
+              isVideoUrl(coverImagePreview ?? game?.coverImage) ? (
+                <video
+                  src={coverImagePreview ?? game?.coverImage}
+                  className="rounded-md max-w-80"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  controls
+                />
+              ) : (
+                <Image
+                  src={
+                    coverImagePreview ?? game?.coverImage ?? '/default-cover.jpg'
+                  } // ✅ Ensure fallback
+                  alt="Cover Image"
+                  width={1200}
+                  height={800}
+                  objectFit="cover"
+                  className="rounded-md max-w-80"
+                />
+              )
             ) : (
               <div className="text-white flex flex-col items-center justify-center">
                 <LucideImage size={86} className="text-white" />
@@ -148,6 +162,7 @@ export default function CoverComponent({
 
       <div className="flex justify-end mt-8">
         <button
+          type="button"
           className="bg-uwu-red py-2 px-4 rounded-lg cursor-pointer text-white"
           onClick={() => onSetMainTab(MainTabsType.SELECTIONS)}
         >

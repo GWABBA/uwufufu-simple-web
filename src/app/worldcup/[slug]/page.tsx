@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation';
 import WorldcupClient from './WorldcupClient';
 import { Metadata } from 'next';
 import HardRedirect from '@/components/common/HardRedirect';
+import { isVideoUrl } from '@/utils/media';
 
 type ParamsPromise = Promise<{ slug: string }>;
 type SearchParamsPromise = Promise<{
@@ -29,7 +30,10 @@ export async function generateMetadata({
   const title = `${worldcup.title} | UwUFUFU`;
   const description =
     worldcup.description ?? 'Play and share your favorite worldcup brackets!';
-  const image = worldcup.coverImage || '/assets/common/default-thumbnail.webp';
+  const image =
+    worldcup.coverImage && !isVideoUrl(worldcup.coverImage)
+      ? worldcup.coverImage
+      : '/assets/common/default-thumbnail.webp';
 
   return {
     title,

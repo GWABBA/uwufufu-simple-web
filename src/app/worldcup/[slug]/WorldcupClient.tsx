@@ -38,6 +38,7 @@ interface WorldcupClientProps {
 type ModalContent = {
   type: 'image' | 'video';
   src: string;
+  videoSource?: string;
 } | null;
 
 export default function WorldcupClient({
@@ -216,6 +217,79 @@ export default function WorldcupClient({
     }
   };
 
+  const hasValidMediaUrl = (url?: string | null) => {
+    if (!url) return false;
+    const normalized = url.trim();
+    return (
+      normalized.startsWith('http://') ||
+      normalized.startsWith('https://') ||
+      normalized.startsWith('/')
+    );
+  };
+
+  const isYouTubeSelection = (selection: SelectionDto) =>
+    selection.videoSource === 'youtube' && hasValidMediaUrl(selection.videoUrl);
+
+  const renderSelectionVideoPreview = (selection: SelectionDto) => {
+    if (isYouTubeSelection(selection)) {
+      return (
+        <Image
+          src={selection.resourceUrl || '/assets/default-image.jpg'}
+          className="w-36 h-24 object-cover rounded-md"
+          alt={selection.name}
+          width={128}
+          height={96}
+          onClick={() =>
+            openModal({
+              type: 'video',
+              src: selection.videoUrl,
+              videoSource: selection.videoSource,
+            })
+          }
+        />
+      );
+    }
+
+    if (matchModalOpen) {
+      return (
+        <Image
+          src={selection.resourceUrl || '/assets/default-image.jpg'}
+          className="w-36 h-24 object-cover rounded-md"
+          alt={selection.name}
+          width={128}
+          height={96}
+          onClick={() =>
+            openModal({
+              type: 'video',
+              src: selection.resourceUrl,
+              videoSource: selection.videoSource,
+            })
+          }
+        />
+      );
+    }
+
+    return (
+      <video
+        src={selection.resourceUrl}
+        className="w-36 h-24 object-cover rounded-md"
+        autoPlay
+        muted
+        loop
+        playsInline
+        controls
+        preload="metadata"
+        onClick={() =>
+          openModal({
+            type: 'video',
+            src: selection.resourceUrl,
+            videoSource: selection.videoSource,
+          })
+        }
+      />
+    );
+  };
+
   const handleReportSubmit = async (reason: string) => {
     try {
       await createReport({
@@ -265,12 +339,22 @@ export default function WorldcupClient({
                 width={800}
                 height={600}
               />
-            ) : (
+            ) : modalContent.videoSource === 'youtube' ? (
               <iframe
                 className="w-[80vw] h-[45vw] max-w-3xl max-h-[60vh] rounded-md"
                 src={normalizeYouTubeUrl(modalContent.src)!}
                 title="Video"
                 allowFullScreen
+              />
+            ) : (
+              <video
+                className="max-w-full max-h-full rounded-lg"
+                src={modalContent.src}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
               />
             )}
           </div>
@@ -311,22 +395,7 @@ export default function WorldcupClient({
                           <div className="bg-uwu-red absolute top-1 left-1 text-white px-2 rounded-md">
                             Video
                           </div>
-                          <Image
-                            src={
-                              selection.resourceUrl ||
-                              '/assets/default-image.jpg'
-                            }
-                            className="w-36 h-24 object-cover rounded-md"
-                            alt={selection.name}
-                            width={128}
-                            height={96}
-                            onClick={() =>
-                              openModal({
-                                type: 'video',
-                                src: selection.videoUrl,
-                              })
-                            }
-                          />
+                          {renderSelectionVideoPreview(selection)}
                         </div>
                       ) : (
                         <div className="relative">
@@ -427,21 +496,61 @@ export default function WorldcupClient({
                       <div className="bg-uwu-red absolute top-1 left-1 text-white px-2 rounded-md z-10">
                         Video
                       </div>
-                      <Image
-                        src={
-                          selection.resourceUrl || '/assets/default-image.jpg'
-                        }
-                        alt={selection.name}
-                        className="object-cover rounded-md w-full h-40"
-                        width={128}
-                        height={120}
-                        onClick={() =>
-                          openModal({
-                            type: 'video',
-                            src: selection.videoUrl,
-                          })
-                        }
-                      />
+                      {matchModalOpen ? (
+                        <Image
+                          src={
+                            selection.resourceUrl || '/assets/default-image.jpg'
+                          }
+                          alt={selection.name}
+                          className="object-cover rounded-md w-full h-40"
+                          width={128}
+                          height={120}
+                          onClick={() =>
+                            openModal({
+                              type: 'video',
+                              src: isYouTubeSelection(selection)
+                                ? selection.videoUrl
+                                : selection.resourceUrl,
+                              videoSource: selection.videoSource,
+                            })
+                          }
+                        />
+                      ) : isYouTubeSelection(selection) ? (
+                        <Image
+                          src={
+                            selection.resourceUrl || '/assets/default-image.jpg'
+                          }
+                          alt={selection.name}
+                          className="object-cover rounded-md w-full h-40"
+                          width={128}
+                          height={120}
+                          onClick={() =>
+                            openModal({
+                              type: 'video',
+                              src: selection.videoUrl,
+                              videoSource: selection.videoSource,
+                            })
+                          }
+                        />
+                      ) : (
+                        <video
+                          src={selection.resourceUrl}
+                          className="object-cover rounded-md w-full h-40"
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          controls
+                          preload="metadata"
+                          onClick={() =>
+                            openModal({
+                              type: 'video',
+                              src: selection.resourceUrl,
+                              videoSource: selection.videoSource,
+                            })
+                          }
+                        />
+                      )}
                     </div>
                   ) : (
                     <div className="relative">

@@ -8,6 +8,7 @@ import {
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { isVideoUrl } from '@/utils/media';
 import { useTranslation } from 'react-i18next';
 import { Virtuoso } from 'react-virtuoso';
 import LoadingAnimation from '@/components/animation/Loading';
@@ -125,15 +126,25 @@ export default function MyPlays() {
               className="block bg-uwu-dark-gray rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden transform hover:scale-105 h-full"
             >
               <div className="w-full h-60 relative">
-                {startedGame.game.coverImage && (
-                  <Image
-                    src={startedGame.game.coverImage}
-                    alt={startedGame.game.title}
-                    fill
-                    className="rounded-t-2xl object-cover z-0"
-                    unoptimized
-                  />
-                )}
+                {startedGame.game.coverImage &&
+                  (isVideoUrl(startedGame.game.coverImage) ? (
+                    <video
+                      src={startedGame.game.coverImage}
+                      className="rounded-t-2xl object-cover z-0 h-full w-full"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  ) : (
+                    <Image
+                      src={startedGame.game.coverImage}
+                      alt={startedGame.game.title}
+                      fill
+                      className="rounded-t-2xl object-cover z-0"
+                      unoptimized
+                    />
+                  ))}
                 <div className="absolute top-2 right-2 z-10">
                   <span
                     className={`px-3 py-1 rounded-md text-xs font-semibold ${

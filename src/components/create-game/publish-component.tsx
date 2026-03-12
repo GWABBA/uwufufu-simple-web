@@ -130,6 +130,7 @@ export default function PublishComponent({
 
       <div className="flex justify-end">
         <button
+          type="button"
           className="bg-uwu-red py-2 px-8 rounded-lg cursor-pointer text-white"
           onClick={finalSave}
         >

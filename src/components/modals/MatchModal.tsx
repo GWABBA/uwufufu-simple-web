@@ -34,6 +34,19 @@ const MatchModal: React.FC<MatchModalProps> = ({
 }) => {
   const { t } = useTranslation();
 
+  const hasValidMediaUrl = (url?: string | null) => {
+    if (!url) return false;
+    const normalized = url.trim();
+    return (
+      normalized.startsWith('http://') ||
+      normalized.startsWith('https://') ||
+      normalized.startsWith('/')
+    );
+  };
+
+  const isYouTubeSelection = (selection: Selection) =>
+    selection.videoSource === 'youtube' && hasValidMediaUrl(selection.videoUrl);
+
   const [winnerId, setWinnerId] = useState<number | null>(null);
   const [selected, setSelected] = useState<boolean>(false);
   const [selectDisabled, setSelectDisabled] = useState<boolean>(false);
@@ -263,7 +276,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
             <MagnifyingPlus className="w-5 h-5 md:w-6 md:h-6" />
           </button>
 
-          {selection.isVideo ? (
+          {selection.isVideo && isYouTubeSelection(selection) ? (
             <div className="w-full aspect-video bg-black">
               <iframe
                 id={`ytplayer-${selection.id}`}
@@ -277,6 +290,19 @@ const MatchModal: React.FC<MatchModalProps> = ({
                 style={{ border: 'none' }}
                 onMouseEnter={() => initPlayer(`ytplayer-${selection.id}`)}
                 onMouseLeave={() => pausePlayer(`ytplayer-${selection.id}`)}
+              />
+            </div>
+          ) : selection.isVideo && hasValidMediaUrl(selection.resourceUrl) ? (
+            <div className="w-full aspect-video bg-black">
+              <video
+                src={selection.resourceUrl}
+                className="rounded mx-auto w-full h-full object-contain"
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                preload="metadata"
               />
             </div>
           ) : (
@@ -445,7 +471,7 @@ const MatchModal: React.FC<MatchModalProps> = ({
                 ×
               </button>
 
-              {fullSizeMedia.isVideo ? (
+              {fullSizeMedia.isVideo && isYouTubeSelection(fullSizeMedia) ? (
                 <div className="flex w-full items-center justify-center">
                   <div className="aspect-video w-full max-w-[960px] overflow-hidden rounded-xl bg-black">
                     <iframe
@@ -462,6 +488,19 @@ const MatchModal: React.FC<MatchModalProps> = ({
                       style={{ border: 'none' }}
                     />
                   </div>
+                </div>
+              ) : fullSizeMedia.isVideo &&
+                hasValidMediaUrl(fullSizeMedia.resourceUrl) ? (
+                <div className="flex w-full items-center justify-center">
+                  <video
+                    className="max-h-full max-w-full rounded-xl"
+                    src={fullSizeMedia.resourceUrl}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    controls
+                  />
                 </div>
               ) : (
                 <div className="relative flex h-full w-full items-center justify-center">

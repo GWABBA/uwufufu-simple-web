@@ -14,6 +14,8 @@ import { useRouter } from 'next/navigation';
 import { uploadImage } from '@/services/images.service';
 import Cookies from 'js-cookie';
 import { useTranslation } from 'react-i18next';
+import { getFriendlyCoverUploadError } from '@/components/create-game/upload-error';
+import { isVideoUrl } from '@/utils/media';
 
 interface FormValues {
   title: string;
@@ -114,8 +116,8 @@ const CreateGame = () => {
     } catch (error) {
       toast.error(
         error instanceof Error
-          ? error.message
-          : t('common.unknown-error-occurred')
+          ? getFriendlyCoverUploadError(error.message)
+          : getFriendlyCoverUploadError(t('common.unknown-error-occurred'))
       );
     } finally {
       setIsUploading(false); // ✅ Hide spinner
@@ -192,13 +194,25 @@ const CreateGame = () => {
 
               {/* ✅ Show Uploaded Image (Fully Covered) or Default Icon */}
               {coverImagePreview ? (
-                <Image
-                  src={coverImagePreview}
-                  alt="Cover Image"
-                  className="rounded-md max-w-80"
-                  width={568}
-                  height={230}
-                />
+                isVideoUrl(coverImagePreview) ? (
+                  <video
+                    src={coverImagePreview}
+                    className="rounded-md max-w-80"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    controls
+                  />
+                ) : (
+                  <Image
+                    src={coverImagePreview}
+                    alt="Cover Image"
+                    className="rounded-md max-w-80"
+                    width={568}
+                    height={230}
+                  />
+                )
               ) : (
                 <div className="text-white flex flex-col items-center">
                   <ImageUpload className="w-12 h-12" />
