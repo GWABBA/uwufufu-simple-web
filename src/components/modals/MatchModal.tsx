@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import FinalWinnerModal from './FinalWinnerModal';
 import { useAppSelector } from '@/store/hooks';
 import GoogleAd from '../common/GoogleAd';
+import { isYouTubeUrl } from '@/utils/media';
 
 declare global {
   interface Window {
@@ -45,7 +46,8 @@ const MatchModal: React.FC<MatchModalProps> = ({
   };
 
   const isYouTubeSelection = (selection: Selection) =>
-    selection.videoSource === 'youtube' && hasValidMediaUrl(selection.videoUrl);
+    hasValidMediaUrl(selection.videoUrl) &&
+    (selection.videoSource === 'youtube' || isYouTubeUrl(selection.videoUrl));
 
   const [winnerId, setWinnerId] = useState<number | null>(null);
   const [selected, setSelected] = useState<boolean>(false);

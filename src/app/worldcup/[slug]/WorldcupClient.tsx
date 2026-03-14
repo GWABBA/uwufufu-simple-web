@@ -29,10 +29,41 @@ import toast from 'react-hot-toast';
 import GoogleAd from '@/components/common/GoogleAd';
 import AccountCircle from '@/assets/icons/account-circle.svg';
 import AdSlot from '@/components/common/AddSlot';
+import { isYouTubeUrl } from '@/utils/media';
 
 interface WorldcupClientProps {
   worldcup: Worldcup;
   startedGameId?: number;
+}
+
+function YouTubeThumbnail({
+  selection,
+  className,
+  width,
+  height,
+  onClick,
+}: {
+  selection: SelectionDto;
+  className: string;
+  width: number;
+  height: number;
+  onClick: () => void;
+}) {
+  const src = selection.resourceUrl?.includes('/sddefault.jpg')
+    ? selection.resourceUrl.replace('/sddefault.jpg', '/default.jpg')
+    : selection.resourceUrl || '/assets/default-image.jpg';
+
+  return (
+    <img
+      src={src}
+      className={className}
+      alt={selection.name}
+      width={width}
+      height={height}
+      loading="lazy"
+      onClick={onClick}
+    />
+  );
 }
 
 type ModalContent = {
@@ -228,15 +259,15 @@ export default function WorldcupClient({
   };
 
   const isYouTubeSelection = (selection: SelectionDto) =>
-    selection.videoSource === 'youtube' && hasValidMediaUrl(selection.videoUrl);
+    hasValidMediaUrl(selection.videoUrl) &&
+    (selection.videoSource === 'youtube' || isYouTubeUrl(selection.videoUrl));
 
   const renderSelectionVideoPreview = (selection: SelectionDto) => {
     if (isYouTubeSelection(selection)) {
       return (
-        <Image
-          src={selection.resourceUrl || '/assets/default-image.jpg'}
+        <YouTubeThumbnail
+          selection={selection}
           className="w-36 h-24 object-cover rounded-md"
-          alt={selection.name}
           width={128}
           height={96}
           onClick={() =>
@@ -339,7 +370,8 @@ export default function WorldcupClient({
                 width={800}
                 height={600}
               />
-            ) : modalContent.videoSource === 'youtube' ? (
+            ) : modalContent.videoSource === 'youtube' ||
+              isYouTubeUrl(modalContent.src) ? (
               <iframe
                 className="w-[80vw] h-[45vw] max-w-3xl max-h-[60vh] rounded-md"
                 src={normalizeYouTubeUrl(modalContent.src)!}
@@ -497,11 +529,8 @@ export default function WorldcupClient({
                         Video
                       </div>
                       {matchModalOpen ? (
-                        <Image
-                          src={
-                            selection.resourceUrl || '/assets/default-image.jpg'
-                          }
-                          alt={selection.name}
+                        <YouTubeThumbnail
+                          selection={selection}
                           className="object-cover rounded-md w-full h-40"
                           width={128}
                           height={120}
@@ -516,11 +545,8 @@ export default function WorldcupClient({
                           }
                         />
                       ) : isYouTubeSelection(selection) ? (
-                        <Image
-                          src={
-                            selection.resourceUrl || '/assets/default-image.jpg'
-                          }
-                          alt={selection.name}
+                        <YouTubeThumbnail
+                          selection={selection}
                           className="object-cover rounded-md w-full h-40"
                           width={128}
                           height={120}
